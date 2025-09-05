@@ -1,0 +1,61 @@
+Post Imóvel
+{
+    "bloco": "01",
+    "apartamento": "101",
+    "boxGaragem": "224"
+}
+
+Post Imóvel
+{
+    "bloco": "01",
+    "apartamento": "102",
+    "boxGaragem": "223"
+}
+
+Post Morador
+{
+  "id": 0,
+  "nome": "Waine",
+  "celular": "62 00000-0000",
+  "email": "w@gmail.com",
+  "isProprietario": true,
+  "dataEntrada": "2025-08-01",
+  "dataSaida": null,
+  "dataInclusao": "2025-08-01",
+  "dataAlteracao": null,
+  "imovelId": 1
+}
+
+Post Morador
+{
+"id": 0,
+"nome": "Joazinho",
+"celular": "62 00000-0000",
+"email": "joao@gmail.com",
+"isProprietario": true,
+"dataEntrada": "2025-08-01",
+"dataSaida": null,
+"dataInclusao": "2025-08-01",
+"dataAlteracao": null,
+"imovelId": 2
+}
+
+Put Morador
+{
+ "id": 1,
+ "nome": "Waine Editado",
+ "celular": "62 99999-9999",
+ "email": "waine@gmail.com",
+ "isProprietario": true,
+ "dataEntrada": "2025-08-01",
+ "dataSaida": "2025-08-08",
+ "dataInclusao": "2025-08-01",
+ "dataAlteracao": "2025-08-08",
+ "imovelId": 2,
+ "imovel": {
+  "id": 2,
+  "bloco": "01",
+  "apartamento": "102",
+  "boxGaragem": "223"
+ }
+}
