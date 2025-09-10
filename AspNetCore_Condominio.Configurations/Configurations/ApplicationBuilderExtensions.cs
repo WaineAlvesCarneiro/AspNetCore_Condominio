@@ -19,7 +19,7 @@ public static class ApplicationBuilderExtensions
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "API Condomínio v1.0.0");
-                c.DocumentTitle = "Documentação da API do Condomínio";
+                c.DocumentTitle = "API Asp Net Core";
             });
         }
 
