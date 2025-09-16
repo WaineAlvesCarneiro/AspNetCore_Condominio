@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.19" />
+	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Folder Include="Data\Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\AspNetCore_Condominio.Application\AspNetCore_Condominio.Application.csproj" />
+	<ProjectReference Include="..\AspNetCore_Condominio.Domain\AspNetCore_Condominio.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
