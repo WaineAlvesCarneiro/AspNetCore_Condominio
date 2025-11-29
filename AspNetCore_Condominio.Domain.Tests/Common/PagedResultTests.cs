@@ -11,6 +11,8 @@ public class PagedResultTests
         var totalDeItens = 45;
         var indiceDaPagina = 2;
         var linhasPorPagina = 10;
+        var totalresultadoPaginado = 3;
+        var itemB = "Item B";
 
         var resultadoPaginado = new PagedResult<string>
         {
@@ -24,8 +26,8 @@ public class PagedResultTests
         Assert.Equal(indiceDaPagina, resultadoPaginado.PageIndex);
         Assert.Equal(linhasPorPagina, resultadoPaginado.LinesPerPage);
         Assert.NotNull(resultadoPaginado.Items);
-        Assert.Equal(3, resultadoPaginado.Items.Count());
-        Assert.Contains("Item B", resultadoPaginado.Items);
+        Assert.Equal(totalresultadoPaginado, resultadoPaginado.Items.Count());
+        Assert.Contains(itemB, resultadoPaginado.Items);
     }
 
     [Fact]
@@ -33,7 +35,12 @@ public class PagedResultTests
     {
         var resultadoPaginado = new PagedResult<int>();
 
+        // Afirma que o objeto 'resultadoPaginado.Items' foi criado com sucesso e não é nulo
+        // garantindo que o seu código não tente acessar membros de um objeto que não existe, o que resultaria em um erro de
+        //  NullReferenceException
         Assert.NotNull(resultadoPaginado.Items);
+
+        //verificar se uma coleção (como uma lista, array ou string) está vazia.
         Assert.Empty(resultadoPaginado.Items);
     }
 }

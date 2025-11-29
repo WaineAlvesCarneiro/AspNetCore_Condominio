@@ -19,10 +19,11 @@ public class AuthUserTests
     public void VerificarSenha_SenhaIncorreta_DeveRetornarFalso()
     {
         const string senhaCorreta = "SenhaSecreta123";
-        const string senhaIncorreta = "SenhaErrada";
         var hash = BCrypt.Net.BCrypt.HashPassword(senhaCorreta);
         var user = new AuthUser { Username = "teste", PasswordHash = hash };
-        var resultado = user.VerificarSenha(senhaIncorreta);
+
+        const string senhaErrada = "SenhaErrada";
+        var resultado = user.VerificarSenha(senhaErrada);
 
         Assert.False(resultado);
     }

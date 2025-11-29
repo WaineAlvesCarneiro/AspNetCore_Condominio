@@ -52,6 +52,16 @@ public class ResultTests
 
         Assert.False(resultado.Sucesso);
         Assert.Equal(mensagemErro, resultado.Mensagem);
+        
         Assert.Equal(default, resultado.Dados);
+        /*
+            O termo default (em C#, por exemplo) retorna:
+            Para Tipos de Valor (structs, inteiros, bool, etc.): O valor que é considerado "zero" ou o estado inicial.
+            Para tipos numéricos (int, double, etc.), é zero (0).
+            Para o tipo bool, é falso (false).
+            Para o tipo char, é \0 (o caractere nulo).
+            Para um enum, é o valor zero.
+            Para Tipos de Referência (classes, string, arrays): O valor nulo (null). 
+        */
     }
 }

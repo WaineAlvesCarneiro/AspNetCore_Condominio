@@ -31,12 +31,15 @@ public class MoradorTests
     [Fact]
     public void AlterarEmail_EmailInvalidoSemArroba_DeveLancarArgumentException()
     {
+        var mensagemEsperada = "E-mail inválido.";
+        var emailEsperadoOriginal = "original@cond.com";
+
         var morador = CriarMoradorBase();
         var emailInvalido = "emailsemarroba.com";
         var ex = Assert.Throws<ArgumentException>(() => morador.AlterarEmail(emailInvalido));
 
-        Assert.Equal("E-mail inválido.", ex.Message);
-        Assert.Equal("original@cond.com", morador.Email);
+        Assert.Equal(mensagemEsperada, ex.Message);
+        Assert.Equal(emailEsperadoOriginal, morador.Email);
     }
 
     [Theory]
