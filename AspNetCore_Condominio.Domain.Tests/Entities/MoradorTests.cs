@@ -42,14 +42,17 @@ public class MoradorTests
         Assert.Equal(emailEsperadoOriginal, morador.Email);
     }
 
-    [Theory]
+    [Theory] //Indica que este é um método de teste que pode receber dados de diferentes fontes, neste caso, os atributos [InlineData].
     [InlineData("")]
     [InlineData(" ")]
-    [InlineData(null)]
+    [InlineData(null)] //Fornecem os valores de entrada (os "dados de teste") para o parâmetro emailInvalido do método de teste.
+                       //O teste será executado três vezes, uma para cada um dos seguintes valores
     public void AlterarEmail_EmailVazioOuNulo_DeveLancarArgumentException(string emailInvalido)
     {
         var morador = CriarMoradorBase();
 
+        //Se o desenvolvedor tentar alterar o e-mail de um Morador para um valor vazio, nulo,
+        //  ou apenas com espaços, o sistema deve rejeitar essa operação lançando uma ArgumentException.
         Assert.Throws<ArgumentException>(() => morador.AlterarEmail(emailInvalido));
     }
 }
