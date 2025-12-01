@@ -18,17 +18,23 @@ public class UpdateImovelCommandValidatorTests
     [Fact]
     public void Validator_ComandoValido_DevePassarSemErros()
     {
-        var command = GetValidCommand();
-        var resultado = _validator.TestValidate(command);
+        // Arrange
+        UpdateImovelCommand command = GetValidCommand();
+        // Act
+        TestValidationResult<UpdateImovelCommand> resultado = _validator.TestValidate(command);
+        // Assert
+        // ShouldNotHaveAnyValidationErrors verifica se não há erros de validação no resultado da validação.
+        // Se houver algum erro, o teste falhará.
         resultado.ShouldNotHaveAnyValidationErrors();
     }
 
     [Fact]
     public void Validator_BlocoMuitoCurto_DeveFalharComMensagemCorreta()
     {
-        var command = GetValidCommand();
+        string mensagemEsperada = "O bloco deve ter entre 3 e 10 caracteres.";
+        UpdateImovelCommand command = GetValidCommand();
         command.Bloco = "";
-        var resultado = _validator.TestValidate(command);
-        resultado.ShouldHaveValidationErrorFor(c => c.Bloco).WithErrorMessage("Bloco é obrigatório");
+        TestValidationResult<UpdateImovelCommand> resultado = _validator.TestValidate(command);
+        resultado.ShouldHaveValidationErrorFor(c => c.Bloco).WithErrorMessage(mensagemEsperada);
     }
 }

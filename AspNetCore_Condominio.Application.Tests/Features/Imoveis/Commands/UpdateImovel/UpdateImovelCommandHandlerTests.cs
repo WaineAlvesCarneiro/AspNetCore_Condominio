@@ -21,13 +21,21 @@ public class UpdateImovelCommandHandlerTests
     public UpdateImovelCommandHandlerTests()
     {
         _imovelRepoMock = new Mock<IImovelRepository>();
+
+        // SUT
+        // System Under Test
+        // Objeto sendo testado
+        // No caso, o handler do comando de atualização de imóvel
+        // Estamos injetando o mock do repositório de imóveis
+        // para isolar o teste e controlar o comportamento do repositório
         _handler = new UpdateImovelCommandHandler(_imovelRepoMock.Object);
     }
 
     [Fact]
     public async Task Handle_ImovelExistenteEComandoValido_DeveAtualizarERetornarSucessoDto()
     {
-        var command = new UpdateImovelCommand
+        // Arrange
+        UpdateImovelCommand command = new()
         {
             Id = 5,
             Bloco = "Bloco Novo",
@@ -35,8 +43,9 @@ public class UpdateImovelCommandHandlerTests
             BoxGaragem = "G2"
         };
 
+        // Act
         _imovelRepoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_imovelExistente);
-        var resultado = await _handler.Handle(command, CancellationToken.None);
+        Domain.Common.Result<DTOs.ImovelDto> resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
         Assert.NotNull(resultado.Dados);
@@ -51,7 +60,8 @@ public class UpdateImovelCommandHandlerTests
     [Fact]
     public async Task Handle_ImovelInexistente_DeveRetornarResultFailure()
     {
-        var command = new UpdateImovelCommand
+        string mensagemEsperada = "Imóvel não encontrado.";
+        UpdateImovelCommand command = new()
         {
             Id = 999,
             Bloco = "Qualquer",
@@ -60,10 +70,10 @@ public class UpdateImovelCommandHandlerTests
         };
 
         _imovelRepoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((Imovel)null!);
-        var resultado = await _handler.Handle(command, CancellationToken.None);
+        Domain.Common.Result<DTOs.ImovelDto> resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
-        Assert.Contains("Imóvel não encontrado.", resultado.Mensagem);
+        Assert.Contains(mensagemEsperada, resultado.Mensagem);
         Assert.Null(resultado.Dados);
 
         _imovelRepoMock.Verify(repo => repo.UpdateAsync(It.IsAny<Imovel>()), Times.Never);

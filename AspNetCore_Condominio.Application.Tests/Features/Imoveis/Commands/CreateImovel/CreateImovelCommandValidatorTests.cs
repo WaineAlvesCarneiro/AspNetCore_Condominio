@@ -9,9 +9,12 @@ public class CreateImovelCommandValidatorTests
 
     public CreateImovelCommandValidatorTests()
     {
+        // Inicializa o validador que será testado.
+        // Isso permite que os testes verifiquem se o validador está funcionando corretamente.
         _validator = new CreateImovelCommandValidator();
     }
 
+    // Método auxiliar para criar um comando válido.
     private CreateImovelCommand GetValidCommand() => new()
     {
         Bloco = "01",
@@ -25,36 +28,54 @@ public class CreateImovelCommandValidatorTests
     [InlineData(" ")]
     public void Validator_BlocoVazioOuNulo_DeveTerErro(string blocoInvalido)
     {
-        var command = GetValidCommand();
+        // Arrange
+        string messagemEsperada = "Bloco é obrigatório";
+        CreateImovelCommand command = GetValidCommand();
         command.Bloco = blocoInvalido;
-        var resultado = _validator.TestValidate(command);
-        resultado.ShouldHaveValidationErrorFor(c => c.Bloco).WithErrorMessage("Bloco é obrigatório");
+
+        // Act
+        TestValidationResult<CreateImovelCommand> resultado = _validator.TestValidate(command);
+
+        // Assert
+        // Verifica se o erro de validação esperado ocorreu.
+        // O campo "Bloco" é obrigatório, então deve haver um erro se estiver vazio ou nulo.
+        // A mensagem de erro esperada é "Bloco é obrigatório".
+        // ShouldHaveValidationErrorFor verifica se há um erro de validação para o campo especificado.
+        // WithErrorMessage verifica se a mensagem de erro corresponde à esperada.
+        resultado.ShouldHaveValidationErrorFor(c => c.Bloco).WithErrorMessage(messagemEsperada);
     }
 
     [Fact]
     public void Validator_ApartamentoVazio_DeveTerErro()
     {
-        var command = GetValidCommand();
+        // Arrange
+        string messagemEsperada = "Apartamento é obrigatório";
+        CreateImovelCommand command = GetValidCommand();
         command.Apartamento = "";
-        var resultado = _validator.TestValidate(command);
-        resultado.ShouldHaveValidationErrorFor(c => c.Apartamento).WithErrorMessage("Apartamento é obrigatório");
+
+        // Act
+        TestValidationResult<CreateImovelCommand> resultado = _validator.TestValidate(command);
+
+        // Assert
+        resultado.ShouldHaveValidationErrorFor(c => c.Apartamento).WithErrorMessage(messagemEsperada);
     }
 
     [Theory]
     [InlineData("12345678901")]
     public void Validator_BoxGaragemMuitoLongo_DeveTerErro(string boxGaragemInvalida)
     {
-        var command = GetValidCommand();
+        string messagemEsperada = "BoxGaragem deve ter no máximo 10 caracteres";
+        CreateImovelCommand command = GetValidCommand();
         command.BoxGaragem = boxGaragemInvalida;
-        var resultado = _validator.TestValidate(command);
-        resultado.ShouldHaveValidationErrorFor(c => c.BoxGaragem).WithErrorMessage("O campo Box Garagem precisa ter entre 1 e 10 caracteres");
+        TestValidationResult<CreateImovelCommand> resultado = _validator.TestValidate(command);
+        resultado.ShouldHaveValidationErrorFor(c => c.BoxGaragem).WithErrorMessage(messagemEsperada);
     }
 
     [Fact]
     public void Validator_ComandoValido_NaoDeveTerErros()
     {
-        var command = GetValidCommand();
-        var resultado = _validator.TestValidate(command);
+        CreateImovelCommand command = GetValidCommand();
+        TestValidationResult<CreateImovelCommand> resultado = _validator.TestValidate(command);
         resultado.ShouldNotHaveAnyValidationErrors();
     }
 }

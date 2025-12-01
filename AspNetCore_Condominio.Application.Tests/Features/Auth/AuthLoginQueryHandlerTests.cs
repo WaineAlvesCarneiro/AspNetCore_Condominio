@@ -74,8 +74,6 @@ public class AuthLoginQueryHandlerTests
         Assert.NotNull(resultado);
         Assert.Equal(_user.Id, resultado.Id);
 
-        //Verification
-
         // Verification (Verificação de Mock - Opcional, mas boa prática):
         //      Verifica se o método GetByUsernameAsync realmente foi chamado no repositório simulado e se foi chamado exatamente uma vez durante a execução do teste.
         //          Isso garante que o handler usou a dependência conforme o esperado.
