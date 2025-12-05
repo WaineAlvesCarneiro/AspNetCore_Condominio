@@ -31,7 +31,7 @@ public class UpdateImovelCommandValidatorTests
     [Fact]
     public void Validator_BlocoMuitoCurto_DeveFalharComMensagemCorreta()
     {
-        string mensagemEsperada = "O bloco deve ter entre 3 e 10 caracteres.";
+        string mensagemEsperada = "Bloco é obrigatório";
         UpdateImovelCommand command = GetValidCommand();
         command.Bloco = "";
         TestValidationResult<UpdateImovelCommand> resultado = _validator.TestValidate(command);

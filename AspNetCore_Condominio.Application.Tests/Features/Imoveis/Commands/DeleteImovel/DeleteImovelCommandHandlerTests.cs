@@ -65,7 +65,7 @@ public class DeleteImovelCommandHandlerTests
     public async Task Handle_ImovelComMoradoresVinculados_DeveRetornarFalhaENaoDeletar()
     {
         // Arrange
-        string mensagemFalha = "Não é possível deletar o imóvel pois existem moradores vinculados a ele.";
+        string mensagemFalha = "Não é possível excluir o imóvel, pois existem moradores vinculados.";
         DeleteImovelCommand command = new(IMOVEL_ID_EXISTENTE);
         _moradorRepoMock.Setup(repo => repo.ExistsByImovelIdAsync(command.Id)).ReturnsAsync(true);
 
