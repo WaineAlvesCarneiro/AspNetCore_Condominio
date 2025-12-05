@@ -12,11 +12,11 @@ public class GetAllPagedImoveisQueryHandlerTests
     private readonly Mock<IImovelRepository> _imovelRepoMock;
     private readonly GetAllPagedImoveisQueryHandler _handler;
 
-    private readonly List<Imovel> _imoveisPagina1 = new List<Imovel>
-    {
+    private readonly List<Imovel> _imoveisPagina1 =
+    [
         new Imovel { Id = 1, Bloco = "A", Apartamento = "101", BoxGaragem = "G1" },
         new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "G2" }
-    };
+    ];
 
     private const int TOTAL_REGISTROS = 15;
     private const int LINES_PER_PAGE = 2;
@@ -31,7 +31,7 @@ public class GetAllPagedImoveisQueryHandlerTests
     [Fact]
     public async Task Handle_DeveRetornarPagedResultComDadosCorretos()
     {
-        var query = new GetAllPagedImoveisQuery(
+        GetAllPagedImoveisQuery query = new(
             Page: PAGE_INDEX,
             LinesPerPage: LINES_PER_PAGE,
             OrderBy: "Bloco",
@@ -41,12 +41,12 @@ public class GetAllPagedImoveisQueryHandlerTests
         _imovelRepoMock.Setup(repo => repo.GetAllPagedAsync(
             PAGE_INDEX, LINES_PER_PAGE, "Bloco", "DESC")).ReturnsAsync((_imoveisPagina1, TOTAL_REGISTROS));
 
-        var resultado = await _handler.Handle(query, CancellationToken.None);
+        Result<PagedResult<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
         Assert.NotNull(resultado.Dados);
 
-        var pagedResult = resultado.Dados;
+        PagedResult<ImovelDto> pagedResult = resultado.Dados;
 
         Assert.Equal(TOTAL_REGISTROS, pagedResult.TotalCount);
         Assert.Equal(PAGE_INDEX, pagedResult.PageIndex);
@@ -63,11 +63,11 @@ public class GetAllPagedImoveisQueryHandlerTests
     public async Task Handle_QuandoRetornaListaVazia_DeveRetornarPagedResultVazio()
     {
         const int totalZero = 0;
-        var query = new GetAllPagedImoveisQuery();
+        GetAllPagedImoveisQuery query = new();
         _imovelRepoMock.Setup(repo => repo.GetAllPagedAsync(
             It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync((new List<Imovel>(), totalZero));
-        var resultado = await _handler.Handle(query, CancellationToken.None);
+        Result<PagedResult<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
         Assert.NotNull(resultado.Dados);

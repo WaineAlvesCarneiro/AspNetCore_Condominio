@@ -14,7 +14,7 @@ public class GetImovelByIdQueryHandlerTests
     private const int IMOVEL_ID_EXISTENTE = 7;
     private const int IMOVEL_ID_INEXISTENTE = 99;
 
-    private readonly Imovel _imovelExistente = new Imovel
+    private readonly Imovel _imovelExistente = new()
     {
         Id = IMOVEL_ID_EXISTENTE,
         Bloco = "Bloco X",

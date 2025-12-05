@@ -11,11 +11,11 @@ public class GetAllImoveisQueryHandlerTests
     private readonly Mock<IImovelRepository> _imovelRepoMock;
     private readonly GetAllImoveisQueryHandler _handler;
 
-    private readonly List<Imovel> _imoveisFicticios = new List<Imovel>
-    {
+    private readonly List<Imovel> _imoveisFicticios =
+    [
         new Imovel { Id = 1, Bloco = "A", Apartamento = "101", BoxGaragem = "A1" },
         new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "B2" }
-    };
+    ];
 
     public GetAllImoveisQueryHandlerTests()
     {
@@ -26,18 +26,18 @@ public class GetAllImoveisQueryHandlerTests
     [Fact]
     public async Task Handle_DeveRetornarListaDeImoveisMapeadaParaDto()
     {
-        var query = new GetAllImoveisQuery();
+        GetAllImoveisQuery query = new();
         _imovelRepoMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(_imoveisFicticios);
-        var resultado = await _handler.Handle(query, CancellationToken.None);
+        Domain.Common.Result<IEnumerable<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
         Assert.NotNull(resultado.Dados);
 
-        var dtos = resultado.Dados.ToList();
+        List<ImovelDto> dtos = resultado.Dados.ToList();
 
         Assert.Equal(_imoveisFicticios.Count, dtos.Count);
-        
-        var primeiroDto = dtos.First();
+
+        ImovelDto primeiroDto = dtos.First();
 
         Assert.IsType<ImovelDto>(primeiroDto);
         Assert.Equal(1, primeiroDto.Id);
@@ -49,9 +49,9 @@ public class GetAllImoveisQueryHandlerTests
     [Fact]
     public async Task Handle_QuandoNaoHaImoveis_DeveRetornarListaVazia()
     {
-        var query = new GetAllImoveisQuery();
+        GetAllImoveisQuery query = new();
         _imovelRepoMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(new List<Imovel>());
-        var resultado = await _handler.Handle(query, CancellationToken.None);
+        Domain.Common.Result<IEnumerable<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
         Assert.NotNull(resultado.Dados);

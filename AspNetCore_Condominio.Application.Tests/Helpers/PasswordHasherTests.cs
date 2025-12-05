@@ -8,7 +8,7 @@ public class PasswordHasherTests
     public void HashPassword_DeveCriarHashVerificavel()
     {
         const string senhaOriginal = "MinhaSenhaForte123";
-        var hash = PasswordHasher.HashPassword(senhaOriginal);
+        string hash = PasswordHasher.HashPassword(senhaOriginal);
 
         Assert.NotEqual(senhaOriginal, hash);
         Assert.False(string.IsNullOrWhiteSpace(hash));
@@ -20,8 +20,8 @@ public class PasswordHasherTests
     {
         const string senhaCorreta = "SenhaCorreta123";
         const string senhaIncorreta = "SenhaErrada321";
-        var hash = PasswordHasher.HashPassword(senhaCorreta);
-        var resultado = PasswordHasher.VerifyPassword(senhaIncorreta, hash);
+        string hash = PasswordHasher.HashPassword(senhaCorreta);
+        bool resultado = PasswordHasher.VerifyPassword(senhaIncorreta, hash);
 
         Assert.False(resultado);
     }
