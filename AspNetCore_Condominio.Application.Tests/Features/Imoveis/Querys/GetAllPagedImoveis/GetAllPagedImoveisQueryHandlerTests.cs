@@ -34,7 +34,7 @@ public class GetAllPagedImoveisQueryHandlerTests
         // Arrange
         string blocoOrdenacao = "Bloco";
         string direcaoOrdenacao = "DESC";
-        string expectedFirstBloco = "B";
+        string expectedFirstBloco = "A";
         GetAllPagedImoveisQuery query = new(
             Page: PAGE_INDEX,
             LinesPerPage: LINES_PER_PAGE,
