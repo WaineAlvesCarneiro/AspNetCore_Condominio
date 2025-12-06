@@ -37,14 +37,14 @@ public class DeleteImovelCommandHandlerTests
         // Arrange
         string mensagemSucesso = "Imóvel deletado com sucesso.";
         DeleteImovelCommand command = new(IMOVEL_ID_EXISTENTE);
-
-        // Act
         // Configura os mocks para simular que o imóvel existe e não possui moradores vinculados.
         // Isso prepara o cenário para testar a deleção do imóvel.
         // O método Setup define o comportamento esperado dos mocks quando os métodos são chamados.
         // ReturnsAsync especifica o valor que deve ser retornado de forma assíncrona.
         _moradorRepoMock.Setup(repo => repo.ExistsByImovelIdAsync(command.Id)).ReturnsAsync(false);
         _imovelRepoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_imovelExistente);
+
+        // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
 
         // Assert

@@ -10,7 +10,7 @@ public class UpdateImovelCommandHandlerTests
     private readonly Mock<IImovelRepository> _imovelRepoMock;
     private readonly UpdateImovelCommandHandler _handler;
 
-    private readonly Imovel _imovelExistente = new Imovel
+    private readonly Imovel _imovelExistente = new()
     {
         Id = 5,
         Bloco = "Bloco Antigo",
@@ -26,8 +26,7 @@ public class UpdateImovelCommandHandlerTests
         // System Under Test
         // Objeto sendo testado
         // No caso, o handler do comando de atualização de imóvel
-        // Estamos injetando o mock do repositório de imóveis
-        // para isolar o teste e controlar o comportamento do repositório
+        // Estamos injetando o mock do repositório de imóveis para isolar o teste e controlar o comportamento do repositório
         _handler = new UpdateImovelCommandHandler(_imovelRepoMock.Object);
     }
 

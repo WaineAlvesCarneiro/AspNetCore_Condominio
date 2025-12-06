@@ -31,18 +31,23 @@ public class GetAllPagedImoveisQueryHandlerTests
     [Fact]
     public async Task Handle_DeveRetornarPagedResultComDadosCorretos()
     {
+        // Arrange
+        string blocoOrdenacao = "Bloco";
+        string direcaoOrdenacao = "DESC";
+        string expectedFirstBloco = "B";
         GetAllPagedImoveisQuery query = new(
             Page: PAGE_INDEX,
             LinesPerPage: LINES_PER_PAGE,
-            OrderBy: "Bloco",
-            Direction: "DESC"
+            OrderBy: blocoOrdenacao,
+            Direction: direcaoOrdenacao
         );
 
-        _imovelRepoMock.Setup(repo => repo.GetAllPagedAsync(
-            PAGE_INDEX, LINES_PER_PAGE, "Bloco", "DESC")).ReturnsAsync((_imoveisPagina1, TOTAL_REGISTROS));
+        _imovelRepoMock.Setup(repo => repo.GetAllPagedAsync(PAGE_INDEX, LINES_PER_PAGE, blocoOrdenacao, direcaoOrdenacao)).ReturnsAsync((_imoveisPagina1, TOTAL_REGISTROS));
 
+        // Act
         Result<PagedResult<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
 
+        // Assert
         Assert.True(resultado.Sucesso);
         Assert.NotNull(resultado.Dados);
 
@@ -52,11 +57,10 @@ public class GetAllPagedImoveisQueryHandlerTests
         Assert.Equal(PAGE_INDEX, pagedResult.PageIndex);
         Assert.Equal(LINES_PER_PAGE, pagedResult.LinesPerPage);
         Assert.Equal(_imoveisPagina1.Count, pagedResult.Items.Count());
-        Assert.Equal("A", pagedResult.Items.First().Bloco);
+        Assert.Equal(expectedFirstBloco, pagedResult.Items.First().Bloco);
         Assert.IsType<PagedResult<ImovelDto>>(pagedResult);
 
-        _imovelRepoMock.Verify(repo => repo.GetAllPagedAsync(
-            PAGE_INDEX, LINES_PER_PAGE, "Bloco", "DESC"), Times.Once);
+        _imovelRepoMock.Verify(repo => repo.GetAllPagedAsync(PAGE_INDEX, LINES_PER_PAGE, blocoOrdenacao, direcaoOrdenacao), Times.Once);
     }
 
     [Fact]

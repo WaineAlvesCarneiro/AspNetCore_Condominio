@@ -52,10 +52,8 @@ public class CreateImovelCommandValidatorTests
         string messagemEsperada = "Apartamento é obrigatório";
         CreateImovelCommand command = GetValidCommand();
         command.Apartamento = "";
-
         // Act
         TestValidationResult<CreateImovelCommand> resultado = _validator.TestValidate(command);
-
         // Assert
         resultado.ShouldHaveValidationErrorFor(c => c.Apartamento).WithErrorMessage(messagemEsperada);
     }
@@ -64,18 +62,24 @@ public class CreateImovelCommandValidatorTests
     [InlineData("12345678901")]
     public void Validator_BoxGaragemMuitoLongo_DeveTerErro(string boxGaragemInvalida)
     {
+        // Arrange
         string messagemEsperada = "O campo Box Garagem precisa ter entre 1 e 10 caracteres";
         CreateImovelCommand command = GetValidCommand();
         command.BoxGaragem = boxGaragemInvalida;
+        // Act
         TestValidationResult<CreateImovelCommand> resultado = _validator.TestValidate(command);
+        // Assert
         resultado.ShouldHaveValidationErrorFor(c => c.BoxGaragem).WithErrorMessage(messagemEsperada);
     }
 
     [Fact]
     public void Validator_ComandoValido_NaoDeveTerErros()
     {
+        // Arrange
         CreateImovelCommand command = GetValidCommand();
+        // Act
         TestValidationResult<CreateImovelCommand> resultado = _validator.TestValidate(command);
+        // Assert
         resultado.ShouldNotHaveAnyValidationErrors();
     }
 }
