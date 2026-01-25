@@ -1,0 +1,78 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore_Condominio.API_Controller", "AspNetCore_Condominio.API_Controller\AspNetCore_Condominio.API_Controller.csproj", "{1395D801-815E-477E-95C9-C7B077D8B65D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore_Condominio.API_MinimalAPI", "AspNetCore_Condominio.API_MinimalAPI\AspNetCore_Condominio.API_MinimalAPI.csproj", "{AF97EBC6-C458-48A2-A403-E601B04901F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore_Condominio.Application", "AspNetCore_Condominio.Application\AspNetCore_Condominio.Application.csproj", "{9D079706-7E4D-4AE5-9340-CB7D08BE7AE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore_Condominio.Configurations", "AspNetCore_Condominio.Configurations\AspNetCore_Condominio.Configurations.csproj", "{EF3C6212-4F6D-4D8C-8560-246682660CCB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore_Condominio.Domain", "AspNetCore_Condominio.Domain\AspNetCore_Condominio.Domain.csproj", "{08D1AF7F-4F9D-4687-945D-27CB92591E2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore_Condominio.Infrastructure", "AspNetCore_Condominio.Infrastructure\AspNetCore_Condominio.Infrastructure.csproj", "{5B7DD54E-4F0B-4EE2-9D08-2C8DD17135C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore_Condominio.Domain.Tests", "AspNetCore_Condominio.Domain.Tests\AspNetCore_Condominio.Domain.Tests.csproj", "{B297AFA8-3B3F-455F-A521-C313987A6634}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore_Condominio.Application.Tests", "AspNetCore_Condominio.Application.Tests\AspNetCore_Condominio.Application.Tests.csproj", "{BD401BE1-A1C2-4B2B-9FA4-EE57C62E05C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNetCore_Condominio.Integration.Tests", "AspNetCore_Condominio.Integration.Tests\AspNetCore_Condominio.Integration.Tests.csproj", "{7533C78E-4B6F-447B-B338-7D52BA4F907E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{380A7511-A354-6D7A-0CC0-8FA1F1BA7B6C}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1395D801-815E-477E-95C9-C7B077D8B65D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1395D801-815E-477E-95C9-C7B077D8B65D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1395D801-815E-477E-95C9-C7B077D8B65D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1395D801-815E-477E-95C9-C7B077D8B65D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF97EBC6-C458-48A2-A403-E601B04901F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF97EBC6-C458-48A2-A403-E601B04901F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF97EBC6-C458-48A2-A403-E601B04901F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF97EBC6-C458-48A2-A403-E601B04901F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D079706-7E4D-4AE5-9340-CB7D08BE7AE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D079706-7E4D-4AE5-9340-CB7D08BE7AE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D079706-7E4D-4AE5-9340-CB7D08BE7AE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D079706-7E4D-4AE5-9340-CB7D08BE7AE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF3C6212-4F6D-4D8C-8560-246682660CCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF3C6212-4F6D-4D8C-8560-246682660CCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF3C6212-4F6D-4D8C-8560-246682660CCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF3C6212-4F6D-4D8C-8560-246682660CCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08D1AF7F-4F9D-4687-945D-27CB92591E2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08D1AF7F-4F9D-4687-945D-27CB92591E2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08D1AF7F-4F9D-4687-945D-27CB92591E2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08D1AF7F-4F9D-4687-945D-27CB92591E2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B7DD54E-4F0B-4EE2-9D08-2C8DD17135C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B7DD54E-4F0B-4EE2-9D08-2C8DD17135C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B7DD54E-4F0B-4EE2-9D08-2C8DD17135C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B7DD54E-4F0B-4EE2-9D08-2C8DD17135C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B297AFA8-3B3F-455F-A521-C313987A6634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B297AFA8-3B3F-455F-A521-C313987A6634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B297AFA8-3B3F-455F-A521-C313987A6634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B297AFA8-3B3F-455F-A521-C313987A6634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD401BE1-A1C2-4B2B-9FA4-EE57C62E05C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD401BE1-A1C2-4B2B-9FA4-EE57C62E05C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD401BE1-A1C2-4B2B-9FA4-EE57C62E05C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD401BE1-A1C2-4B2B-9FA4-EE57C62E05C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7533C78E-4B6F-447B-B338-7D52BA4F907E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7533C78E-4B6F-447B-B338-7D52BA4F907E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7533C78E-4B6F-447B-B338-7D52BA4F907E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7533C78E-4B6F-447B-B338-7D52BA4F907E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6104ED2C-E39D-4997-8A0F-DF3B30376B2E}
+	EndGlobalSection
+EndGlobal
