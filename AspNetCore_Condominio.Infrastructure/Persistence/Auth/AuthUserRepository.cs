@@ -16,4 +16,3 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
         return users.FirstOrDefault(u => string.Equals(u.UserName, username, StringComparison.OrdinalIgnoreCase));
     }
 }
-

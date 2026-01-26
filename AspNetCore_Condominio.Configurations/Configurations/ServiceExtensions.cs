@@ -1,19 +1,15 @@
 ﻿using AspNetCore_Condominio.Application.Behaviors;
 using AspNetCore_Condominio.Application.Features.Auth;
 using AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
-using AspNetCore_Condominio.Application.Features.Events;
 using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Moradores.Commands.Create;
 using AspNetCore_Condominio.Configurations.Converters;
 using AspNetCore_Condominio.Configurations.ServicesJWT;
-using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
 using AspNetCore_Condominio.Infrastructure.Data;
 using AspNetCore_Condominio.Infrastructure.Repositories;
 using AspNetCore_Condominio.Infrastructure.Repositories.Auth;
-using AspNetCore_Condominio.Infrastructure.Repositories.Email;
-using AspNetCore_Condominio.Infrastructure.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -45,7 +41,6 @@ public static class ServiceExtensions
         services.AddMediatR(cfg =>
         {
             cfg.RegisterServicesFromAssembly(typeof(AuthLoginQuery).Assembly);
-            cfg.RegisterServicesFromAssembly(typeof(CriadoEventHandler<>).Assembly);
         });
 
         services.AddValidatorsFromAssembly(typeof(CreateCommandValidatorEmpresa).Assembly);
@@ -59,9 +54,6 @@ public static class ServiceExtensions
         services.AddScoped<IEmpresaRepository, EmpresaRepository>();
         services.AddScoped<IImovelRepository, ImovelRepository>();
         services.AddScoped<IMoradorRepository, MoradorRepository>();
-
-        services.AddScoped<EmailRepository>();
-        services.AddScoped<IEmailService, EmailService>();
 
         services.AddSingleton<TokenService>();
 

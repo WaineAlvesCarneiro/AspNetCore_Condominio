@@ -10,5 +10,14 @@ public class ImovelConfiguration : IEntityTypeConfiguration<Imovel>
     {
         builder.ToTable("Imovel", "dbo");
         builder.HasKey(i => i.Id);
+
+        builder.Property(m => m.EmpresaId)
+            .HasColumnType("bigint")
+            .IsRequired();
+
+        builder.HasOne(m => m.Empresa)
+            .WithMany()
+            .HasForeignKey(m => m.EmpresaId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

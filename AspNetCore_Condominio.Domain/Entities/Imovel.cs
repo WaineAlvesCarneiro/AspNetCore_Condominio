@@ -7,6 +7,7 @@ public class Imovel
     public required string Apartamento { get; set; }
     public required string BoxGaragem { get; set; }
     public long EmpresaId { get; set; }
+    public virtual Empresa? Empresa { get; set; }
 
     private readonly List<Morador> _moradores = new();
     public IReadOnlyCollection<Morador> Moradores => _moradores.AsReadOnly();

@@ -64,7 +64,6 @@ public class MoradorController(IMediator mediator) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateCommandMorador command)
     {
-        command.EmpresaId = 1;
         var result = await mediator.Send(command);
 
         if (!result.Sucesso)
@@ -80,7 +79,6 @@ public class MoradorController(IMediator mediator) : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandMorador command)
     {
-        command.EmpresaId = 1;
         if (id != command.Id)
         {
             return BadRequest("O ID da URL não corresponde ao ID do corpo da requisição.");

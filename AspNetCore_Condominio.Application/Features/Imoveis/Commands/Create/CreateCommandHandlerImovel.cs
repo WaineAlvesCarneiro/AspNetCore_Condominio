@@ -15,7 +15,8 @@ public class CreateCommandHandlerImovel(IImovelRepository repository)
         {
             Bloco = request.Bloco,
             Apartamento = request.Apartamento,
-            BoxGaragem = request.BoxGaragem
+            BoxGaragem = request.BoxGaragem,
+            EmpresaId = request.EmpresaId
         };
 
         await repository.CreateAsync(dado);
@@ -25,7 +26,8 @@ public class CreateCommandHandlerImovel(IImovelRepository repository)
             Id = dado.Id,
             Bloco = dado.Bloco,
             Apartamento = dado.Apartamento,
-            BoxGaragem = dado.BoxGaragem
+            BoxGaragem = dado.BoxGaragem,
+            EmpresaId = request.EmpresaId
         };
 
         return Result<ImovelDto>.Success(dto, "Imóvel criado com sucesso.");

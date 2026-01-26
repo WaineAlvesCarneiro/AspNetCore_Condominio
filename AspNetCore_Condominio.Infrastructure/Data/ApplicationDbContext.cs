@@ -1,6 +1,5 @@
 ﻿using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Entities.Auth;
-using AspNetCore_Condominio.Domain.Entities.EmailRemetente;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System.Reflection;
@@ -11,7 +10,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<AuthUser> AuthUsers { get; set; }
     public DbSet<Empresa> Empresas { get; set; }
-    public DbSet<EmailRemetente> EmailRemetentes { get; set; }
     public DbSet<Imovel> Imovels { get; set; }
     public DbSet<Morador> Moradors { get; set; }
 

@@ -21,6 +21,7 @@ public class UpdateCommandHandlerImovel(IImovelRepository repository)
         dadoToUpdate.Bloco = request.Bloco;
         dadoToUpdate.Apartamento = request.Apartamento;
         dadoToUpdate.BoxGaragem = request.BoxGaragem;
+        dadoToUpdate.EmpresaId = request.EmpresaId;
 
         await _repository.UpdateAsync(dadoToUpdate);
 
@@ -29,7 +30,8 @@ public class UpdateCommandHandlerImovel(IImovelRepository repository)
             Id = dadoToUpdate.Id,
             Bloco = dadoToUpdate.Bloco,
             Apartamento = dadoToUpdate.Apartamento,
-            BoxGaragem = dadoToUpdate.BoxGaragem
+            BoxGaragem = dadoToUpdate.BoxGaragem,
+            EmpresaId = dadoToUpdate.EmpresaId
         };
 
         return Result<ImovelDto>.Success(dto, "Imóvel criado com sucesso.");

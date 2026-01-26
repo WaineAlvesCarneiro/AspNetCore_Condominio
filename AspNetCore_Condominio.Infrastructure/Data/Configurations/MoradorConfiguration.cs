@@ -55,12 +55,8 @@ public class MoradorConfiguration : IEntityTypeConfiguration<Morador>
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasOne(m => m.Empresa)
-                    .WithMany()
-                    .HasForeignKey(m => m.EmpresaId)
-                    .OnDelete(DeleteBehavior.NoAction);
-
-        builder.HasCheckConstraint(
-            "CK_Morador_DataSaida",
-            "[DataSaida] IS NULL OR [DataSaida] >= [DataEntrada]");
+            .WithMany()
+            .HasForeignKey(m => m.EmpresaId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

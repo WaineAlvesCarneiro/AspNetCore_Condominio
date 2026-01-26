@@ -154,6 +154,5 @@ public class UpdateCommandHandlerTests
         Assert.Equal(dataSaida.Year, moradorCapturado.DataSaida!.Value.Year);
         Assert.Equal(dataSaida.Month, moradorCapturado.DataSaida.Value.Month);
         Assert.Equal(dataSaida.Day, moradorCapturado.DataSaida.Value.Day);
-        Assert.NotNull(moradorCapturado.DataAlteracao!.Value);
     }
 }

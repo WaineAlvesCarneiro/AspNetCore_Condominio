@@ -18,7 +18,6 @@ public class JsonDateOnlyConverter : JsonConverter<DateOnly>
                 return date;
             }
 
-            // Tenta parse como DateTime e converte para DateOnly
             if (DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTime))
             {
                 return DateOnly.FromDateTime(dateTime);
