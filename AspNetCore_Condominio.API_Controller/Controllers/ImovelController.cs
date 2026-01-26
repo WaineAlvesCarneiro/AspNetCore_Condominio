@@ -1,6 +1,7 @@
-﻿using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Create;
-using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Update;
+﻿using AspNetCore_Condominio.API_Controller.Controllers.ApiBase;
+using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Delete;
+using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Update;
 using AspNetCore_Condominio.Application.Features.Imoveis.Queries.GetAll;
 using AspNetCore_Condominio.Application.Features.Imoveis.Queries.GetAllPaged;
 using AspNetCore_Condominio.Application.Features.Imoveis.Queries.GetById;
@@ -13,18 +14,20 @@ namespace AspNetCore_Condominio.API_Controller.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(Policy = "AdminPolicy")]
-public class ImovelController(IMediator mediator) : ControllerBase
+public class ImovelController(IMediator mediator) : ApiBaseController
 {
+    [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var result = await mediator.Send(new GetAllQueryImovel());
+        var result = await mediator.Send(new GetAllQueryImovel(UserEmpresaId));
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet("paginado")]
     public async Task<IActionResult> GetAllPagedAsync(
         [FromQuery] int page = 1,
@@ -34,6 +37,7 @@ public class ImovelController(IMediator mediator) : ControllerBase
         [FromQuery] string? searchTerm = null)
     {
         var query = new GetAllPagedQueryImovel(
+            UserEmpresaId: UserEmpresaId,
             Page: page,
             PageSize: pageSize,
             SortBy: sortBy,
@@ -51,19 +55,23 @@ public class ImovelController(IMediator mediator) : ControllerBase
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)
     {
-        var result = await mediator.Send(new GetByIdQueryImovel(id));
+        var result = await mediator.Send(new GetByIdQueryImovel(id, UserEmpresaId));
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
             : NotFound(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Sindico")]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateCommandImovel command)
     {
+        command.EmpresaId = UserEmpresaId;
+
         var result = await mediator.Send(command);
 
         if (!result.Sucesso)
@@ -76,6 +84,7 @@ public class ImovelController(IMediator mediator) : ControllerBase
         });
     }
 
+    [Authorize(Roles = "Sindico")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandImovel command)
     {
@@ -83,6 +92,7 @@ public class ImovelController(IMediator mediator) : ControllerBase
         {
             return BadRequest("O ID da URL não corresponde ao ID do corpo da requisição.");
         }
+        command.EmpresaId = UserEmpresaId;
 
         var result = await mediator.Send(command);
 
@@ -91,13 +101,19 @@ public class ImovelController(IMediator mediator) : ControllerBase
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Sindico")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {
-        var result = await mediator.Send(new DeleteCommandImovel(id));
+        if (IsSindico)
+        {
+            var result = await mediator.Send(new DeleteCommandImovel(id, UserEmpresaId));
 
-        return result.Sucesso
-            ? NoContent()
-            : BadRequest(new { sucesso = false, erro = result.Mensagem });
+            return result.Sucesso
+                ? NoContent()
+                : BadRequest(new { sucesso = false, erro = result.Mensagem });
+        }
+
+        return Forbid();
     }
 }

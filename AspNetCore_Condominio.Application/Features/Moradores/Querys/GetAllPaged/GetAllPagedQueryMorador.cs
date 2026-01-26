@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace AspNetCore_Condominio.Application.Features.Moradores.Queries.GetAllPaged;
 
 public record GetAllPagedQueryMorador(
-    [FromQuery(Name = "page")] int Page = 1,
-    [FromQuery(Name = "pageSize")] int PageSize = 10,
-    [FromQuery(Name = "sortBy")] string? SortBy = "Id",
-    [FromQuery(Name = "sortDescending")] string SortDescending = "ASC",
-    [FromQuery(Name = "searchTerm")] string? SearchTerm = null)
+    long UserEmpresaId,
+    int Page = 1,
+    int PageSize = 10,
+    string? SortBy = "Id",
+    string SortDescending = "ASC",
+    string? SearchTerm = null)
     : IRequest<Result<PagedResult<MoradorDto>>>
 {
     public int ActualPage => Page < 1 ? 1 : Page;

@@ -10,9 +10,11 @@ public record GetAllQueryHandlerImovel(IImovelRepository repository)
 {
     public async Task<Result<IEnumerable<ImovelDto>>> Handle(GetAllQueryImovel request, CancellationToken cancellationToken)
     {
-        var dados = await repository.GetAllAsync();
+        var dados = await repository.GetAllAsync(request.UserEmpresaId);
 
-        var dtos = dados.Select(dado => new ImovelDto
+        var dadosFiltrados = dados.Where(x => x.EmpresaId == request.UserEmpresaId);
+
+        var dtos = dadosFiltrados.Select(dado => new ImovelDto
         {
             Id = dado.Id,
             Bloco = dado.Bloco,

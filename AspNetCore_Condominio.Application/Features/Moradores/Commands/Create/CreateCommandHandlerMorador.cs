@@ -15,7 +15,7 @@ public class CreateCommandHandlerMorador(IMoradorRepository repository, IImovelR
 
     public async Task<Result<MoradorDto>> Handle(CreateCommandMorador request, CancellationToken cancellationToken)
     {
-        var imovelExist = await _imovelRepository.GetByIdAsync(request.ImovelId);
+        var imovelExist = await _imovelRepository.GetByIdAsync(request.ImovelId, request.EmpresaId);
         if (imovelExist == null)
         {
             return Result<MoradorDto>.Failure("O imóvel informado não existe.");

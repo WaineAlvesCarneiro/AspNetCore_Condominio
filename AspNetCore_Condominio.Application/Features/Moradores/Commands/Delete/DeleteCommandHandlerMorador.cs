@@ -9,7 +9,7 @@ public class DeleteCommandHandlerMorador(IMoradorRepository repository)
 {
     public async Task<Result> Handle(DeleteCommandMorador request, CancellationToken cancellationToken)
     {
-        var dado = await repository.GetByIdAsync(request.Id);
+        var dado = await repository.GetByIdAsync(request.Id, request.UserEmpresaId);
         if (dado is null)
             return Result.Failure("Morador não encontrado.");
 

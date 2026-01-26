@@ -1,16 +1,17 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
 using AspNetCore_Condominio.Domain.Common;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore_Condominio.Application.Features.Imoveis.Queries.GetAllPaged;
 
 public record GetAllPagedQueryImovel(
-    [FromQuery(Name = "page")] int Page = 1,
-    [FromQuery(Name = "pageSize")] int PageSize = 10,
-    [FromQuery(Name = "sortBy")] string? SortBy = "Id",
-    [FromQuery(Name = "sortDescending")] string SortDescending = "ASC",
-    [FromQuery(Name = "searchTerm")] string? SearchTerm = null) : IRequest<Result<PagedResult<ImovelDto>>>
+    long UserEmpresaId,
+    int Page = 1,
+    int PageSize = 10,
+    string? SortBy = "Id",
+    string SortDescending = "ASC",
+    string? SearchTerm = null)
+    : IRequest<Result<PagedResult<ImovelDto>>>
 {
     public int ActualPage => Page < 1 ? 1 : Page;
     public int ActualPageSize => PageSize < 1 ? 10 : PageSize;

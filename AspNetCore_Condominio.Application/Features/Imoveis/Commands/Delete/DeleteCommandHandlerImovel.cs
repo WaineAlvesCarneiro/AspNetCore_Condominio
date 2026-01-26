@@ -13,7 +13,7 @@ public class DeleteCommandHandlerImovel(IImovelRepository repository, IMoradorRe
         if (existsMoradorVinculadoNoImovel)
             return Result.Failure("Não é possível excluir o imóvel, pois existem moradores vinculados.");
 
-        var dado = await repository.GetByIdAsync(request.Id);
+        var dado = await repository.GetByIdAsync(request.Id, request.UserEmpresaId);
         if (dado is null)
             return Result.Failure("Imóvel não encontrado.");
 

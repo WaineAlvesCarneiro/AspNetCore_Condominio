@@ -9,12 +9,16 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<IEnumerable<Imovel>> GetAllAsync()
+    public async Task<IEnumerable<Imovel>> GetAllAsync(long userEmpresaId)
     {
-        return await _context.Set<Imovel>().ToListAsync();
+        return await _context.Imovels
+            .Where(m => m.EmpresaId == userEmpresaId)
+            .AsNoTracking()
+            .ToListAsync();
     }
 
     public async Task<(IEnumerable<Imovel> items, int totalCount)> GetAllPagedAsync(
+        long userEmpresaId,
         int page = 1,
         int pageSize = 10,
         string? orderBy = "Id",
@@ -22,6 +26,7 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
         string? searchTerm = null)
     {
         var query = _context.Imovels
+            .Where(m => m.EmpresaId == userEmpresaId)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -62,12 +67,14 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
         };
     }
 
-    public async Task<Imovel?> GetByIdAsync(long id)
+    public async Task<Imovel?> GetByIdAsync(long id, long userEmpresaId)
     {
-        return await _context.Set<Imovel>().FirstOrDefaultAsync(i => i.Id == id);
+        return await _context.Imovels
+            .AsNoTracking()
+            .FirstOrDefaultAsync(i => i.Id == id && i.EmpresaId == userEmpresaId);
     }
 
-    public async Task CreateAsync(Imovel imovel)
+    public async Task CreateAsync(Imovel imovel )
     {
         await _context.Set<Imovel>().AddAsync(imovel);
         await _context.SaveChangesAsync();
@@ -85,8 +92,8 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> ExistsImovelVinculadoNaEmpresaAsync(long empresaId)
+    public async Task<bool> ExistsImovelVinculadoNaEmpresaAsync(long userEmpresaId)
     {
-        return await _context.Imovels.AnyAsync(m => m.EmpresaId == empresaId);
+        return await _context.Imovels.AnyAsync(m => m.EmpresaId == userEmpresaId);
     }
 }

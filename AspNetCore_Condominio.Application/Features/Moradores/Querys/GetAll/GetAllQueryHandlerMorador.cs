@@ -10,9 +10,11 @@ public class GetAllQueryHandlerMorador(IMoradorRepository repository)
 {
     public async Task<Result<IEnumerable<MoradorDto>>> Handle(GetAllQueryMorador request, CancellationToken cancellationToken)
     {
-        var dados = await repository.GetAllAsync();
+        var dados = await repository.GetAllAsync(request.UserEmpresaId);
 
-        var dtos = dados.Select(dado => new MoradorDto
+        var dadosFiltrados = dados.Where(x => x.EmpresaId == request.UserEmpresaId);
+
+        var dtos = dadosFiltrados.Select(dado => new MoradorDto
         {
             Id = dado.Id,
             Nome = dado.Nome,

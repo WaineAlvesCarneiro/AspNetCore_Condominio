@@ -1,4 +1,6 @@
-﻿using AspNetCore_Condominio.Application.Features.Moradores.Commands.Create;
+﻿using AspNetCore_Condominio.API_Controller.Controllers.ApiBase;
+using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Delete;
+using AspNetCore_Condominio.Application.Features.Moradores.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Moradores.Commands.Delete;
 using AspNetCore_Condominio.Application.Features.Moradores.Commands.Update;
 using AspNetCore_Condominio.Application.Features.Moradores.Queries.GetAll;
@@ -13,18 +15,20 @@ namespace AspNetCore_Condominio.API_Controller.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(Policy = "AdminPolicy")]
-public class MoradorController(IMediator mediator) : ControllerBase
+public class MoradorController(IMediator mediator) : ApiBaseController
 {
+    [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet]
     public async Task<IActionResult> Get()
     {
-        var result = await mediator.Send(new GetAllQueryMorador());
+        var result = await mediator.Send(new GetAllQueryMorador(UserEmpresaId));
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet("paginado")]
     public async Task<IActionResult> GetAllPagedAsync(
         [FromQuery] int page = 1,
@@ -34,6 +38,7 @@ public class MoradorController(IMediator mediator) : ControllerBase
         [FromQuery] string? searchTerm = null)
     {
         var query = new GetAllPagedQueryMorador(
+            UserEmpresaId: UserEmpresaId,
             Page: page,
             PageSize: pageSize,
             SortBy: sortBy,
@@ -51,19 +56,23 @@ public class MoradorController(IMediator mediator) : ControllerBase
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)
     {
-        var result = await mediator.Send(new GetByIdQueryMorador(id));
+        var result = await mediator.Send(new GetByIdQueryMorador(id, UserEmpresaId));
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
             : NotFound(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Sindico")]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateCommandMorador command)
     {
+        command.EmpresaId = UserEmpresaId;
+
         var result = await mediator.Send(command);
 
         if (!result.Sucesso)
@@ -76,6 +85,7 @@ public class MoradorController(IMediator mediator) : ControllerBase
         });
     }
 
+    [Authorize(Roles = "Sindico")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandMorador command)
     {
@@ -83,6 +93,7 @@ public class MoradorController(IMediator mediator) : ControllerBase
         {
             return BadRequest("O ID da URL não corresponde ao ID do corpo da requisição.");
         }
+        command.EmpresaId = UserEmpresaId;
 
         var result = await mediator.Send(command);
 
@@ -91,13 +102,19 @@ public class MoradorController(IMediator mediator) : ControllerBase
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Sindico")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {
-        var result = await mediator.Send(new DeleteCommandMorador(id));
+        if (IsSindico)
+        {
+            var result = await mediator.Send(new DeleteCommandMorador(id, UserEmpresaId));
 
-        return result.Sucesso
-            ? NoContent()
-            : BadRequest(new { sucesso = false, erro = result.Mensagem });
+            return result.Sucesso
+                ? NoContent()
+                : BadRequest(new { sucesso = false, erro = result.Mensagem });
+        }
+
+        return Forbid();
     }
 }

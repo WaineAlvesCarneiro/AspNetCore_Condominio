@@ -4,6 +4,7 @@ using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Repositories;
 using Moq;
+using System.Numerics;
 
 namespace AspNetCore_Condominio.Application.Tests.Features.Imoveis.Querys.GetAllPaged;
 
@@ -38,6 +39,7 @@ public class GetAllPagedQueryHandlerTests
         // Arrange
         string expectedFirstBloco = "A";
         GetAllPagedQueryImovel query = new(
+            UserEmpresaId: UserEmpresaId,
             Page: Page,
             PageSize: PageSize,
             SortBy: SortBy,
@@ -45,6 +47,7 @@ public class GetAllPagedQueryHandlerTests
         );
 
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
+            UserEmpresaId,
             Page,
             PageSize,
             SortBy,
@@ -69,6 +72,7 @@ public class GetAllPagedQueryHandlerTests
         Assert.IsType<PagedResult<ImovelDto>>(pagedResult);
 
         _repoMock.Verify(repo => repo.GetAllPagedAsync(
+            UserEmpresaId,
             Page,
             PageSize,
             SortBy,
@@ -82,7 +86,7 @@ public class GetAllPagedQueryHandlerTests
         const int totalZero = 0;
         GetAllPagedQueryImovel query = new();
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
-            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync((new List<Imovel>(), totalZero));
         Result<PagedResult<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
 

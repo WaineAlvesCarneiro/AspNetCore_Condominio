@@ -10,7 +10,7 @@ public record GetByIdQueryHandlerImovel(IImovelRepository repository)
 {
     public async Task<Result<ImovelDto>> Handle(GetByIdQueryImovel request, CancellationToken cancellationToken)
     {
-        var dado = await repository.GetByIdAsync(request.Id);
+        var dado = await repository.GetByIdAsync(request.Id, request.UserEmpresaId);
         if (dado is null)
             return Result<ImovelDto>.Failure("Imóvel não encontrado.");
 

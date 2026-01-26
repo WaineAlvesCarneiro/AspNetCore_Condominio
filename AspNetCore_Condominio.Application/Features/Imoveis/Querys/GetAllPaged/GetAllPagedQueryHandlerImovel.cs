@@ -16,6 +16,7 @@ public record GetAllPagedQueryHandlerImovel(IImovelRepository repository)
         CancellationToken cancellationToken)
     {
         (IEnumerable<Imovel> items, int totalCount) = await _repository.GetAllPagedAsync(
+            userEmpresaId: request.UserEmpresaId,
             page: request.ActualPage,
             pageSize: request.ActualPageSize,
             orderBy: request.ActualSortBy,
@@ -23,7 +24,7 @@ public record GetAllPagedQueryHandlerImovel(IImovelRepository repository)
             searchTerm: request.SearchTerm
         );
 
-        IEnumerable<ImovelDto> dtos = items.Select(dado => new ImovelDto
+        var dtos = items.Select(dado => new ImovelDto
         {
             Id = dado.Id,
             Bloco = dado.Bloco,
@@ -32,14 +33,12 @@ public record GetAllPagedQueryHandlerImovel(IImovelRepository repository)
             EmpresaId = dado.EmpresaId
         });
 
-        PagedResult<ImovelDto> pagedResult = new PagedResult<ImovelDto>
+        return Result<PagedResult<ImovelDto>>.Success(new PagedResult<ImovelDto>
         {
             Items = dtos,
             TotalCount = totalCount,
             PageIndex = request.ActualPage,
             LinesPerPage = request.ActualPageSize
-        };
-
-        return Result<PagedResult<ImovelDto>>.Success(pagedResult);
+        });
     }
 }

@@ -26,7 +26,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
             return Unauthorized();
         }
 
-        var token = _tokenService.GenerateToken(user.UserName, user.Role);
+        var token = _tokenService.GenerateToken(user.UserName, user.Role, user.EmpresaId);
         return Ok(new { token });
     }
 }

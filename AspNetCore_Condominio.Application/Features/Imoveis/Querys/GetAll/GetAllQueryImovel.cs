@@ -4,4 +4,4 @@ using MediatR;
 
 namespace AspNetCore_Condominio.Application.Features.Imoveis.Queries.GetAll;
 
-public record GetAllQueryImovel() : IRequest<Result<IEnumerable<ImovelDto>>>;
+public record GetAllQueryImovel(long UserEmpresaId) : IRequest<Result<IEnumerable<ImovelDto>>>;

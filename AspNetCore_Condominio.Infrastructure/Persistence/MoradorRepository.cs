@@ -9,9 +9,10 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<IEnumerable<Morador>> GetAllAsync()
+    public async Task<IEnumerable<Morador>> GetAllAsync(long userEmpresaId)
     {
         return await _context.Set<Morador>()
+            .Where(m => m.EmpresaId == userEmpresaId)
             .Include(m => m.Imovel)
             .Include(m => m.Empresa)
             .AsNoTracking()
@@ -19,6 +20,7 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
     }
 
     public async Task<(IEnumerable<Morador> items, int totalCount)> GetAllPagedAsync(
+        long userEmpresaId,
         int page = 1,
         int pageSize = 10,
         string? orderBy = "Id",
@@ -26,6 +28,7 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
         string? searchTerm = null)
     {
         var query = _context.Moradors
+            .Where(m => m.EmpresaId == userEmpresaId)
             .Include(m => m.Imovel)
             .Include(m => m.Empresa)
             .AsQueryable();
@@ -68,13 +71,13 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
         };
     }
 
-    public async Task<Morador?> GetByIdAsync(long id)
+    public async Task<Morador?> GetByIdAsync(long id, long userEmpresaId)
     {
-        return await _context.Set<Morador>()
+        return await _context.Moradors
             .Include(m => m.Imovel)
             .Include(m => m.Empresa)
             .AsNoTracking()
-            .FirstOrDefaultAsync(m => m.Id == id);
+            .FirstOrDefaultAsync(i => i.Id == id && i.EmpresaId == userEmpresaId);
     }
 
     public async Task CreateAsync(Morador morador)

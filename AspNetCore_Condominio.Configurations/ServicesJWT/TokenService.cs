@@ -10,7 +10,7 @@ public class TokenService(IConfiguration configuration)
 {
     private readonly IConfiguration _configuration = configuration;
 
-    public string GenerateToken(string username, string role)
+    public string GenerateToken(string username, string role, long empresaId)
     {
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
@@ -19,7 +19,8 @@ public class TokenService(IConfiguration configuration)
             Subject = new ClaimsIdentity(new[]
             {
                     new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, role)
+                    new Claim(ClaimTypes.Role, role),
+                    new Claim("EmpresaId", empresaId.ToString())
                 }),
             Expires = DateTime.UtcNow.AddMinutes(60),
             Audience = _configuration["Jwt:Audience"],

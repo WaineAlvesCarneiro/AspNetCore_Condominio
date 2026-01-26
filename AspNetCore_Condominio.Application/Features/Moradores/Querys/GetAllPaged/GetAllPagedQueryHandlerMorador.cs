@@ -15,74 +15,66 @@ public class GetAllPagedQueryHandlerMorador(IMoradorRepository repository)
         GetAllPagedQueryMorador request,
         CancellationToken cancellationToken)
     {
-        try
+        (IEnumerable<Morador> items, int totalCount) = await _repository.GetAllPagedAsync(
+            userEmpresaId: request.UserEmpresaId,
+            page: request.ActualPage,
+            pageSize: request.ActualPageSize,
+            orderBy: request.ActualSortBy,
+            direction: request.ActualDirection,
+            searchTerm: request.SearchTerm
+        );
+
+        var dtos = items.Select(dado => new MoradorDto
         {
-            (IEnumerable<Morador> items, int totalCount) = await _repository.GetAllPagedAsync(
-                page: request.ActualPage,
-                pageSize: request.ActualPageSize,
-                orderBy: request.ActualSortBy,
-                direction: request.ActualDirection,
-                searchTerm: request.SearchTerm
-            );
-
-            var dtos = items.Select(dado => new MoradorDto
+            Id = dado.Id,
+            Nome = dado.Nome,
+            Celular = dado.Celular,
+            Email = dado.Email,
+            IsProprietario = dado.IsProprietario,
+            DataEntrada = dado.DataEntrada,
+            DataSaida = dado.DataSaida,
+            DataInclusao = dado.DataInclusao,
+            DataAlteracao = dado.DataAlteracao,
+            ImovelId = dado.ImovelId,
+            ImovelDto = dado.Imovel != null ? new ImovelDto
             {
-                Id = dado.Id,
-                Nome = dado.Nome,
-                Celular = dado.Celular,
-                Email = dado.Email,
-                IsProprietario = dado.IsProprietario,
-                DataEntrada = dado.DataEntrada,
-                DataSaida = dado.DataSaida,
-                DataInclusao = dado.DataInclusao,
-                DataAlteracao = dado.DataAlteracao,
-                ImovelId = dado.ImovelId,
-                ImovelDto = dado.Imovel != null ? new ImovelDto
-                {
-                    Id = dado.Imovel.Id,
-                    Bloco = dado.Imovel.Bloco,
-                    Apartamento = dado.Imovel.Apartamento,
-                    BoxGaragem = dado.Imovel.BoxGaragem,
-                    EmpresaId = dado.Imovel.EmpresaId,
-                } : null,
-                EmpresaId = dado.EmpresaId,
-                EmpresaDto = dado.Empresa != null ? new EmpresaDto
-                {
-                    Id = dado.Empresa.Id,
-                    RazaoSocial = dado.Empresa.RazaoSocial,
-                    Fantasia = dado.Empresa.Fantasia,
-                    Cnpj = dado.Empresa.Cnpj,
-                    TipoDeCondominio = dado.Empresa.TipoDeCondominio,
-                    Nome = dado.Empresa.Nome,
-                    Celular = dado.Empresa.Celular,
-                    Telefone = dado.Empresa.Telefone!,
-                    Email = dado.Empresa.Email,
-                    Senha = dado.Empresa.Senha,
-                    Host = dado.Empresa.Host,
-                    Porta = dado.Empresa.Porta,
-                    Cep = dado.Empresa.Cep,
-                    Uf = dado.Empresa.Uf,
-                    Cidade = dado.Empresa.Cidade,
-                    Endereco = dado.Empresa.Endereco,
-                    Complemento = dado.Empresa.Complemento,
-                    DataInclusao = dado.Empresa.DataInclusao,
-                    DataAlteracao = dado.Empresa.DataAlteracao
-                } : null
-            });
-
-            var pagedResult = new PagedResult<MoradorDto>
+                Id = dado.Imovel.Id,
+                Bloco = dado.Imovel.Bloco,
+                Apartamento = dado.Imovel.Apartamento,
+                BoxGaragem = dado.Imovel.BoxGaragem,
+                EmpresaId = dado.Imovel.EmpresaId,
+            } : null,
+            EmpresaId = dado.EmpresaId,
+            EmpresaDto = dado.Empresa != null ? new EmpresaDto
             {
-                Items = dtos,
-                TotalCount = totalCount,
-                PageIndex = request.ActualPage,
-                LinesPerPage = request.ActualPageSize
-            };
+                Id = dado.Empresa.Id,
+                RazaoSocial = dado.Empresa.RazaoSocial,
+                Fantasia = dado.Empresa.Fantasia,
+                Cnpj = dado.Empresa.Cnpj,
+                TipoDeCondominio = dado.Empresa.TipoDeCondominio,
+                Nome = dado.Empresa.Nome,
+                Celular = dado.Empresa.Celular,
+                Telefone = dado.Empresa.Telefone!,
+                Email = dado.Empresa.Email,
+                Senha = dado.Empresa.Senha,
+                Host = dado.Empresa.Host,
+                Porta = dado.Empresa.Porta,
+                Cep = dado.Empresa.Cep,
+                Uf = dado.Empresa.Uf,
+                Cidade = dado.Empresa.Cidade,
+                Endereco = dado.Empresa.Endereco,
+                Complemento = dado.Empresa.Complemento,
+                DataInclusao = dado.Empresa.DataInclusao,
+                DataAlteracao = dado.Empresa.DataAlteracao
+            } : null
+        });
 
-            return Result<PagedResult<MoradorDto>>.Success(pagedResult);
-        }
-        catch (Exception ex)
+        return Result<PagedResult<MoradorDto>>.Success(new PagedResult<MoradorDto>
         {
-            return Result<PagedResult<MoradorDto>>.Failure($"Erro ao buscar moradores paginados: {ex.Message}");
-        }
+            Items = dtos,
+            TotalCount = totalCount,
+            PageIndex = request.ActualPage,
+            LinesPerPage = request.ActualPageSize
+        });
     }
 }

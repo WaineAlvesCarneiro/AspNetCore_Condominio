@@ -91,7 +91,7 @@ public static class ServiceExtensions
         services.AddAuthorization(options =>
         {
             options.AddPolicy("AdminPolicy", policy =>
-                policy.RequireRole("Suporte"));
+                policy.RequireRole("Suporte", "Sindico", "Porteiro"));
         });
 
         return services;
