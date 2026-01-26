@@ -41,6 +41,7 @@ public class Morador : IEntidadeComEmail
         DataEntrada = dataEntrada;
         DataInclusao = DateTime.UtcNow;
         Imovel = null!;
+        Empresa = null!;
     }
 
     public void AlterarEmail(string novoEmail)

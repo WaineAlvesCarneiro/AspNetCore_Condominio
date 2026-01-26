@@ -27,8 +27,10 @@ public class GetAllQueryHandlerTests
                 Id = 5,
                 Bloco = "01",
                 Apartamento = "101",
-                BoxGaragem = "224"
-            }
+                BoxGaragem = "224",
+                EmpresaId = 2
+            },
+            EmpresaId = 2
         },
         new Morador
         {
@@ -40,7 +42,8 @@ public class GetAllQueryHandlerTests
             DataInclusao = new DateTime(2024, 2, 1),
             DataSaida = new DateOnly(2024, 9, 1),
             IsProprietario = false,
-            ImovelId = 8
+            ImovelId = 8,
+            EmpresaId = 2
         }
     };
 

@@ -18,10 +18,10 @@ public class GetAllPagedQueryHandlerTests
         new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "G2", EmpresaId = 1 }
     ];
 
-    private const int Page = 0;
-    private const int LinesPerPage = 10;
-    private const string? OrderBy = "Id";
-    private const string? Direction = "ASC";
+    private const int Page = 1;
+    private const int PageSize = 10;
+    private const string? SortBy = "Id";
+    private const string? SortDescending = "ASC";
     private const string? SearchTerm = null;
 
     private const int TOTAL_REGISTROS = 2;
@@ -36,23 +36,19 @@ public class GetAllPagedQueryHandlerTests
     public async Task Handle_DeveRetornarPagedResultComDadosCorretos()
     {
         // Arrange
-        string ordenacao = "Id";
-        string direcaoOrdenacao = "ASC";
         string expectedFirstBloco = "A";
-
         GetAllPagedQueryImovel query = new(
             Page: Page,
-            LinesPerPage: LinesPerPage,
-            OrderBy: ordenacao,
-            Direction: direcaoOrdenacao
+            PageSize: PageSize,
+            SortBy: SortBy,
+            SortDescending: SortDescending!
         );
 
-        // CORREÇÃO: Use as variáveis locais
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
             Page,
-            LinesPerPage,
-            ordenacao,  // ← Variável local "Id"
-            direcaoOrdenacao,  // ← Variável local "ASC"
+            PageSize,
+            SortBy,
+            SortDescending,
             SearchTerm))
             .ReturnsAsync((_pagina1, TOTAL_REGISTROS));
 
@@ -67,17 +63,16 @@ public class GetAllPagedQueryHandlerTests
 
         Assert.Equal(TOTAL_REGISTROS, pagedResult.TotalCount);
         Assert.Equal(Page, pagedResult.PageIndex);
-        Assert.Equal(LinesPerPage, pagedResult.LinesPerPage);
+        Assert.Equal(PageSize, pagedResult.PageSize);
         Assert.Equal(_pagina1.Count, pagedResult.Items.Count());
         Assert.Equal(expectedFirstBloco, pagedResult.Items.First().Bloco);
         Assert.IsType<PagedResult<ImovelDto>>(pagedResult);
 
-        // CORREÇÃO: Atualize também o Verify
         _repoMock.Verify(repo => repo.GetAllPagedAsync(
             Page,
-            LinesPerPage,
-            ordenacao,
-            direcaoOrdenacao,
+            PageSize,
+            SortBy,
+            SortDescending,
             SearchTerm), Times.Once);
     }
 

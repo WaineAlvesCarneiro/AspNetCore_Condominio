@@ -61,42 +61,6 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
             }
         }
 
-        protected async Task<long> SeedMoradorAsync(
-            string nome = "Teste Morador",
-            string celular = "11999998888",
-            string email = "teste@email.com",
-            bool isProprietario = false,
-            DateOnly? dataEntrada = null,
-            DateTime? dataInclusao = null,
-            long? imovelId = null,
-            long empresaId = 1)
-        {
-            if (!imovelId.HasValue)
-            {
-                imovelId = await GetOrCreateImovelIdAsync();
-            }
-
-            var dto = new
-            {
-                Nome = nome,
-                Celular = celular,
-                Email = email,
-                IsProprietario = isProprietario,
-                DataEntrada = DateOnly.FromDateTime(DateTime.UtcNow),
-                dataInclusao = DateTime.UtcNow,
-                ImovelId = imovelId.Value,
-                EmpresaId = empresaId
-            };
-
-            var response = await _client.PostAsJsonAsync("/Morador", dto);
-            response.EnsureSuccessStatusCode();
-
-            var result = await response.Content.ReadFromJsonAsync<Result<MoradorDto>>();
-            Assert.NotNull(result?.Dados);
-
-            return result.Dados.Id;
-        }
-
         protected async Task<long> GetOrCreateImovelIdAsync()
         {
             var response = await _client.GetAsync("/Imovel");
@@ -134,6 +98,9 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
                 string celular,
                 string telefone,
                 string email,
+                string? senha,
+                string host,
+                int porta,
                 string cep,
                 string uf,
                 string cidade,
@@ -155,6 +122,9 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
                     Celular = celular,
                     Telefone = telefone,
                     Email = email,
+                    Senha = senha,
+                    Host = host,
+                    Porta = porta,
                     Cep = cep,
                     Uf = uf,
                     Cidade = cidade,

@@ -3,6 +3,7 @@ using AspNetCore_Condominio.Application.Features.Moradores.Queries.GetById;
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Repositories;
 using Moq;
+using System;
 using DateTime = System.DateTime;
 
 namespace AspNetCore_Condominio.Application.Tests.Features.Moradores.Querys.GetById;
@@ -27,7 +28,7 @@ public class GetByIdQueryHandlerTests
         DataSaida = DateOnly.FromDateTime(new DateTime(2024, 1, 15, 18, 30, 0)),
         DataAlteracao = new DateTime(2024, 1, 16, 9, 0, 0),
         ImovelId = 10,
-        Imovel = new Imovel { Id = 10, Bloco = "Z", Apartamento = "999", BoxGaragem = "Z99" }
+        Imovel = new Imovel { Id = 10, Bloco = "Z", Apartamento = "999", BoxGaragem = "Z99", EmpresaId = 1 }
     };
 
     public GetByIdQueryHandlerTests()
@@ -53,9 +54,9 @@ public class GetByIdQueryHandlerTests
         Assert.Equal(_existente.Nome, dto.Nome);
 
 
-        Assert.Equal(new DateOnly(2023, 5, 10), dto.DataEntrada);
-        Assert.Equal(new DateOnly(2024, 1, 15), dto.DataSaida);
-        Assert.Equal(new DateTime(2024, 1, 16), dto.DataAlteracao);
+        Assert.Equal(DateOnly.FromDateTime(new DateTime(2023, 5, 10, 8, 0, 0)), dto.DataEntrada);
+        Assert.Equal(DateOnly.FromDateTime(new DateTime(2024, 1, 15, 18, 30, 0)), dto.DataSaida);
+        Assert.Equal(new DateTime(2024, 1, 16, 9, 0, 0), dto.DataAlteracao);
 
         Assert.NotNull(dto.ImovelDto);
         Assert.Equal(10, dto.ImovelDto.Id);

@@ -14,6 +14,9 @@ public class Empresa : IEntidadeComEmail
     public required string Celular { get; set; }
     public string? Telefone { get; set; }
     public required string Email { get; set; } = null!;
+    public string? Senha { get; set; }
+    public required string Host { get; set; }
+    public int Porta { get; set; }
     public required string Cep { get; set; }
     public required string Uf { get; set; }
     public required string Cidade { get; set; }

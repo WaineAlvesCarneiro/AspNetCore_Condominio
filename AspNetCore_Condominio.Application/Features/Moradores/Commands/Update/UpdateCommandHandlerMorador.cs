@@ -36,6 +36,7 @@ public class UpdateCommandHandlerMorador(IMoradorRepository repository, IImovelR
         dadoToUpdate.ImovelId = request.ImovelId;
         dadoToUpdate.DataAlteracao = request.DataAlteracao!;
         dadoToUpdate.DataInclusao = dadoToUpdate.DataInclusao;
+        dadoToUpdate.EmpresaId = dadoToUpdate.EmpresaId;
 
         await _repository.UpdateAsync(dadoToUpdate);
 
@@ -76,6 +77,9 @@ public class UpdateCommandHandlerMorador(IMoradorRepository repository, IImovelR
                     Celular = dadoToUpdate.Empresa.Celular,
                     Telefone = dadoToUpdate.Empresa.Telefone!,
                     Email = dadoToUpdate.Empresa.Email,
+                    Senha = dadoToUpdate.Empresa.Senha,
+                    Host = dadoToUpdate.Empresa.Host,
+                    Porta = dadoToUpdate.Empresa.Porta,
                     Cep = dadoToUpdate.Empresa.Cep,
                     Uf = dadoToUpdate.Empresa.Uf,
                     Cidade = dadoToUpdate.Empresa.Cidade,

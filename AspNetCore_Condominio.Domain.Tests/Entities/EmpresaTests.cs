@@ -5,30 +5,35 @@ namespace AspNetCore_Condominio.Domain.Tests.Entities;
 
 public class EmpresaTests
 {
+    private DateTime DateAtual = DateTime.UtcNow;
+
     private Empresa CriarBase()
     {
         return new Empresa
         {
             RazaoSocial = "Razão Social",
             Fantasia = "Fantasia",
-            Cnpj = "01.111.222/0001-02",
+            Cnpj = "01111222000102",
             TipoDeCondominio = (TipoCondominio)1,
             Nome = "Nome Responsável",
             Celular = "(11) 99999-9999",
             Telefone = "(11) 3333-3333",
             Email = "email@gmail.com",
+            Senha = "SenhaSegura123!",
+            Host = "smtp.email.com",
+            Porta = 587,
             Cep = "01234-567",
             Uf = "SP",
             Cidade = "São Paulo",
             Endereco = "Rua Exemplo, 123",
             Complemento = "Complemento",
-            DataInclusao = DateTime.Now,
-            DataAlteracao = null
+            DataInclusao = DateAtual,
+            DataAlteracao = DateAtual
         };
     }
 
     [Fact]
-    public void Novo_DeveInicializarListaDeMoradoresVazia()
+    public void Novo_DeveInicializarListaDeEmpresasVazia()
     {
         var dado = CriarBase();
 
@@ -36,23 +41,29 @@ public class EmpresaTests
         {
             RazaoSocial = "Razão Social",
             Fantasia = "Fantasia",
-            Cnpj = "01.111.222/0001-02",
+            Cnpj = "01111222000102",
             TipoDeCondominio = (TipoCondominio)1,
             Nome = "Nome Responsável",
             Celular = "(11) 99999-9999",
             Telefone = "(11) 3333-3333",
             Email = "email@gmail.com",
+            Senha = "SenhaSegura123!",
+            Host = "smtp.email.com",
+            Porta = 587,
             Cep = "01234-567",
             Uf = "SP",
             Cidade = "São Paulo",
             Endereco = "Rua Exemplo, 123",
             Complemento = "Complemento",
-            DataInclusao = DateTime.Now,
-            DataAlteracao = null
+            DataInclusao = DateAtual,
+            DataAlteracao = DateAtual
         };
 
         Assert.NotNull(dado);
-        Assert.Empty(dado.Cnpj);
+        Assert.IsType<Empresa>(dado);
+        Assert.Equal(dadoParaComparacao.RazaoSocial, dado.RazaoSocial);
+        Assert.Equal(dadoParaComparacao.Fantasia, dado.Fantasia);
+        Assert.Equal(dadoParaComparacao.Cnpj, dado.Cnpj);
 
         foreach (var prop in dado.GetType().GetProperties())
         {

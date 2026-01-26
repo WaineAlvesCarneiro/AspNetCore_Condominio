@@ -20,7 +20,8 @@ public class UpdateCommandValidatorTests
         DataInclusao = new DateTime(2023, 1, 10),
         DataSaida = null,
         DataAlteracao = DateTime.Now,
-        ImovelId = 1
+        ImovelId = 1,
+        EmpresaId = 1
     };
 
     [Fact]
@@ -56,17 +57,7 @@ public class UpdateCommandValidatorTests
         command.DataEntrada = DateOnly.FromDateTime(new DateTime(2023, 10, 20));
         command.DataSaida = DateOnly.FromDateTime(new DateTime(2023, 10, 19));
         var resultado = _validator.TestValidate(command);
-        resultado.ShouldHaveValidationErrorFor(c => c.DataSaida).WithErrorMessage("Data de saída deve ser maior que a data de entrada");
-    }
-
-    [Fact]
-    public void Validator_DataSaidaIgualADataEntrada_DeveTerErro()
-    {
-        var command = GetValidCommand();
-        command.DataEntrada = DateOnly.FromDateTime(new DateTime(2023, 10, 20));
-        command.DataSaida = DateOnly.FromDateTime(new DateTime(2023, 10, 20));
-        var resultado = _validator.TestValidate(command);
-        resultado.ShouldHaveValidationErrorFor(c => c.DataSaida).WithErrorMessage("Data de saída deve ser maior que a data de entrada");
+        resultado.ShouldHaveValidationErrorFor(c => c.DataSaida).WithErrorMessage("Data de saída deve ser maior ou igual à data de entrada");
     }
 
     [Fact]

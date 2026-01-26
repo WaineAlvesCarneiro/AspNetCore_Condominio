@@ -12,24 +12,27 @@ public class GetAllQueryHandlerEmpresa(IEmpresaRepository repository)
     {
         var dados = await repository.GetAllAsync();
 
-        var dtos = dados.Select(item => new EmpresaDto
+        var dtos = dados.Select(dado => new EmpresaDto
         {
-            Id = item.Id,
-            RazaoSocial = item.RazaoSocial,
-            Fantasia = item.Fantasia,
-            Cnpj = item.Cnpj,
-            TipoDeCondominio = item.TipoDeCondominio,
-            Nome = item.Nome,
-            Celular = item.Celular,
-            Telefone = item.Telefone!,
-            Email = item.Email,
-            Cep = item.Cep,
-            Uf = item.Uf,
-            Cidade = item.Cidade,
-            Endereco = item.Endereco,
-            Complemento = item.Complemento,
-            DataInclusao = item.DataInclusao,
-            DataAlteracao = item.DataAlteracao
+            Id = dado.Id,
+            RazaoSocial = dado.RazaoSocial,
+            Fantasia = dado.Fantasia,
+            Cnpj = dado.Cnpj,
+            TipoDeCondominio = dado.TipoDeCondominio,
+            Nome = dado.Nome,
+            Celular = dado.Celular,
+            Telefone = dado.Telefone!,
+            Email = dado.Email,
+            Senha = dado.Senha,
+            Host = dado.Host,
+            Porta = dado.Porta,
+            Cep = dado.Cep,
+            Uf = dado.Uf,
+            Cidade = dado.Cidade,
+            Endereco = dado.Endereco,
+            Complemento = dado.Complemento,
+            DataInclusao = dado.DataInclusao,
+            DataAlteracao = dado.DataAlteracao
         });
 
         return Result<IEnumerable<EmpresaDto>>.Success(dtos);

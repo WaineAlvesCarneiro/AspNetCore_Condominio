@@ -28,6 +28,9 @@ public record UpdateCommandHandlerEmpresa(IEmpresaRepository repository, IMediat
         dadoToUpdate.Celular = request.Celular;
         dadoToUpdate.Telefone = request.Telefone;
         dadoToUpdate.Email = request.Email;
+        dadoToUpdate.Senha = dadoToUpdate.Senha;
+        dadoToUpdate.Host = dadoToUpdate.Host;
+        dadoToUpdate.Porta = dadoToUpdate.Porta;
         dadoToUpdate.Cep = request.Cep;
         dadoToUpdate.Uf = request.Uf;
         dadoToUpdate.Cidade = request.Cidade;
@@ -51,6 +54,9 @@ public record UpdateCommandHandlerEmpresa(IEmpresaRepository repository, IMediat
             Celular = dadoToUpdate.Celular,
             Telefone = dadoToUpdate.Telefone!,
             Email = dadoToUpdate.Email,
+            Senha = dadoToUpdate.Senha,
+            Host = dadoToUpdate.Host,
+            Porta = dadoToUpdate.Porta,
             Cep = dadoToUpdate.Cep,
             Uf = dadoToUpdate.Uf,
             Cidade = dadoToUpdate.Cidade,

@@ -23,24 +23,27 @@ public class GetAllPagedQueryHandlerEmpresa(IEmpresaRepository repository)
             searchTerm: request.SearchTerm
         );
 
-        IEnumerable<EmpresaDto> dtos = items.Select(i => new EmpresaDto
+        IEnumerable<EmpresaDto> dtos = items.Select(dado => new EmpresaDto
         {
-            Id = i.Id,
-            RazaoSocial = i.RazaoSocial,
-            Fantasia = i.Fantasia,
-            Cnpj = i.Cnpj,
-            TipoDeCondominio = i.TipoDeCondominio,
-            Nome = i.Nome,
-            Celular = i.Celular,
-            Telefone = i.Telefone!,
-            Email = i.Email,
-            Cep = i.Cep,
-            Uf = i.Uf,
-            Cidade = i.Cidade,
-            Endereco = i.Endereco,
-            Complemento = i.Complemento,
-            DataInclusao = i.DataInclusao,
-            DataAlteracao = i.DataAlteracao
+            Id = dado.Id,
+            RazaoSocial = dado.RazaoSocial,
+            Fantasia = dado.Fantasia,
+            Cnpj = dado.Cnpj,
+            TipoDeCondominio = dado.TipoDeCondominio,
+            Nome = dado.Nome,
+            Celular = dado.Celular,
+            Telefone = dado.Telefone!,
+            Email = dado.Email,
+            Senha = dado.Senha,
+            Host = dado.Host,
+            Porta = dado.Porta,
+            Cep = dado.Cep,
+            Uf = dado.Uf,
+            Cidade = dado.Cidade,
+            Endereco = dado.Endereco,
+            Complemento = dado.Complemento,
+            DataInclusao = dado.DataInclusao,
+            DataAlteracao = dado.DataAlteracao
         });
 
         PagedResult<EmpresaDto> pagedResult = new PagedResult<EmpresaDto>

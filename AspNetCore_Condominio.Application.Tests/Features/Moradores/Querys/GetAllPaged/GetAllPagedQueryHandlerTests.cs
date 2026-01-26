@@ -19,7 +19,7 @@ public class GetAllPagedQueryHandlerTests
         {
             Id = 11, Nome = "Morador 11", Celular = "85991234567", Email = "m11@cond.com", IsProprietario = true,
             DataEntrada = DateOnly.FromDateTime(new DateTime(2023, 11, 1)), DataInclusao = new DateTime(2023, 11, 1),
-            ImovelId = 5, EmpresaId = 1, Imovel = new Imovel { Id = 5, Bloco = "C", Apartamento = "301", BoxGaragem = "134" }
+            ImovelId = 5, EmpresaId = 1, Imovel = new Imovel { Id = 5, Bloco = "C", Apartamento = "301", BoxGaragem = "134", EmpresaId = 1}
         },
         new Morador
         {
@@ -29,14 +29,12 @@ public class GetAllPagedQueryHandlerTests
     };
 
     private const int Page = 1;
-    private const int LinesPerPage = 10;
-    private const string? OrderBy = "Id";
-    private const string? Direction = "ASC";
+    private const int PageSize = 10;
+    private const string? SortBy = "Id";
+    private const string? SortDescending = "ASC";
     private const string? SearchTerm = null;
 
-    private const int TOTAL_REGISTROS = 25;
-    private const int LINES_PER_PAGE = 10;
-    private const int PAGE_INDEX = 1;
+    private const int TOTAL_REGISTROS = 2;
 
     public GetAllPagedQueryHandlerTests()
     {
@@ -51,14 +49,19 @@ public class GetAllPagedQueryHandlerTests
         string expectedFirstNome = "Morador 11";
 
         var query = new GetAllPagedQueryMorador(
-            Page: PAGE_INDEX,
-            PageSize: LINES_PER_PAGE,
-            SortBy: "Id",
-            SortDescending: false,
-            SearchTerm: null
+            Page: Page,
+            PageSize: PageSize,
+            SortBy: SortBy,
+            SortDescending: SortDescending!
         );
 
-        _repoMock.Setup(repo => repo.GetAllPagedAsync(Page, LinesPerPage, OrderBy, Direction, SearchTerm)).ReturnsAsync((_pagina1, TOTAL_REGISTROS));
+        _repoMock.Setup(repo => repo.GetAllPagedAsync(
+            Page,
+            PageSize,
+            SortBy,
+            SortDescending,
+            SearchTerm))
+            .ReturnsAsync((_pagina1, TOTAL_REGISTROS));
 
         // Act
         Result<PagedResult<MoradorDto>> resultado = await _handler.Handle(query, CancellationToken.None);
@@ -70,13 +73,18 @@ public class GetAllPagedQueryHandlerTests
         PagedResult<MoradorDto> pagedResult = resultado.Dados;
 
         Assert.Equal(TOTAL_REGISTROS, pagedResult.TotalCount);
-        Assert.Equal(PAGE_INDEX, pagedResult.PageIndex);
-        Assert.Equal(LINES_PER_PAGE, pagedResult.LinesPerPage);
+        Assert.Equal(Page, pagedResult.PageIndex);
+        Assert.Equal(PageSize, pagedResult.PageSize);
         Assert.Equal(_pagina1.Count, pagedResult.Items.Count());
         Assert.Equal(expectedFirstNome, pagedResult.Items.First().Nome);
         Assert.IsType<PagedResult<MoradorDto>>(pagedResult);
 
-        _repoMock.Verify(repo => repo.GetAllPagedAsync(Page, LinesPerPage, OrderBy, Direction, SearchTerm), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllPagedAsync(
+                    Page,
+                    PageSize,
+                    SortBy,
+                    SortDescending,
+                    SearchTerm), Times.Once);
 
         var primeiroDto = pagedResult.Items.First();
 
@@ -84,8 +92,6 @@ public class GetAllPagedQueryHandlerTests
         Assert.Equal(DateOnly.FromDateTime(new DateTime(2023, 11, 1)), primeiroDto.DataEntrada);
         Assert.NotNull(primeiroDto.ImovelDto);
         Assert.Equal("C", primeiroDto.ImovelDto.Bloco);
-
-        _repoMock.Verify(repo => repo.GetAllPagedAsync(Page, LinesPerPage, OrderBy, Direction, SearchTerm), Times.Once);
     }
 
     [Fact]

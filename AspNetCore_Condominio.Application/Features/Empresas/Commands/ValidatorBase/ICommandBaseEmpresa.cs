@@ -12,6 +12,9 @@ public interface ICommandBaseEmpresa
     string Celular { get; set; }
     string? Telefone { get; set; }
     string Email { get; set; }
+    string? Senha { get; set; }
+    string Host { get; set; }
+    int Porta { get; set; }
     string Cep { get; set; }
     string Uf { get; set; }
     string Cidade { get; set; }

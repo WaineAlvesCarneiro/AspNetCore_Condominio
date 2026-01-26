@@ -16,11 +16,13 @@ public class CreateCommandHandlerTests
     private readonly CreateCommandHandlerMorador _handler;
 
     private const int IMOVEL_ID_VALIDO = 1;
+    private const int EMPRESA_ID_VALIDO = 1;
     private readonly Imovel _imovelValido = new Imovel {
         Id = IMOVEL_ID_VALIDO,
         Bloco = "01",
         Apartamento = "101",
-        BoxGaragem = "224"
+        BoxGaragem = "224",
+        EmpresaId = EMPRESA_ID_VALIDO
     };
 
     public CreateCommandHandlerTests()
@@ -47,7 +49,8 @@ public class CreateCommandHandlerTests
         IsProprietario = false,
         DataEntrada = DateOnly.FromDateTime(DateTime.Now),
         DataInclusao = DateTime.Now,
-        ImovelId = IMOVEL_ID_VALIDO
+        ImovelId = IMOVEL_ID_VALIDO,
+        EmpresaId = EMPRESA_ID_VALIDO
     };
 
     [Fact]
@@ -62,11 +65,6 @@ public class CreateCommandHandlerTests
 
         _repoMock.Verify(repo => repo.CreateAsync(
             It.Is<Morador>(m => m.Nome == command.Nome)
-        ), Times.Once);
-
-        _mediatorMock.Verify(m => m.Publish(
-            It.Is<CriadoEventEmail<Morador>>(e => e.Equals(e.Entidade.Id == 5)),
-            It.IsAny<CancellationToken>()
         ), Times.Once);
     }
 

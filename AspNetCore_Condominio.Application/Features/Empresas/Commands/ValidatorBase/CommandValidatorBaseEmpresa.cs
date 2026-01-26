@@ -26,7 +26,7 @@ public abstract class CommandValidatorBaseEmpresa<T> : AbstractValidator<T>
 
         RuleFor(p => p.Nome)
             .NotEmpty().WithMessage("Nome do Responsável é obrigatório")
-            .Length(2, 10).WithMessage("O campo Nome do Responsável precisa ter entre 2 e 10 caracteres");
+            .Length(2, 50).WithMessage("O campo Nome do Responsável precisa ter entre 2 e 50 caracteres");
 
         RuleFor(p => p.Celular)
             .NotEmpty().WithMessage("Celular é obrigatório")
@@ -35,6 +35,14 @@ public abstract class CommandValidatorBaseEmpresa<T> : AbstractValidator<T>
         RuleFor(p => p.Email)
             .NotEmpty().WithMessage("Email é obrigatório")
             .EmailAddress().WithMessage("Informe um email válido");
+
+        RuleFor(p => p.Host)
+            .NotEmpty().WithMessage("Host é obrigatório")
+            .Length(2, 50).WithMessage("O campo Host do Responsável precisa ter entre 2 e 50 caracteres");
+
+        RuleFor(p => p.Porta)
+            .NotEmpty().WithMessage("Porta é obrigatória")
+            .InclusiveBetween(1, 65535).WithMessage("O campo Porta precisa estar entre 1 e 65535");
 
         RuleFor(p => p.Cep)
             .NotEmpty().WithMessage("Cep é obrigatório")

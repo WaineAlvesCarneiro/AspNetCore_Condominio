@@ -31,7 +31,8 @@ public class CreateCommandHandlerMorador(IMoradorRepository repository, IImovelR
             DataSaida = null,
             DataInclusao = request.DataInclusao,
             DataAlteracao = null,
-            ImovelId = request.ImovelId
+            ImovelId = request.ImovelId,
+            EmpresaId = request.EmpresaId
         };
 
         await _repository.CreateAsync(dado);
@@ -73,6 +74,9 @@ public class CreateCommandHandlerMorador(IMoradorRepository repository, IImovelR
                     Celular = dado.Empresa.Celular,
                     Telefone = dado.Empresa.Telefone!,
                     Email = dado.Empresa.Email,
+                    Senha = dado.Empresa.Senha,
+                    Host = dado.Empresa.Host,
+                    Porta = dado.Empresa.Porta,
                     Cep = dado.Empresa.Cep,
                     Uf = dado.Empresa.Uf,
                     Cidade = dado.Empresa.Cidade,

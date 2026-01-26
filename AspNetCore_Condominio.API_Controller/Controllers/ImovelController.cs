@@ -30,14 +30,14 @@ public class ImovelController(IMediator mediator) : ControllerBase
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = "Id",
-        [FromQuery] bool sortDescending = false,
+        [FromQuery] string? sortDescending = "ASC",
         [FromQuery] string? searchTerm = null)
     {
         var query = new GetAllPagedQueryImovel(
             Page: page,
             PageSize: pageSize,
             SortBy: sortBy,
-            SortDescending: sortDescending,
+            SortDescending: sortDescending!,
             SearchTerm: searchTerm);
 
         var result = await mediator.Send(query);

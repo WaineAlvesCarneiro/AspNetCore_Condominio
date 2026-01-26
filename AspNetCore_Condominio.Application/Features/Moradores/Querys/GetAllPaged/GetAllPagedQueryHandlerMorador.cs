@@ -37,7 +37,6 @@ public class GetAllPagedQueryHandlerMorador(IMoradorRepository repository)
                 DataInclusao = dado.DataInclusao,
                 DataAlteracao = dado.DataAlteracao,
                 ImovelId = dado.ImovelId,
-                EmpresaId = dado.EmpresaId,
                 ImovelDto = dado.Imovel != null ? new ImovelDto
                 {
                     Id = dado.Imovel.Id,
@@ -46,6 +45,7 @@ public class GetAllPagedQueryHandlerMorador(IMoradorRepository repository)
                     BoxGaragem = dado.Imovel.BoxGaragem,
                     EmpresaId = dado.Imovel.EmpresaId,
                 } : null,
+                EmpresaId = dado.EmpresaId,
                 EmpresaDto = dado.Empresa != null ? new EmpresaDto
                 {
                     Id = dado.Empresa.Id,
@@ -57,6 +57,9 @@ public class GetAllPagedQueryHandlerMorador(IMoradorRepository repository)
                     Celular = dado.Empresa.Celular,
                     Telefone = dado.Empresa.Telefone!,
                     Email = dado.Empresa.Email,
+                    Senha = dado.Empresa.Senha,
+                    Host = dado.Empresa.Host,
+                    Porta = dado.Empresa.Porta,
                     Cep = dado.Empresa.Cep,
                     Uf = dado.Empresa.Uf,
                     Cidade = dado.Empresa.Cidade,

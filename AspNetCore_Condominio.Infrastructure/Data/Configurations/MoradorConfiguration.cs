@@ -42,6 +42,7 @@ public class MoradorConfiguration : IEntityTypeConfiguration<Morador>
             .HasColumnType("datetime2");
 
         builder.Property(m => m.ImovelId)
+            .HasColumnType("bigint")
             .IsRequired();
 
         builder.Property(m => m.EmpresaId)
