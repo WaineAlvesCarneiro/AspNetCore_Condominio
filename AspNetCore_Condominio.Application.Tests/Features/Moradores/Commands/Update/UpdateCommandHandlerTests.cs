@@ -15,6 +15,7 @@ public class UpdateCommandHandlerTests
     private readonly Mock<IMediator> _mediatorMock;
     private readonly UpdateCommandHandlerMorador _handler;
 
+    private const long UserEmpresaId = 1;
     private const int ID_EXISTENTE = 5;
     private const int IMOVEL_ID_VALIDO = 1;
     private const int EMPRESA_ID_VALIDO = 1;
@@ -66,9 +67,9 @@ public class UpdateCommandHandlerTests
             _mediatorMock.Object
         );
 
-        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_VALIDO)).ReturnsAsync(_imovelValido);
-        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_NOVO)).ReturnsAsync(_imovelNovo);
-        _repoMock.Setup(repo => repo.GetByIdAsync(ID_EXISTENTE)).ReturnsAsync(_existente);
+        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_VALIDO, UserEmpresaId)).ReturnsAsync(_imovelValido);
+        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_NOVO, UserEmpresaId)).ReturnsAsync(_imovelNovo);
+        _repoMock.Setup(repo => repo.GetByIdAsync(ID_EXISTENTE, UserEmpresaId)).ReturnsAsync(_existente);
         _repoMock.Setup(repo => repo.UpdateAsync(It.IsAny<Morador>())).Returns(Task.CompletedTask);
     }
 
@@ -113,7 +114,7 @@ public class UpdateCommandHandlerTests
         const int moradorIdInexistente = 99;
         var command = GetValidCommand();
         command.Id = moradorIdInexistente;
-        _repoMock.Setup(repo => repo.GetByIdAsync(moradorIdInexistente)).ReturnsAsync((Morador)null!);
+        _repoMock.Setup(repo => repo.GetByIdAsync(moradorIdInexistente, UserEmpresaId)).ReturnsAsync((Morador)null!);
         var resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
@@ -128,7 +129,7 @@ public class UpdateCommandHandlerTests
         const long imovelIdInexistente = 99;
         var command = GetValidCommand();
         command.ImovelId = imovelIdInexistente;
-        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(imovelIdInexistente)).ReturnsAsync((Imovel)null!);
+        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(imovelIdInexistente, UserEmpresaId)).ReturnsAsync((Imovel)null!);
         var resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);

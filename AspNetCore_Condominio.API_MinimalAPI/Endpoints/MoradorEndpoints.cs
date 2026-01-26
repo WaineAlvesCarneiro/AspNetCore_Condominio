@@ -1,4 +1,5 @@
-﻿using AspNetCore_Condominio.Application.DTOs;
+﻿using AspNetCore_Condominio.API_MinimalAPI.Extensions;
+using AspNetCore_Condominio.Application.DTOs;
 using AspNetCore_Condominio.Application.Features.Moradores.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Moradores.Commands.Delete;
 using AspNetCore_Condominio.Application.Features.Moradores.Commands.Update;
@@ -8,6 +9,7 @@ using AspNetCore_Condominio.Application.Features.Moradores.Queries.GetById;
 using AspNetCore_Condominio.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AspNetCore_Condominio.API_MinimalAPI.Endpoints;
 
@@ -16,11 +18,13 @@ public static class MoradorEndpoints
     public static void MapMoradorEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/morador")
-            .WithTags("Morador");
+            .WithTags("Morador")
+            .RequireAuthorization("AdminPolicy");
 
-        group.MapGet("/", async (IMediator mediator) =>
+        group.MapGet("/", async (ClaimsPrincipal user, IMediator mediator) =>
         {
-            var query = new GetAllQueryMorador();
+            var empresaId = user.GetEmpresaId();
+            var query = new GetAllQueryMorador(empresaId);
             var result = await mediator.Send(query);
             return result.Sucesso
                 ? Results.Ok(new { sucesso = true, dados = result.Dados })
@@ -37,9 +41,11 @@ public static class MoradorEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapGet("/paginado", async ([AsParameters] GetAllPagedQueryMorador query, ISender sender) =>
+        group.MapGet("/paginado", async (ClaimsPrincipal user, [AsParameters] GetAllPagedQueryMorador query, ISender sender) =>
         {
-            var result = await sender.Send(query);
+            var queryComFiltro = query with { UserEmpresaId = user.GetEmpresaId() };
+
+            var result = await sender.Send(queryComFiltro);
             return result.Sucesso
                 ? Results.Ok(new { sucesso = true, dados = result.Dados })
                 : Results.BadRequest(new { sucesso = false, mensagem = result.Mensagem });
@@ -55,9 +61,10 @@ public static class MoradorEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapGet("/{id:long}", async (long id, IMediator mediator) =>
+        group.MapGet("/{id:long}", async (ClaimsPrincipal user, long id, IMediator mediator) =>
         {
-            var query = new GetByIdQueryMorador(id);
+            var empresaId = user.GetEmpresaId();
+            var query = new GetByIdQueryMorador(id, empresaId);
             var result = await mediator.Send(query);
             return result.Sucesso
                 ? Results.Ok(new { sucesso = true, dados = result.Dados })
@@ -74,8 +81,9 @@ public static class MoradorEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapPost("/", async ([FromBody] CreateCommandMorador command, ISender sender) =>
+        group.MapPost("/", async (ClaimsPrincipal user, [FromBody] CreateCommandMorador command, ISender sender) =>
         {
+            command.EmpresaId = user.GetEmpresaId();
             var result = await sender.Send(command);
             return result.Sucesso
                 ? Results.CreatedAtRoute("GetByIdMorador", new { id = result.Dados!.Id }, result.Dados)
@@ -92,8 +100,9 @@ public static class MoradorEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapPut("/{id:long}", async (long id, [FromBody] UpdateCommandMorador command, ISender sender) =>
+        group.MapPut("/{id:long}", async (ClaimsPrincipal user, long id, [FromBody] UpdateCommandMorador command, ISender sender) =>
         {
+            command.EmpresaId = user.GetEmpresaId();
             if (id != command.Id)
             {
                 return Results.BadRequest(new { sucesso = false, erro = "O ID da URL não corresponde ao ID do corpo da requisição." });
@@ -114,9 +123,10 @@ public static class MoradorEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapDelete("/{id:long}", async (long id, IMediator mediator) =>
+        group.MapDelete("/{id:long}", async (ClaimsPrincipal user, long id, IMediator mediator) =>
         {
-            var command = new DeleteCommandMorador(id);
+            var empresaId = user.GetEmpresaId();
+            var command = new DeleteCommandMorador(id, empresaId);
             var result = await mediator.Send(command);
             return result.Sucesso
                 ? Results.NoContent()

@@ -16,6 +16,8 @@ public class GetAllQueryHandlerTests
         new Imovel { Id = 1, Bloco = "A", Apartamento = "101", BoxGaragem = "A1" },
         new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "B2" }
     ];
+    
+    private const long UserEmpresaId = 1;
 
     public GetAllQueryHandlerTests()
     {
@@ -29,8 +31,8 @@ public class GetAllQueryHandlerTests
         // Arrange
         long idprimeiroDto = 1;
         string blocoPrimeiroDto = "A";
-        GetAllQueryImovel query = new();
-        _repoMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(_ficticios);
+        GetAllQueryImovel query = new(UserEmpresaId);
+        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId)).ReturnsAsync(_ficticios);
 
         // Act
         Domain.Common.Result<IEnumerable<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
@@ -49,15 +51,15 @@ public class GetAllQueryHandlerTests
         Assert.Equal(idprimeiroDto, primeiroDto.Id);
         Assert.Equal(blocoPrimeiroDto, primeiroDto.Bloco);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId), Times.Once);
     }
 
     [Fact]
     public async Task Handle_QuandoNaoHaImoveis_DeveRetornarListaVazia()
     {
         // Arrange
-        GetAllQueryImovel query = new();
-        _repoMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(new List<Imovel>());
+        GetAllQueryImovel query = new(UserEmpresaId);
+        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId)).ReturnsAsync(new List<Imovel>());
 
         // Act
         Domain.Common.Result<IEnumerable<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
@@ -67,6 +69,6 @@ public class GetAllQueryHandlerTests
         Assert.NotNull(resultado.Dados);
         Assert.Empty(resultado.Dados);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId), Times.Once);
     }
 }

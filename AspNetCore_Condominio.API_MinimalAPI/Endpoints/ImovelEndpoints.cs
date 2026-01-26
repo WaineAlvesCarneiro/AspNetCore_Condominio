@@ -1,4 +1,5 @@
-﻿using AspNetCore_Condominio.Application.DTOs;
+﻿using AspNetCore_Condominio.API_MinimalAPI.Extensions;
+using AspNetCore_Condominio.Application.DTOs;
 using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Delete;
 using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Update;
@@ -8,6 +9,7 @@ using AspNetCore_Condominio.Application.Features.Imoveis.Queries.GetById;
 using AspNetCore_Condominio.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AspNetCore_Condominio.API_MinimalAPI.Endpoints;
 
@@ -16,11 +18,13 @@ public static class ImovelEndpoints
     public static void MapImovelEndpoints(this WebApplication app)
     {
         var group = app.MapGroup("/imovel")
-            .WithTags("Imovel");
+            .WithTags("Imovel")
+            .RequireAuthorization("AdminPolicy");
 
-        group.MapGet("/", async (IMediator mediator) =>
+        group.MapGet("/", async (ClaimsPrincipal user, IMediator mediator) =>
         {
-            var query = new GetAllQueryImovel();
+            var empresaId = user.GetEmpresaId();
+            var query = new GetAllQueryImovel(empresaId);
             var result = await mediator.Send(query);
             return result.Sucesso
                 ? Results.Ok(new { sucesso = true, dados = result.Dados })
@@ -37,9 +41,11 @@ public static class ImovelEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapGet("/paginado", async ([AsParameters] GetAllPagedQueryImovel query, ISender sender) =>
+        group.MapGet("/paginado", async (ClaimsPrincipal user, [AsParameters] GetAllPagedQueryImovel query, ISender sender) =>
         {
-            var result = await sender.Send(query);
+            var queryComFiltro = query with { UserEmpresaId = user.GetEmpresaId() };
+
+            var result = await sender.Send(queryComFiltro);
             return result.Sucesso
                 ? Results.Ok(new { sucesso = true, dados = result.Dados })
                 : Results.BadRequest(new { sucesso = false, mensagem = result.Mensagem });
@@ -55,9 +61,10 @@ public static class ImovelEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapGet("/{id:long}", async (long id, IMediator mediator) =>
+        group.MapGet("/{id:long}", async (ClaimsPrincipal user, long id, IMediator mediator) =>
         {
-            var query = new GetByIdQueryImovel(id);
+            var empresaId = user.GetEmpresaId();
+            var query = new GetByIdQueryImovel(id, empresaId);
             var result = await mediator.Send(query);
             return result.Sucesso
                 ? Results.Ok(new { sucesso = true, dados = result.Dados })
@@ -74,8 +81,9 @@ public static class ImovelEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapPost("/", async (CreateCommandImovel command, IMediator mediator) =>
+        group.MapPost("/", async (ClaimsPrincipal user, CreateCommandImovel command, IMediator mediator) =>
         {
+            command.EmpresaId = user.GetEmpresaId();
             var result = await mediator.Send(command);
             return result.Sucesso
                 ? Results.CreatedAtRoute("GetByIdImovel", new { id = result.Dados!.Id }, result.Dados)
@@ -92,8 +100,9 @@ public static class ImovelEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapPut("/{id:long}", async (long id, [FromBody] UpdateCommandImovel command, ISender sender) =>
+        group.MapPut("/{id:long}", async (ClaimsPrincipal user, long id, [FromBody] UpdateCommandImovel command, ISender sender) =>
         {
+            command.EmpresaId = user.GetEmpresaId();
             if (id != command.Id)
             {
                 return Results.BadRequest(new { sucesso = false, erro = "O ID da URL não corresponde ao ID do corpo da requisição." });
@@ -114,14 +123,14 @@ public static class ImovelEndpoints
             .RequireCors()
             .CacheOutput();
 
-        group.MapDelete("/{id:long}", async (long id, IMediator mediator) =>
+        group.MapDelete("/{id:long}", async (ClaimsPrincipal user, long id, IMediator mediator) =>
         {
             if (id <= 0)
             {
                 return Results.BadRequest(new { sucesso = false, erro = "ID inválido." });
             }
-
-            var command = new DeleteCommandImovel(id);
+            var empresaId = user.GetEmpresaId();
+            var command = new DeleteCommandImovel(id, empresaId);
             var result = await mediator.Send(command);
             return result.Sucesso
                 ? Results.NoContent()

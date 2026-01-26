@@ -28,6 +28,7 @@ public class GetAllPagedQueryHandlerTests
         }
     };
 
+    private const long UserEmpresaId = 1;
     private const int Page = 1;
     private const int PageSize = 10;
     private const string? SortBy = "Id";
@@ -49,6 +50,7 @@ public class GetAllPagedQueryHandlerTests
         string expectedFirstNome = "Morador 11";
 
         var query = new GetAllPagedQueryMorador(
+            UserEmpresaId: 1,
             Page: Page,
             PageSize: PageSize,
             SortBy: SortBy,
@@ -56,6 +58,7 @@ public class GetAllPagedQueryHandlerTests
         );
 
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
+            UserEmpresaId,
             Page,
             PageSize,
             SortBy,
@@ -80,11 +83,12 @@ public class GetAllPagedQueryHandlerTests
         Assert.IsType<PagedResult<MoradorDto>>(pagedResult);
 
         _repoMock.Verify(repo => repo.GetAllPagedAsync(
-                    Page,
-                    PageSize,
-                    SortBy,
-                    SortDescending,
-                    SearchTerm), Times.Once);
+            UserEmpresaId,
+            Page,
+            PageSize,
+            SortBy,
+            SortDescending,
+            SearchTerm), Times.Once);
 
         var primeiroDto = pagedResult.Items.First();
 
@@ -98,9 +102,9 @@ public class GetAllPagedQueryHandlerTests
     public async Task Handle_QuandoRetornaListaVazia_DeveRetornarPagedResultVazio()
     {
         const int totalZero = 0;
-        var query = new GetAllPagedQueryMorador();
+        var query = new GetAllPagedQueryMorador(UserEmpresaId);
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
-            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync((new List<Morador>(), totalZero));
         var resultado = await _handler.Handle(query, CancellationToken.None);
 

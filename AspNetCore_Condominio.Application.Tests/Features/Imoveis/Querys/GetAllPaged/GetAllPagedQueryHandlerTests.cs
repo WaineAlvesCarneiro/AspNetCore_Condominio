@@ -4,7 +4,6 @@ using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Repositories;
 using Moq;
-using System.Numerics;
 
 namespace AspNetCore_Condominio.Application.Tests.Features.Imoveis.Querys.GetAllPaged;
 
@@ -19,6 +18,7 @@ public class GetAllPagedQueryHandlerTests
         new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "G2", EmpresaId = 1 }
     ];
 
+    private const long UserEmpresaId = 1;
     private const int Page = 1;
     private const int PageSize = 10;
     private const string? SortBy = "Id";
@@ -84,7 +84,7 @@ public class GetAllPagedQueryHandlerTests
     public async Task Handle_QuandoRetornaListaVazia_DeveRetornarPagedResultVazio()
     {
         const int totalZero = 0;
-        GetAllPagedQueryImovel query = new();
+        GetAllPagedQueryImovel query = new(UserEmpresaId);
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
             It.IsAny<long>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync((new List<Imovel>(), totalZero));

@@ -19,6 +19,8 @@ public class DeleteCommandHandlerTests
         ImovelId = 1
     };
 
+    private const long UserEmpresaId = 1;
+
     public DeleteCommandHandlerTests()
     {
         _repoMock = new Mock<IMoradorRepository>();
@@ -28,8 +30,8 @@ public class DeleteCommandHandlerTests
     [Fact]
     public async Task Handle_MoradorExistente_DeveChamarDeleteAsyncERetornarSucesso()
     {
-        var command = new DeleteCommandMorador(_existente.Id);
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_existente);
+        var command = new DeleteCommandMorador(_existente.Id, UserEmpresaId);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, UserEmpresaId)).ReturnsAsync(_existente);
         var resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
@@ -44,8 +46,8 @@ public class DeleteCommandHandlerTests
     public async Task Handle_MoradorInexistente_DeveRetornarFailure()
     {
         const long idInexistente = 999;
-        var command = new DeleteCommandMorador(idInexistente);
-        _repoMock.Setup(repo => repo.GetByIdAsync(idInexistente)).ReturnsAsync((Morador)null!);
+        var command = new DeleteCommandMorador(idInexistente, UserEmpresaId);
+        _repoMock.Setup(repo => repo.GetByIdAsync(idInexistente, UserEmpresaId)).ReturnsAsync((Morador)null!);
         var resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);

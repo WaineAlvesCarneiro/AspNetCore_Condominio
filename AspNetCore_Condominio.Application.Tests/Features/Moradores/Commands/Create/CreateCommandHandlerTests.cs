@@ -15,6 +15,7 @@ public class CreateCommandHandlerTests
     private readonly Mock<IMediator> _mediatorMock;
     private readonly CreateCommandHandlerMorador _handler;
 
+    private const long UserEmpresaId = 1;
     private const int IMOVEL_ID_VALIDO = 1;
     private const int EMPRESA_ID_VALIDO = 1;
     private readonly Imovel _imovelValido = new Imovel {
@@ -35,7 +36,7 @@ public class CreateCommandHandlerTests
             _imovelRepoMock.Object,
             _mediatorMock.Object
         );
-        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_VALIDO)).ReturnsAsync(_imovelValido);
+        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_VALIDO, UserEmpresaId)).ReturnsAsync(_imovelValido);
         _repoMock.Setup(repo => repo.CreateAsync(It.IsAny<Morador>()))
             .Callback<Morador>(morador => morador.Id = 5)
             .Returns(Task.CompletedTask);
@@ -76,7 +77,7 @@ public class CreateCommandHandlerTests
         var command = GetValidCommand();
         command.ImovelId = ImovelIdInexistente;
 
-        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(ImovelIdInexistente)).ReturnsAsync((Imovel)null!);
+        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(ImovelIdInexistente, UserEmpresaId)).ReturnsAsync((Imovel)null!);
         var resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);

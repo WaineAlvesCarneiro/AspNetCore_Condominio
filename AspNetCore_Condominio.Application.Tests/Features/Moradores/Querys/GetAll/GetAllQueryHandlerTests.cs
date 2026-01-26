@@ -11,6 +11,8 @@ public class GetAllQueryHandlerTests
     private readonly Mock<IMoradorRepository> _repoMock;
     private readonly GetAllQueryHandlerMorador _handler;
 
+    private const long UserEmpresaId = 1;
+
     private readonly List<Morador> _ficticios = new List<Morador>
     {
         new Morador
@@ -56,8 +58,9 @@ public class GetAllQueryHandlerTests
     [Fact]
     public async Task Handle_DeveRetornarListaDeMoradoresMapeadaParaDto()
     {
-        var query = new GetAllQueryMorador();
-        _repoMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(_ficticios);
+        
+        var query = new GetAllQueryMorador(UserEmpresaId);
+        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId)).ReturnsAsync(_ficticios);
         var resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
@@ -82,20 +85,20 @@ public class GetAllQueryHandlerTests
         Assert.Equal(new DateOnly(2024, 9, 1), segundoDto.DataSaida);
         Assert.Null(segundoDto.ImovelDto);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId), Times.Once);
     }
 
     [Fact]
     public async Task Handle_QuandoNaoHaMoradores_DeveRetornarListaVazia()
     {
-        var query = new GetAllQueryMorador();
-        _repoMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(new List<Morador>());
+        var query = new GetAllQueryMorador(UserEmpresaId);
+        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId)).ReturnsAsync(new List<Morador>());
         var resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
         Assert.NotNull(resultado.Dados);
         Assert.Empty(resultado.Dados);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId), Times.Once);
     }
 }

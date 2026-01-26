@@ -10,6 +10,8 @@ public class UpdateCommandHandlerTests
     private readonly Mock<IImovelRepository> _repoMock;
     private readonly UpdateCommandHandlerImovel _handler;
 
+    private const long UserEmpresaId = 1;
+
     private readonly Imovel _existente = new()
     {
         Id = 5,
@@ -37,7 +39,7 @@ public class UpdateCommandHandlerTests
         };
 
         // Act
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_existente);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, UserEmpresaId)).ReturnsAsync(_existente);
         Domain.Common.Result<DTOs.ImovelDto> resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
@@ -62,7 +64,7 @@ public class UpdateCommandHandlerTests
             BoxGaragem = "Qualquer"
         };
 
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((Imovel)null!);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, UserEmpresaId)).ReturnsAsync((Imovel)null!);
         Domain.Common.Result<DTOs.ImovelDto> resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
