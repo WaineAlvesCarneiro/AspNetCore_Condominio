@@ -17,13 +17,13 @@ public class CreateCommandHandlerTests
 
     private const long UserEmpresaId = 1;
     private const int IMOVEL_ID_VALIDO = 1;
-    private const int EMPRESA_ID_VALIDO = 1;
+
     private readonly Imovel _imovelValido = new Imovel {
         Id = IMOVEL_ID_VALIDO,
         Bloco = "01",
         Apartamento = "101",
         BoxGaragem = "224",
-        EmpresaId = EMPRESA_ID_VALIDO
+        EmpresaId = UserEmpresaId
     };
 
     public CreateCommandHandlerTests()
@@ -51,7 +51,7 @@ public class CreateCommandHandlerTests
         DataEntrada = DateOnly.FromDateTime(DateTime.Now),
         DataInclusao = DateTime.Now,
         ImovelId = IMOVEL_ID_VALIDO,
-        EmpresaId = EMPRESA_ID_VALIDO
+        EmpresaId = UserEmpresaId
     };
 
     [Fact]

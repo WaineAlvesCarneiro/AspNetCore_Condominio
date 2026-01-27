@@ -14,6 +14,7 @@ public class GetByIdQueryHandlerTests
     private readonly GetByIdQueryHandlerMorador _handler;
 
     private const long UserEmpresaId = 1;
+
     private const int ID_EXISTENTE = 42;
     private const int ID_NAO_EXISTENTE = 99;
 
@@ -29,7 +30,8 @@ public class GetByIdQueryHandlerTests
         DataSaida = DateOnly.FromDateTime(new DateTime(2024, 1, 15, 18, 30, 0)),
         DataAlteracao = new DateTime(2024, 1, 16, 9, 0, 0),
         ImovelId = 10,
-        Imovel = new Imovel { Id = 10, Bloco = "Z", Apartamento = "999", BoxGaragem = "Z99", EmpresaId = 1 }
+        Imovel = new Imovel { Id = 10, Bloco = "Z", Apartamento = "999", BoxGaragem = "Z99", EmpresaId = UserEmpresaId },
+        EmpresaId = UserEmpresaId
     };
 
     public GetByIdQueryHandlerTests()

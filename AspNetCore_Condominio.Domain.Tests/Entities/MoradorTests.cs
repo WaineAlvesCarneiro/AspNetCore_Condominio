@@ -4,6 +4,8 @@ namespace AspNetCore_Condominio.Domain.Tests.Entities;
 
 public class MoradorTests
 {
+    private const long UserEmpresaId = 1;
+
     private Morador CriarBase() => new()
     {
         Nome = "Original",
@@ -13,7 +15,7 @@ public class MoradorTests
         DataEntrada = DateOnly.FromDateTime(DateTime.Now.AddDays(-10)),
         DataInclusao = DateTime.Now.AddDays(-10),
         ImovelId = 1,
-        EmpresaId = 1
+        EmpresaId = UserEmpresaId
     };
 
     [Fact]

@@ -20,7 +20,7 @@ public class DeleteCommandHandlerTests
     {
         _repoMock = new Mock<IImovelRepository>();
         _moradorRepoMock = new Mock<IMoradorRepository>();
-        _existente = new Imovel { Id = ID_EXISTENTE, Bloco = "A", Apartamento = "101", BoxGaragem = "224" };
+        _existente = new Imovel { Id = ID_EXISTENTE, Bloco = "A", Apartamento = "101", BoxGaragem = "224", EmpresaId = UserEmpresaId };
         _handler = new DeleteCommandHandlerImovel(_repoMock.Object, _moradorRepoMock.Object);
     }
 

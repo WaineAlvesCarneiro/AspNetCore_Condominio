@@ -12,13 +12,14 @@ public class GetAllPagedQueryHandlerTests
     private readonly Mock<IImovelRepository> _repoMock;
     private readonly GetAllPagedQueryHandlerImovel _handler;
 
+    private const long UserEmpresaId = 1;
+
     private readonly List<Imovel> _pagina1 =
     [
-        new Imovel { Id = 1, Bloco = "A", Apartamento = "101", BoxGaragem = "G1", EmpresaId = 1 },
-        new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "G2", EmpresaId = 1 }
+        new Imovel { Id = 1, Bloco = "A", Apartamento = "101", BoxGaragem = "G1", EmpresaId = UserEmpresaId },
+        new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "G2", EmpresaId = UserEmpresaId }
     ];
 
-    private const long UserEmpresaId = 1;
     private const int Page = 1;
     private const int PageSize = 10;
     private const string? SortBy = "Id";

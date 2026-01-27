@@ -13,22 +13,23 @@ public class GetAllPagedQueryHandlerTests
     private readonly Mock<IMoradorRepository> _repoMock;
     private readonly GetAllPagedQueryHandlerMorador _handler;
 
+    private const long UserEmpresaId = 1;
+
     private readonly List<Morador> _pagina1 = new List<Morador>
     {
         new Morador
         {
             Id = 11, Nome = "Morador 11", Celular = "85991234567", Email = "m11@cond.com", IsProprietario = true,
             DataEntrada = DateOnly.FromDateTime(new DateTime(2023, 11, 1)), DataInclusao = new DateTime(2023, 11, 1),
-            ImovelId = 5, EmpresaId = 1, Imovel = new Imovel { Id = 5, Bloco = "C", Apartamento = "301", BoxGaragem = "134", EmpresaId = 1}
+            ImovelId = 5, EmpresaId = 1, Imovel = new Imovel { Id = 5, Bloco = "C", Apartamento = "301", BoxGaragem = "134", EmpresaId = UserEmpresaId}
         },
         new Morador
         {
             Id = 12, Nome = "Morador 12", Celular = "31991234567", Email = "m12@cond.com", IsProprietario = false,
-            DataEntrada = DateOnly.FromDateTime(new DateTime(2023, 11, 2)), DataInclusao = new DateTime(2023, 11, 2), EmpresaId = 1
+            DataEntrada = DateOnly.FromDateTime(new DateTime(2023, 11, 2)), DataInclusao = new DateTime(2023, 11, 2), EmpresaId = UserEmpresaId
         }
     };
 
-    private const long UserEmpresaId = 1;
     private const int Page = 1;
     private const int PageSize = 10;
     private const string? SortBy = "Id";

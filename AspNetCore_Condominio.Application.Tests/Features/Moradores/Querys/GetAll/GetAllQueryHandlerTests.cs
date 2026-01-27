@@ -11,7 +11,7 @@ public class GetAllQueryHandlerTests
     private readonly Mock<IMoradorRepository> _repoMock;
     private readonly GetAllQueryHandlerMorador _handler;
 
-    private const long UserEmpresaId = 1;
+    private const long UserEmpresaId = 2;
 
     private readonly List<Morador> _ficticios = new List<Morador>
     {

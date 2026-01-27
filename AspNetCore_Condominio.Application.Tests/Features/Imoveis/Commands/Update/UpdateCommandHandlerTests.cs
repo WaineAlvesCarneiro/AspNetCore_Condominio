@@ -17,7 +17,8 @@ public class UpdateCommandHandlerTests
         Id = 5,
         Bloco = "Bloco Antigo",
         Apartamento = "100",
-        BoxGaragem = "G1"
+        BoxGaragem = "G1",
+        EmpresaId = UserEmpresaId
     };
 
     public UpdateCommandHandlerTests()
@@ -35,7 +36,8 @@ public class UpdateCommandHandlerTests
             Id = 5,
             Bloco = "Bloco Novo",
             Apartamento = "101",
-            BoxGaragem = "G2"
+            BoxGaragem = "G2",
+            EmpresaId = UserEmpresaId
         };
 
         // Act
@@ -61,7 +63,8 @@ public class UpdateCommandHandlerTests
             Id = 999,
             Bloco = "Qualquer",
             Apartamento = "Qualquer",
-            BoxGaragem = "Qualquer"
+            BoxGaragem = "Qualquer",
+            EmpresaId = UserEmpresaId
         };
 
         _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, UserEmpresaId)).ReturnsAsync((Imovel)null!);

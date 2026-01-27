@@ -20,7 +20,8 @@ public class GetByIdQueryHandlerTests
         Id = ID_EXISTENTE,
         Bloco = "Bloco X",
         Apartamento = "305",
-        BoxGaragem = "G7"
+        BoxGaragem = "G7",
+        EmpresaId = UserEmpresaId
     };
 
     public GetByIdQueryHandlerTests()

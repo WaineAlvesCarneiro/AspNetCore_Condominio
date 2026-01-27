@@ -10,16 +10,17 @@ public class DeleteCommandHandlerTests
     private readonly Mock<IMoradorRepository> _repoMock;
     private readonly DeleteCommandHandlerMorador _handler;
 
+    private const long UserEmpresaId = 1;
+
     private readonly Morador _existente = new Morador
     {
         Id = 42,
         Nome = "Teste Delete",
         Celular = "99999999999",
         Email = "delete@teste.com",
-        ImovelId = 1
+        ImovelId = 1,
+        EmpresaId = UserEmpresaId
     };
-
-    private const long UserEmpresaId = 1;
 
     public DeleteCommandHandlerTests()
     {

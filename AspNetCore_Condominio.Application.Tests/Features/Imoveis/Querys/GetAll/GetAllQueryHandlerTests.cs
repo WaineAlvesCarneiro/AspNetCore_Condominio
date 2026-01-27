@@ -11,13 +11,13 @@ public class GetAllQueryHandlerTests
     private readonly Mock<IImovelRepository> _repoMock;
     private readonly GetAllQueryHandlerImovel _handler;
 
+    private const long UserEmpresaId = 1;
+
     private readonly List<Imovel> _ficticios =
     [
-        new Imovel { Id = 1, Bloco = "A", Apartamento = "101", BoxGaragem = "A1" },
-        new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "B2" }
-    ];
-    
-    private const long UserEmpresaId = 1;
+        new Imovel { Id = 1, Bloco = "A", Apartamento = "101", BoxGaragem = "A1", EmpresaId = UserEmpresaId },
+        new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "B2", EmpresaId = UserEmpresaId  }
+    ];   
 
     public GetAllQueryHandlerTests()
     {
