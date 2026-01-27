@@ -1,6 +1,7 @@
-﻿using AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
-using AspNetCore_Condominio.Application.Features.Empresas.Commands.Update;
+﻿using AspNetCore_Condominio.API_Controller.Controllers.ApiBase;
+using AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Empresas.Commands.Delete;
+using AspNetCore_Condominio.Application.Features.Empresas.Commands.Update;
 using AspNetCore_Condominio.Application.Features.Empresas.Queries.GetAll;
 using AspNetCore_Condominio.Application.Features.Empresas.Queries.GetAllPaged;
 using AspNetCore_Condominio.Application.Features.Empresas.Queries.GetById;
@@ -13,8 +14,9 @@ namespace AspNetCore_Condominio.API_Controller.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize(Policy = "AdminPolicy")]
-public class EmpresaController(IMediator mediator) : ControllerBase
+public class EmpresaController(IMediator mediator) : ApiBaseController
 {
+    [Authorize(Roles = "Suporte")]
     [HttpGet]
     public async Task<IActionResult> Get()
     {
@@ -25,19 +27,20 @@ public class EmpresaController(IMediator mediator) : ControllerBase
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Suporte")]
     [HttpGet("paginado")]
     public async Task<IActionResult> GetAllPagedAsync(
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = "Id",
-        [FromQuery] bool sortDescending = false,
+        [FromQuery] string? sortDescending = "ASC",
         [FromQuery] string? searchTerm = null)
     {
         var query = new GetAllPagedQueryEmpresa(
             Page: page,
             PageSize: pageSize,
             SortBy: sortBy,
-            SortDescending: sortDescending,
+            SortDescending: sortDescending!,
             SearchTerm: searchTerm);
 
         var result = await mediator.Send(query);
@@ -51,6 +54,7 @@ public class EmpresaController(IMediator mediator) : ControllerBase
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Suporte")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(long id)
     {
@@ -61,6 +65,7 @@ public class EmpresaController(IMediator mediator) : ControllerBase
             : NotFound(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Suporte")]
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateCommandEmpresa command)
     {
@@ -76,6 +81,7 @@ public class EmpresaController(IMediator mediator) : ControllerBase
         });
     }
 
+    [Authorize(Roles = "Suporte")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandEmpresa command)
     {
@@ -91,13 +97,19 @@ public class EmpresaController(IMediator mediator) : ControllerBase
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 
+    [Authorize(Roles = "Suporte")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {
-        var result = await mediator.Send(new DeleteCommandEmpresa(id));
+        if (IsSuporte)
+        {
+            var result = await mediator.Send(new DeleteCommandEmpresa(id));
 
         return result.Sucesso
             ? NoContent()
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
+        }
+
+        return Forbid();
     }
 }
