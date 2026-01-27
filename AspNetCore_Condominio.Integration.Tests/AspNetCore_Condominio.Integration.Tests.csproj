@@ -37,4 +37,9 @@
     <ProjectReference Include="..\AspNetCore_Condominio.Infrastructure\AspNetCore_Condominio.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\Imoveis\" />
+    <Folder Include="Features\Moradores\" />
+  </ItemGroup>
+
 </Project>
