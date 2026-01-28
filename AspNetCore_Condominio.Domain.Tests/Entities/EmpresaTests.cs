@@ -26,6 +26,7 @@ public class EmpresaTests
             Uf = "SP",
             Cidade = "São Paulo",
             Endereco = "Rua Exemplo, 123",
+            Bairro = "Pq Amazônia",
             Complemento = "Complemento",
             DataInclusao = DateAtual,
             DataAlteracao = DateAtual
@@ -54,6 +55,7 @@ public class EmpresaTests
             Uf = "SP",
             Cidade = "São Paulo",
             Endereco = "Rua Exemplo, 123",
+            Bairro = "Pq Amazônia",
             Complemento = "Complemento",
             DataInclusao = DateAtual,
             DataAlteracao = DateAtual

@@ -56,6 +56,7 @@ public class GetAllQueryHandlerMorador(IMoradorRepository repository)
                     Uf = dado.Empresa.Uf,
                     Cidade = dado.Empresa.Cidade,
                     Endereco = dado.Empresa.Endereco,
+                    Bairro = dado.Empresa.Bairro,
                     Complemento = dado.Empresa.Complemento,
                     DataInclusao = dado.Empresa.DataInclusao,
                     DataAlteracao = dado.Empresa.DataAlteracao

@@ -22,7 +22,7 @@ public class TokenService(IConfiguration configuration)
                     new Claim(ClaimTypes.Role, role),
                     new Claim("EmpresaId", empresaId.ToString())
                 }),
-            Expires = DateTime.UtcNow.AddMinutes(60),
+            Expires = DateTime.UtcNow.AddMinutes(5),
             Audience = _configuration["Jwt:Audience"],
             Issuer = _configuration["Jwt:Issuer"],
             SigningCredentials = new SigningCredentials(

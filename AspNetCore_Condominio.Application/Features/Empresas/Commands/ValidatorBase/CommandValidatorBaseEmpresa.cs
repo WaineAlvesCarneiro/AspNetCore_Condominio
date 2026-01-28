@@ -59,5 +59,9 @@ public abstract class CommandValidatorBaseEmpresa<T> : AbstractValidator<T>
         RuleFor(p => p.Endereco)
             .NotEmpty().WithMessage("Endereço é obrigatório")
             .Length(2, 50).WithMessage("O campo Endereço precisa ter entre 2 e 50 caracteres");
+
+        RuleFor(p => p.Bairro)
+            .NotEmpty().WithMessage("Bairro é obrigatório")
+            .Length(2, 50).WithMessage("O campo Bairro precisa ter entre 2 e 50 caracteres");
     }
 }

@@ -35,6 +35,7 @@ public record UpdateCommandHandlerEmpresa(IEmpresaRepository repository, IMediat
         dadoToUpdate.Uf = request.Uf;
         dadoToUpdate.Cidade = request.Cidade;
         dadoToUpdate.Endereco = request.Endereco;
+        dadoToUpdate.Bairro = request.Bairro;
         dadoToUpdate.Complemento = request.Complemento;
         dadoToUpdate.DataInclusao = request.DataInclusao;
         dadoToUpdate.DataAlteracao = request.DataAlteracao;
@@ -61,6 +62,7 @@ public record UpdateCommandHandlerEmpresa(IEmpresaRepository repository, IMediat
             Uf = dadoToUpdate.Uf,
             Cidade = dadoToUpdate.Cidade,
             Endereco = dadoToUpdate.Endereco,
+            Bairro = dadoToUpdate.Bairro,
             Complemento = dadoToUpdate.Complemento,
             DataInclusao = dadoToUpdate.DataInclusao,
             DataAlteracao = dadoToUpdate.DataAlteracao

@@ -35,6 +35,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Features.Empresa
                 Uf = "SP",
                 Cidade = "São Paulo",
                 Endereco = "Rua Exemplo, 123",
+                Bairro = "Pq Amazônia",
                 Complemento = "Complemento",
                 DataInclusao = DateTime.UtcNow
             };

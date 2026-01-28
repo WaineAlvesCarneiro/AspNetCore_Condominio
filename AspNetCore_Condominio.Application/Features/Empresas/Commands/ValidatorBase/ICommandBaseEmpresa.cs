@@ -19,6 +19,7 @@ public interface ICommandBaseEmpresa
     string Uf { get; set; }
     string Cidade { get; set; }
     string Endereco { get; set; }
+    string Bairro { get; set; }
     string? Complemento { get; set; }
     DateTime DataInclusao { get; set; }
     DateTime? DataAlteracao { get; set; }

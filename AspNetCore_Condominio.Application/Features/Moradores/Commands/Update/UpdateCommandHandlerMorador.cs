@@ -84,6 +84,7 @@ public class UpdateCommandHandlerMorador(IMoradorRepository repository, IImovelR
                     Uf = dadoToUpdate.Empresa.Uf,
                     Cidade = dadoToUpdate.Empresa.Cidade,
                     Endereco = dadoToUpdate.Empresa.Endereco,
+                    Bairro = dadoToUpdate.Empresa.Bairro,
                     Complemento = dadoToUpdate.Empresa.Complemento,
                     DataInclusao = dadoToUpdate.Empresa.DataInclusao,
                     DataAlteracao = dadoToUpdate.Empresa.DataAlteracao

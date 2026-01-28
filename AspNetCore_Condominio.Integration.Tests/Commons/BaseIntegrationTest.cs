@@ -105,6 +105,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
                 string uf,
                 string cidade,
                 string endereco,
+                string bairro,
                 string complemento,
                 DateTime dataInclusao)
         {
@@ -129,6 +130,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
                     Uf = uf,
                     Cidade = cidade,
                     Endereco = endereco,
+                    Bairro = bairro,
                     Complemento = complemento,
                     DataInclusao = dataInclusao
                 };

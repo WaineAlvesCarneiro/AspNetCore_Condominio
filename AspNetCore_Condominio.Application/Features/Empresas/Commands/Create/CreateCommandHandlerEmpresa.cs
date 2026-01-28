@@ -29,6 +29,7 @@ public record CreateCommandHandlerEmpresa(IEmpresaRepository repository, IMediat
             Uf = request.Uf,
             Cidade = request.Cidade,
             Endereco = request.Endereco,
+            Bairro = request.Bairro,
             Complemento = request.Complemento,
             DataInclusao = request.DataInclusao
         };
@@ -55,6 +56,7 @@ public record CreateCommandHandlerEmpresa(IEmpresaRepository repository, IMediat
             Uf = dado.Uf,
             Cidade = dado.Cidade,
             Endereco = dado.Endereco,
+            Bairro = dado.Bairro,
             Complemento = dado.Complemento,
             DataInclusao = dado.DataInclusao,
             DataAlteracao = dado.DataAlteracao

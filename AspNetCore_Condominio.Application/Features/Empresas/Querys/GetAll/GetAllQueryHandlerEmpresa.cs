@@ -30,6 +30,7 @@ public class GetAllQueryHandlerEmpresa(IEmpresaRepository repository)
             Uf = dado.Uf,
             Cidade = dado.Cidade,
             Endereco = dado.Endereco,
+            Bairro = dado.Bairro,
             Complemento = dado.Complemento,
             DataInclusao = dado.DataInclusao,
             DataAlteracao = dado.DataAlteracao
