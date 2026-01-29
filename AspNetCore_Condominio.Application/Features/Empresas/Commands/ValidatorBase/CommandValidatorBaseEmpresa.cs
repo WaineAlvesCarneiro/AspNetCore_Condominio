@@ -10,11 +10,11 @@ public abstract class CommandValidatorBaseEmpresa<T> : AbstractValidator<T>
     {
         RuleFor(p => p.RazaoSocial)
             .NotEmpty().WithMessage("Razão Social é obrigatória")
-            .Length(2, 70).WithMessage("O campo Razão Social precisa ter entre 2 e 70 caracteres");
+            .Length(3, 100).WithMessage("O campo Razão Social precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.Fantasia)
             .NotEmpty().WithMessage("Fantasia é obrigatória")
-            .Length(2, 50).WithMessage("O campo Fantasia precisa ter entre 2 e 50 caracteres");
+            .Length(3, 100).WithMessage("O campo Fantasia precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.Cnpj)
             .NotEmpty().WithMessage("Cnpj é obrigatório")
@@ -26,23 +26,24 @@ public abstract class CommandValidatorBaseEmpresa<T> : AbstractValidator<T>
 
         RuleFor(p => p.Nome)
             .NotEmpty().WithMessage("Nome do Responsável é obrigatório")
-            .Length(2, 50).WithMessage("O campo Nome do Responsável precisa ter entre 2 e 50 caracteres");
+            .Length(3, 100).WithMessage("O campo Nome do Responsável precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.Celular)
             .NotEmpty().WithMessage("Celular é obrigatório")
             .Length(11, 16).WithMessage("O campo Celular precisa ter entre 11 e 16 caracteres");
 
         RuleFor(p => p.Email)
-            .NotEmpty().WithMessage("Email é obrigatório")
-            .EmailAddress().WithMessage("Informe um email válido");
+            .NotEmpty().WithMessage("E-mail é obrigatório")
+            .EmailAddress().WithMessage("Informe um e-mail válido")
+            .Length(3, 100).WithMessage("O campo e-mail precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.Host)
             .NotEmpty().WithMessage("Host é obrigatório")
-            .Length(2, 50).WithMessage("O campo Host do Responsável precisa ter entre 2 e 50 caracteres");
+            .Length(3, 100).WithMessage("O campo Host precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.Porta)
             .NotEmpty().WithMessage("Porta é obrigatória")
-            .InclusiveBetween(1, 65535).WithMessage("O campo Porta precisa estar entre 1 e 65535");
+            .GreaterThanOrEqualTo(1).WithMessage("A porta deve ser maior que zero");
 
         RuleFor(p => p.Cep)
             .NotEmpty().WithMessage("Cep é obrigatório")
@@ -54,14 +55,14 @@ public abstract class CommandValidatorBaseEmpresa<T> : AbstractValidator<T>
 
         RuleFor(p => p.Cidade)
             .NotEmpty().WithMessage("Cidade é obrigatória")
-            .Length(2, 50).WithMessage("O campo Cidade precisa ter entre 2 e 50 caracteres");
+            .Length(3, 100).WithMessage("O campo Cidade precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.Endereco)
             .NotEmpty().WithMessage("Endereço é obrigatório")
-            .Length(2, 50).WithMessage("O campo Endereço precisa ter entre 2 e 50 caracteres");
+            .Length(3, 100).WithMessage("O campo Endereço precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.Bairro)
             .NotEmpty().WithMessage("Bairro é obrigatório")
-            .Length(2, 50).WithMessage("O campo Bairro precisa ter entre 2 e 50 caracteres");
+            .Length(3, 100).WithMessage("O campo Bairro precisa ter entre 3 e 100 caracteres");
     }
 }

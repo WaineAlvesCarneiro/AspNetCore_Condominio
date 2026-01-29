@@ -8,8 +8,8 @@ public abstract class CommandValidatorBaseMorador<T> : AbstractValidator<T>
     protected void ConfigureCommonRules()
     {
         RuleFor(p => p.Nome)
-            .NotEmpty().WithMessage("Nome do Morador é obrigatório")
-            .Length(3, 50).WithMessage("O campo Nome do Morador precisa ter entre 3 e 50 caracteres");
+            .NotEmpty().WithMessage("Nome é obrigatório")
+            .Length(3, 100).WithMessage("O campo Nome precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.Celular)
             .NotEmpty().WithMessage("Celular é obrigatório")
@@ -18,7 +18,7 @@ public abstract class CommandValidatorBaseMorador<T> : AbstractValidator<T>
         RuleFor(p => p.Email)
             .NotEmpty().WithMessage("Email é obrigatório")
             .EmailAddress().WithMessage("Formato de e-mail inválido")
-            .MaximumLength(50).WithMessage("O campo Email pode ter no máximo 50 caracteres");
+            .Length(3, 100).WithMessage("O campo e-mail precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.DataEntrada)
             .NotEmpty().WithMessage("Data de entrada é obrigatória")
