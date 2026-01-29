@@ -9,4 +9,6 @@ public record AuthUserDto
     public required string UserName { get; set; }
     public required string PasswordHash { get; set; }
     public TipoRole Role { get; set; }
+    public DateTime DataInclusao { get; set; }
+    public DateTime? DataAlteracao { get; set; }
 }

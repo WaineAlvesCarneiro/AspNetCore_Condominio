@@ -1,4 +1,10 @@
 ﻿using AspNetCore_Condominio.Application.Features.Auth;
+using AspNetCore_Condominio.Application.Features.Auth.Commands.Create;
+using AspNetCore_Condominio.Application.Features.Auth.Commands.Delete;
+using AspNetCore_Condominio.Application.Features.Auth.Commands.Update;
+using AspNetCore_Condominio.Application.Features.Auth.Queries.GetAll;
+using AspNetCore_Condominio.Application.Features.Auth.Queries.GetAllPaged;
+using AspNetCore_Condominio.Application.Features.Auth.Queries.GetById;
 using AspNetCore_Condominio.Configurations.ServicesJWT;
 using AspNetCore_Condominio.Domain.Entities.Auth;
 using AspNetCore_Condominio.Domain.Enums;
@@ -71,7 +77,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
 
     [Authorize(Roles = "Suporte")]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(long id)
+    public async Task<IActionResult> GetById(Guid id)
     {
         var result = await mediator.Send(new GetByIdQueryAuthUser(id));
 
@@ -114,7 +120,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
 
     [Authorize(Roles = "Suporte")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(long id)
+    public async Task<IActionResult> Delete(Guid id)
     {
         var result = await mediator.Send(new DeleteCommandAuthUser(id));
 
