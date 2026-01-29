@@ -16,7 +16,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Features.Empresa
         const string BaseUrl = "/Empresa";
 
         [Fact]
-        public async Task Post_SemToken_DeveRetornarUnauthorized()
+        public async Task Post_Sem_Token_Deve_Retornar_Unauthorized()
         {
             ClearAuthHeader();
             var novoDto = new EmpresaDto {
@@ -44,7 +44,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Features.Empresa
         }
 
         [Fact]
-        public async Task Post_EmpresaValidoComToken_DeveRetornarCreatedESucesso()
+        public async Task Post_Empresa_Valido_Com_Token_Deve_Retornar_Created_Sucesso()
         {
             var seed = await SeedEmpresaAsync(
                 "Razão Social",
@@ -76,7 +76,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Features.Empresa
         }
 
         [Fact]
-        public async Task GetById_EmpresaExistente_DeveRetornarSucesso()
+        public async Task Get_By_Id_Empresa_Existente_Deve_Retornar_Sucesso()
         {
             var seed = await SeedEmpresaAsync(
                 "Razão Social",
@@ -108,7 +108,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Features.Empresa
         }
 
         [Fact]
-        public async Task Delete_EmpresaExistente_DeveExcluirERetornarSucesso()
+        public async Task Delete_Empresa_Existente_Deve_Excluir_E_Retornar_Sucesso()
         {
             var seed = await SeedEmpresaAsync(
                 "Razão Social",

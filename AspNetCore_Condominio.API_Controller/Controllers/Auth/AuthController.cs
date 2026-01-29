@@ -104,7 +104,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
 
     [Authorize(Roles = "Suporte")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandAuthUser command)
+    public async Task<IActionResult> Put(Guid id, [FromBody] UpdateCommandAuthUser command)
     {
         if (id != command.Id)
         {

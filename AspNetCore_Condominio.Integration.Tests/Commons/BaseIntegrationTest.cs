@@ -140,5 +140,26 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
                 return dado;
             }
         }
+
+        protected async Task<AuthUser> SeedAuthUserAsync(long empresaId, string userName, string passwordHash, int role, DateTime dataInclusao)
+        {
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                var dado = new AuthUser
+                {
+                    EmpresaId = empresaId,
+                    UserName = userName,
+                    PasswordHash = passwordHash,
+                    Role = (TipoRole)role,
+                    DataInclusao = dataInclusao
+                };
+
+                db.AuthUsers.Add(dado);
+                await db.SaveChangesAsync();
+                return dado;
+            }
+        }
     }
 }

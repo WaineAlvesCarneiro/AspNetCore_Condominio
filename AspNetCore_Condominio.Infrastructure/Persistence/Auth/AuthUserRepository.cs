@@ -34,7 +34,7 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             query = query.Where(m =>
-                m.UserName.Contains(searchTerm);
+                m.UserName.Contains(searchTerm));
         }
 
         query = ApplyOrdering(query, orderBy!, direction!);
