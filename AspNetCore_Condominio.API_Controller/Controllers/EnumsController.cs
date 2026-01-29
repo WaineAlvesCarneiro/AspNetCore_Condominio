@@ -21,4 +21,19 @@ public class EnumsController : ControllerBase
 
         return Ok(options);
     }
+
+    [HttpGet("tipo-role")]
+    public IActionResult GetTipoRole()
+    {
+        var options = Enum.GetValues(typeof(TipoRole))
+            .Cast<TipoRole>()
+            .Select(e => new
+            {
+                Value = (int)e,
+                Label = e.ToString()
+            })
+            .ToList();
+
+        return Ok(options);
+    }
 }

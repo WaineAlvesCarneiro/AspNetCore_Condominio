@@ -62,6 +62,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Features.Empresa
                 "SP",
                 "São Paulo",
                 "Rua Exemplo, 123",
+                "Pq Amazônia",
                 "Complemento",
                 DateTime.Now);
             await AddAdminAuthHeaderAsync();
@@ -93,6 +94,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Features.Empresa
                 "SP",
                 "São Paulo",
                 "Rua Exemplo, 123",
+                "Pq Amazônia",
                 "Complemento",
                 DateTime.Now);
             await AddAdminAuthHeaderAsync();
@@ -124,6 +126,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Features.Empresa
                 "SP",
                 "São Paulo",
                 "Rua Exemplo, 123",
+                "Pq Amazônia",
                 "Complemento",
                 DateTime.Now);
             await AddAdminAuthHeaderAsync();

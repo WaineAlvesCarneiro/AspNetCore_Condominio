@@ -1,16 +1,15 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities;
-using AspNetCore_Condominio.Domain.Events;
 using AspNetCore_Condominio.Domain.Repositories;
 using MediatR;
 
 namespace AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
 
 public record CreateCommandHandlerEmpresa(IEmpresaRepository repository, IMediator mediator)
-    : IRequestHandler<CreateCommandEmpresa, Result<EmpresaDto>>
+    : IRequestHandler<CreateCommandAuthUser, Result<EmpresaDto>>
 {
-    public async Task<Result<EmpresaDto>> Handle(CreateCommandEmpresa request, CancellationToken cancellationToken)
+    public async Task<Result<EmpresaDto>> Handle(CreateCommandAuthUser request, CancellationToken cancellationToken)
     {
         var dado = new Empresa
         {
@@ -35,8 +34,6 @@ public record CreateCommandHandlerEmpresa(IEmpresaRepository repository, IMediat
         };
 
         await repository.CreateAsync(dado);
-
-        await mediator.Publish(new CriadoEventEmail<Empresa>(dado, true), cancellationToken);
 
         var dto = new EmpresaDto
         {

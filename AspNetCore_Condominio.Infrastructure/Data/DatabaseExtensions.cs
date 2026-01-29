@@ -1,5 +1,6 @@
 ﻿using AspNetCore_Condominio.Application.Helpers;
 using AspNetCore_Condominio.Domain.Entities.Auth;
+using AspNetCore_Condominio.Domain.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +30,7 @@ public static class DatabaseExtensions
                     {
                         UserName = "Admin",
                         PasswordHash = hashedPassword,
-                        Role = "Suporte"
+                        Role = (TipoRole)1
                     };
 
                     context.AuthUsers.Add(adminUser);

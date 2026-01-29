@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using AspNetCore_Condominio.Domain.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore_Condominio.API_Controller.Controllers.ApiBase;

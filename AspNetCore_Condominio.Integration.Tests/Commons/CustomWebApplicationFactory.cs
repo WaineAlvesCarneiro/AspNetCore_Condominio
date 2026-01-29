@@ -1,8 +1,6 @@
 ﻿using AspNetCore_Condominio.Domain.Entities.Auth;
-using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Infrastructure.Data;
 using AspNetCore_Condominio.Integration.Tests.Data;
-using AspNetCore_Condominio.Integration.Tests.Mocks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -42,9 +40,6 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
                         logger.LogError(ex, "Erro ao popular banco de testes");
                     }
                 }
-
-                services.RemoveAll<IEmailService>();
-                services.AddSingleton<IEmailService, FakeEmailService>();
             });
 
             builder.UseEnvironment("Testing");

@@ -1,6 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.Features.Moradores.Commands.Create;
 using AspNetCore_Condominio.Domain.Entities;
-using AspNetCore_Condominio.Domain.Events;
 using AspNetCore_Condominio.Domain.Repositories;
 using MediatR;
 using Moq;
@@ -12,7 +11,6 @@ public class CreateCommandHandlerTests
 {
     private readonly Mock<IMoradorRepository> _repoMock;
     private readonly Mock<IImovelRepository> _imovelRepoMock;
-    private readonly Mock<IMediator> _mediatorMock;
     private readonly CreateCommandHandlerMorador _handler;
 
     private const long UserEmpresaId = 1;
@@ -30,11 +28,9 @@ public class CreateCommandHandlerTests
     {
         _repoMock = new Mock<IMoradorRepository>();
         _imovelRepoMock = new Mock<IImovelRepository>();
-        _mediatorMock = new Mock<IMediator>();
         _handler = new CreateCommandHandlerMorador(
             _repoMock.Object,
-            _imovelRepoMock.Object,
-            _mediatorMock.Object
+            _imovelRepoMock.Object
         );
         _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_VALIDO, UserEmpresaId)).ReturnsAsync(_imovelValido);
         _repoMock.Setup(repo => repo.CreateAsync(It.IsAny<Morador>()))
@@ -84,7 +80,6 @@ public class CreateCommandHandlerTests
         Assert.Contains("O imóvel informado não existe.", resultado.Mensagem);
 
         _repoMock.Verify(repo => repo.CreateAsync(It.IsAny<Morador>()), Times.Never);
-        _mediatorMock.Verify(m => m.Publish(It.IsAny<CriadoEventEmail<Morador>>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]

@@ -1,6 +1,7 @@
 ﻿using AspNetCore_Condominio.Application.Features.Auth;
 using AspNetCore_Condominio.Application.Helpers;
 using AspNetCore_Condominio.Domain.Entities.Auth;
+using AspNetCore_Condominio.Domain.Enums;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
 using Moq;
 
@@ -26,7 +27,7 @@ public class AuthLoginQueryHandlerTests
             Id = Guid.NewGuid(),
             UserName = USERNAME,
             PasswordHash = hashedPassword,
-            Role = "Suporte"
+            Role = (TipoRole)1
         };
 
         _handler = new AuthLoginQueryHandler(_authRepoMock.Object);

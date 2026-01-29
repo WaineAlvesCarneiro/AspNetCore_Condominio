@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Domain.Entities.Auth;
+using AspNetCore_Condominio.Domain.Enums;
 
 namespace AspNetCore_Condominio.Domain.Tests.Entities.Auth;
 
@@ -9,7 +10,7 @@ public class AuthUserTests
     {
         const string senhaValida = "SenhaSecreta123";
         var hash = BCrypt.Net.BCrypt.HashPassword(senhaValida);
-        var user = new AuthUser { UserName = "teste", PasswordHash = hash, Role = "Suporte" };
+        var user = new AuthUser { UserName = "teste", PasswordHash = hash, Role = (TipoRole)1 };
         var resultado = user.VerificarSenha(senhaValida);
 
         Assert.True(resultado);
@@ -20,7 +21,7 @@ public class AuthUserTests
     {
         const string senhaCorreta = "SenhaSecreta123";
         var hash = BCrypt.Net.BCrypt.HashPassword(senhaCorreta);
-        var user = new AuthUser { UserName = "teste", PasswordHash = hash, Role = "Suporte" };
+        var user = new AuthUser { UserName = "teste", PasswordHash = hash, Role = (TipoRole)1 };
 
         const string senhaErrada = "SenhaErrada";
         var resultado = user.VerificarSenha(senhaErrada);

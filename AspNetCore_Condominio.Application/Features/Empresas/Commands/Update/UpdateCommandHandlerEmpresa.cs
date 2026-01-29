@@ -1,7 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
 using AspNetCore_Condominio.Domain.Common;
-using AspNetCore_Condominio.Domain.Entities;
-using AspNetCore_Condominio.Domain.Events;
 using AspNetCore_Condominio.Domain.Repositories;
 using MediatR;
 
@@ -41,8 +39,6 @@ public record UpdateCommandHandlerEmpresa(IEmpresaRepository repository, IMediat
         dadoToUpdate.DataAlteracao = request.DataAlteracao;
 
         await _repository.UpdateAsync(dadoToUpdate);
-
-        await mediator.Publish(new CriadoEventEmail<Empresa>(dadoToUpdate, false), cancellationToken);
 
         var dto = new EmpresaDto
         {

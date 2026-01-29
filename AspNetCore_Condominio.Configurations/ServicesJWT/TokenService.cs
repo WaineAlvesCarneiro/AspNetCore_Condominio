@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AspNetCore_Condominio.Domain.Enums;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,7 +11,7 @@ public class TokenService(IConfiguration configuration)
 {
     private readonly IConfiguration _configuration = configuration;
 
-    public string GenerateToken(string username, string role, long empresaId)
+    public string GenerateToken(string username, TipoRole role, long? empresaId)
     {
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
@@ -18,10 +19,10 @@ public class TokenService(IConfiguration configuration)
         {
             Subject = new ClaimsIdentity(new[]
             {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, role),
-                    new Claim("EmpresaId", empresaId.ToString())
-                }),
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.Role, role.ToString()),
+                new Claim("EmpresaId", empresaId.ToString()!)
+            }),
             Expires = DateTime.UtcNow.AddMinutes(5),
             Audience = _configuration["Jwt:Audience"],
             Issuer = _configuration["Jwt:Issuer"],

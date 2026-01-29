@@ -1,8 +1,6 @@
-﻿using AspNetCore_Condominio.Domain.Interfaces;
+﻿namespace AspNetCore_Condominio.Domain.Entities;
 
-namespace AspNetCore_Condominio.Domain.Entities;
-
-public class Morador : IEntidadeComEmail
+public class Morador
 {
     public long Id { get; set; }
     public required string Nome { get; set; } = null!;

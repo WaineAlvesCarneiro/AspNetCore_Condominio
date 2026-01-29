@@ -52,11 +52,11 @@ public class CreateCommandValidatorTests
     }
 
     [Theory]
-    [InlineData("12345678901")]
+    [InlineData("")]
     public void Validator_BoxGaragemMuitoLongo_DeveTerErro(string boxGaragemInvalida)
     {
         // Arrange
-        string messagemEsperada = "O campo Box Garagem precisa ter entre 1 e 10 caracteres";
+        string messagemEsperada = "O campo Garagem precisa ter entre 1 e 100 caracteres";
         CreateCommandImovel command = GetValidCommand();
         command.BoxGaragem = boxGaragemInvalida;
         // Act

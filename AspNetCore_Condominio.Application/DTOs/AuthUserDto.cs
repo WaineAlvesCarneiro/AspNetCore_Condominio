@@ -1,0 +1,12 @@
+﻿using AspNetCore_Condominio.Domain.Enums;
+
+namespace AspNetCore_Condominio.Application.DTOs;
+
+public record AuthUserDto
+{
+    public Guid Id { get; set; }
+    public long? EmpresaId { get; set; }
+    public required string UserName { get; set; }
+    public required string PasswordHash { get; set; }
+    public TipoRole Role { get; set; }
+}

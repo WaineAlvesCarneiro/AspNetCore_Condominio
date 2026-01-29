@@ -67,7 +67,7 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Suporte")]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateCommandEmpresa command)
+    public async Task<IActionResult> Post([FromBody] CreateCommandAuthUser command)
     {
         var result = await mediator.Send(command);
 

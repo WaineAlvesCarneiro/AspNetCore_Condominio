@@ -1,13 +1,12 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities;
-using AspNetCore_Condominio.Domain.Events;
 using AspNetCore_Condominio.Domain.Repositories;
 using MediatR;
 
 namespace AspNetCore_Condominio.Application.Features.Moradores.Commands.Update;
 
-public class UpdateCommandHandlerMorador(IMoradorRepository repository, IImovelRepository imovelRepository, IMediator mediator)
+public class UpdateCommandHandlerMorador(IMoradorRepository repository, IImovelRepository imovelRepository)
     : IRequestHandler<UpdateCommandMorador, Result<MoradorDto>>
 {
     private readonly IMoradorRepository _repository = repository;
@@ -39,8 +38,6 @@ public class UpdateCommandHandlerMorador(IMoradorRepository repository, IImovelR
         dadoToUpdate.EmpresaId = dadoToUpdate.EmpresaId;
 
         await _repository.UpdateAsync(dadoToUpdate);
-
-        await mediator.Publish(new CriadoEventEmail<Morador>(dadoToUpdate, false), cancellationToken);
 
         var dto = new MoradorDto
         {

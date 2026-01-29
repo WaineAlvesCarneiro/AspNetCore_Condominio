@@ -1,9 +1,8 @@
 ﻿using AspNetCore_Condominio.Domain.Enums;
-using AspNetCore_Condominio.Domain.Interfaces;
 
 namespace AspNetCore_Condominio.Domain.Entities;
 
-public class Empresa : IEntidadeComEmail
+public class Empresa
 {
     public long Id { get; set; }
     public required string RazaoSocial { get; set; }

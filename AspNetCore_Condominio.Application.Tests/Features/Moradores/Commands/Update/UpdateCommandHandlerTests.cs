@@ -1,6 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.Features.Moradores.Commands.Update;
 using AspNetCore_Condominio.Domain.Entities;
-using AspNetCore_Condominio.Domain.Events;
 using AspNetCore_Condominio.Domain.Repositories;
 using MediatR;
 using Moq;
@@ -12,7 +11,6 @@ public class UpdateCommandHandlerTests
 {
     private readonly Mock<IMoradorRepository> _repoMock;
     private readonly Mock<IImovelRepository> _imovelRepoMock;
-    private readonly Mock<IMediator> _mediatorMock;
     private readonly UpdateCommandHandlerMorador _handler;
 
     private const long UserEmpresaId = 1;
@@ -59,12 +57,10 @@ public class UpdateCommandHandlerTests
     {
         _repoMock = new Mock<IMoradorRepository>();
         _imovelRepoMock = new Mock<IImovelRepository>();
-        _mediatorMock = new Mock<IMediator>();
 
         _handler = new UpdateCommandHandlerMorador(
             _repoMock.Object,
-            _imovelRepoMock.Object,
-            _mediatorMock.Object
+            _imovelRepoMock.Object
         );
 
         _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_VALIDO, UserEmpresaId)).ReturnsAsync(_imovelValido);
@@ -101,10 +97,6 @@ public class UpdateCommandHandlerTests
 
         _repoMock.Verify(repo => repo.UpdateAsync(
             It.Is<Morador>(m => m.Nome == command.Nome && m.ImovelId == IMOVEL_ID_NOVO)
-        ), Times.Once);
-        _mediatorMock.Verify(m => m.Publish(
-            It.Is<CriadoEventEmail<Morador>>(e => e.IsCreate == false),
-            It.IsAny<CancellationToken>()
         ), Times.Once);
     }
 

@@ -17,8 +17,4 @@
 	<ProjectReference Include="..\AspNetCore_Condominio.Domain\AspNetCore_Condominio.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Events\" />
-  </ItemGroup>
-
 </Project>

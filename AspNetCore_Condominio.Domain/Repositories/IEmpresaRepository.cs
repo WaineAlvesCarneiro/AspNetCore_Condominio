@@ -12,7 +12,7 @@ public interface IEmpresaRepository
         string? direction = "ASC",
         string? searchTerm = null);
     Task<Empresa?> GetByIdAsync(long id);
-    Task CreateAsync(Empresa Empresa);
-    Task UpdateAsync(Empresa Empresa);
-    Task DeleteAsync(Empresa Empresa);
+    Task CreateAsync(Empresa empresa);
+    Task UpdateAsync(Empresa empresa);
+    Task DeleteAsync(Empresa empresa);
 }

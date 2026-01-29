@@ -1,4 +1,6 @@
-﻿namespace AspNetCore_Condominio.Domain.Entities.Auth;
+﻿using AspNetCore_Condominio.Domain.Enums;
+
+namespace AspNetCore_Condominio.Domain.Entities.Auth;
 
 public class AuthUser
 {
@@ -6,7 +8,7 @@ public class AuthUser
     public long EmpresaId { get; set; }
     public required string UserName { get; set; }
     public required string PasswordHash { get; set; }
-    public required string Role { get; set; }
+    public TipoRole Role { get; set; }
 
     public bool VerificarSenha(string senhaBruta)
     {
