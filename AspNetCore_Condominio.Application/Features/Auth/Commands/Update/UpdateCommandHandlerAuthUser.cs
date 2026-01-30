@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Helpers;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
 using MediatR;
@@ -20,7 +21,7 @@ public record UpdateCommandHandlerAuthUser(IAuthUserRepository repository, IMedi
 
         dadoToUpdate.EmpresaId = request.EmpresaId;
         dadoToUpdate.UserName = request.UserName;
-        dadoToUpdate.PasswordHash = request.PasswordHash;
+        dadoToUpdate.PasswordHash = PasswordHasher.HashPassword(request.PasswordHash.ToString());
         dadoToUpdate.Role = request.Role;
         dadoToUpdate.DataInclusao = request.DataInclusao;
         dadoToUpdate.DataAlteracao = request.DataAlteracao;

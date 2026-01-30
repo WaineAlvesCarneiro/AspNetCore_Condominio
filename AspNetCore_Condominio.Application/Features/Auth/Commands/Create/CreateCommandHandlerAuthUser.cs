@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Helpers;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities.Auth;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
@@ -15,7 +16,7 @@ public record CreateCommandHandlerAuthUser(IAuthUserRepository repository, IMedi
         {
             EmpresaId = request.EmpresaId,
             UserName = request.UserName,
-            PasswordHash = request.PasswordHash,
+            PasswordHash = PasswordHasher.HashPassword(request.PasswordHash.ToString()),
             Role = request.Role,
             DataInclusao = request.DataInclusao
         };

@@ -105,15 +105,10 @@ public class ImovelController(IMediator mediator) : ApiBaseController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {
-        if (IsSindico)
-        {
-            var result = await mediator.Send(new DeleteCommandImovel(id, UserEmpresaId));
+        var result = await mediator.Send(new DeleteCommandImovel(id, UserEmpresaId));
 
-            return result.Sucesso
-                ? NoContent()
-                : BadRequest(new { sucesso = false, erro = result.Mensagem });
-        }
-
-        return Forbid();
+        return result.Sucesso
+            ? NoContent()
+            : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 }

@@ -17,20 +17,11 @@ public class AuthIntegrationTests : BaseIntegrationTest
 {
     public AuthIntegrationTests(CustomWebApplicationFactory<controllerapi::Program> factory) : base(factory) { }
 
-    private DateTime DateAtual = DateTime.UtcNow;
-
-    const long EMPRESA_ID_VALIDO = 1;
-    const string USERNAME_VALIDO = "Admin";
-    const string PASSWORD_VALIDO = "12345";
-    const int ROLE = 1;
-
-    const string BaseUrl = "/Auth/login";
-
     [Fact]
     public async Task Post_Login_Valido_Deve_Retornar_Token()
     {
-        var loginRequest = new AuthLoginRequest(USERNAME_VALIDO, PASSWORD_VALIDO);
-        var response = await _client.PostAsJsonAsync(BaseUrl, loginRequest);
+        var loginRequest = new AuthLoginRequest("Admin", "12345");
+        var response = await _client.PostAsJsonAsync("/Auth/login", loginRequest);
         response.EnsureSuccessStatusCode();
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -45,8 +36,8 @@ public class AuthIntegrationTests : BaseIntegrationTest
     [Fact]
     public async Task Post_Senha_Incorreta_Deve_Retornar_Falha_De_Autorizacao()
     {
-        var loginRequest = new AuthLoginRequest(USERNAME_VALIDO, "senhaErrada123");
-        var response = await _client.PostAsJsonAsync(BaseUrl, loginRequest);
+        var loginRequest = new AuthLoginRequest("Admin", "senhaErrada123");
+        var response = await _client.PostAsJsonAsync("/Auth/login", loginRequest);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -54,8 +45,8 @@ public class AuthIntegrationTests : BaseIntegrationTest
     [Fact]
     public async Task Post_Usuario_Inexistente_Deve_Retornar_Falha_De_Autorizacao()
     {
-        var loginRequest = new AuthLoginRequest("usuario.inexistente", PASSWORD_VALIDO);
-        var response = await _client.PostAsJsonAsync(BaseUrl, loginRequest);
+        var loginRequest = new AuthLoginRequest("usuario.inexistente", "12345");
+        var response = await _client.PostAsJsonAsync("/Auth/login", loginRequest);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
@@ -64,12 +55,12 @@ public class AuthIntegrationTests : BaseIntegrationTest
     {
         return new AuthUser
         {
-            EmpresaId = EMPRESA_ID_VALIDO,
-            UserName = USERNAME_VALIDO,
-            PasswordHash = PASSWORD_VALIDO,
-            Role = (TipoRole)ROLE,
-            DataInclusao = DateAtual,
-            DataAlteracao = DateAtual
+            EmpresaId = 1,
+            UserName = "Admin",
+            PasswordHash = "12345",
+            Role = (TipoRole)1,
+            DataInclusao = DateTime.UtcNow,
+            DataAlteracao = DateTime.UtcNow
         };
     }
 
@@ -80,12 +71,12 @@ public class AuthIntegrationTests : BaseIntegrationTest
 
         var dadoParaComparacao = new AuthUser
         {
-            EmpresaId = EMPRESA_ID_VALIDO,
-            UserName = USERNAME_VALIDO,
-            PasswordHash = PASSWORD_VALIDO,
-            Role = (TipoRole)ROLE,
-            DataInclusao = DateAtual,
-            DataAlteracao = DateAtual
+            EmpresaId = 1,
+            UserName = "Admin",
+            PasswordHash = "12345",
+            Role = (TipoRole)1,
+            DataInclusao = DateTime.UtcNow,
+            DataAlteracao = DateTime.UtcNow
         };
 
         Assert.NotNull(dado);
@@ -119,34 +110,34 @@ public class AuthIntegrationTests : BaseIntegrationTest
     public async Task Post_AuthUser_Valido_Com_Token_Deve_Retornar_Created_Sucesso()
     {
         var seed = await SeedAuthUserAsync(
-            EMPRESA_ID_VALIDO,
-            USERNAME_VALIDO,
-            PASSWORD_VALIDO,
-            ROLE,
-            DateAtual);
+            1,
+            "Admin",
+            "12345",
+            1,
+            DateTime.UtcNow);
         await AddAdminAuthHeaderAsync();
 
-        var response = await _client.GetAsync($"{BaseUrl}/{seed.Id}");
+        var response = await _client.GetAsync($"{"/Auth/login"}/{seed.Id}");
         response.EnsureSuccessStatusCode();
         var resultDto = await response.Content.ReadFromJsonAsync<Result<AuthUserDto>>();
 
         Assert.True(resultDto!.Sucesso);
-        Assert.Equal(USERNAME_VALIDO, resultDto.Dados!.UserName);
-        Assert.Equal(PASSWORD_VALIDO, resultDto.Dados!.PasswordHash);
+        Assert.Equal("Admin", resultDto.Dados!.UserName);
+        Assert.Equal("12345", resultDto.Dados!.PasswordHash);
     }
 
     [Fact]
     public async Task Get_By_Id_AuthUser_Existente_Deve_Retornar_Sucesso()
     {
         var seed = await SeedAuthUserAsync(
-            EMPRESA_ID_VALIDO,
-            USERNAME_VALIDO,
-            PASSWORD_VALIDO,
-            ROLE,
-            DateAtual);
+            1,
+            "Admin",
+            "12345",
+            1,
+            DateTime.UtcNow);
         await AddAdminAuthHeaderAsync();
 
-        var response = await _client.GetAsync($"{BaseUrl}/{seed.Id}");
+        var response = await _client.GetAsync($"{"/Auth/login"}/{seed.Id}");
         response.EnsureSuccessStatusCode();
         var resultDto = await response.Content.ReadFromJsonAsync<Result<AuthUserDto>>();
 
@@ -158,15 +149,15 @@ public class AuthIntegrationTests : BaseIntegrationTest
     public async Task Delete_AuthUser_Existente_Deve_Excluir_E_Retornar_Sucesso()
     {
         var seed = await SeedAuthUserAsync(
-            EMPRESA_ID_VALIDO,
-            USERNAME_VALIDO,
-            PASSWORD_VALIDO,
-            ROLE,
-            DateAtual);
+            1,
+            "Admin",
+            "12345",
+            1,
+            DateTime.UtcNow);
         await AddAdminAuthHeaderAsync();
-        var response = await _client.DeleteAsync($"{BaseUrl}/{seed.Id}");
+        var response = await _client.DeleteAsync($"{"/Auth/login"}/{seed.Id}");
         response.EnsureSuccessStatusCode();
-        var checkResponse = await _client.GetAsync($"{BaseUrl}/{seed.Id}");
+        var checkResponse = await _client.GetAsync($"{"/Auth/login"}/{seed.Id}");
 
         Assert.Equal(HttpStatusCode.NotFound, checkResponse.StatusCode);
     }

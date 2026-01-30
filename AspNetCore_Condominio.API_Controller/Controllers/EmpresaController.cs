@@ -67,7 +67,7 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Suporte")]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateCommandAuthUser command)
+    public async Task<IActionResult> Post([FromBody] CreateCommandEmpresa command)
     {
         var result = await mediator.Send(command);
 
@@ -101,15 +101,10 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {
-        if (IsSuporte)
-        {
-            var result = await mediator.Send(new DeleteCommandEmpresa(id));
+        var result = await mediator.Send(new DeleteCommandEmpresa(id));
 
         return result.Sucesso
             ? NoContent()
             : BadRequest(new { sucesso = false, erro = result.Mensagem });
-        }
-
-        return Forbid();
     }
 }

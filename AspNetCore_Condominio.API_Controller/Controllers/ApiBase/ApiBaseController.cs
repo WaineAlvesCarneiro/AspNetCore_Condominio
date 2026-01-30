@@ -4,23 +4,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AspNetCore_Condominio.API_Controller.Controllers.ApiBase;
 
-[ApiController]
 public abstract class ApiBaseController : ControllerBase
 {
-    protected long UserEmpresaId
-    {
-        get
-        {
-            var claim = User.FindFirst("EmpresaId")?.Value;
-            return long.TryParse(claim, out var id) ? id : 0;
-        }
-    }
+    protected long UserEmpresaId =>
+        long.TryParse(User.FindFirst("EmpresaId")?.Value, out var id) ? id : 0;
 
-    protected string UserName => User.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty;
+    protected string UserName => User.Identity?.Name ?? string.Empty;
 
-    protected string UserRole => User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty;
+    protected TipoRole? UserRole =>
+        Enum.TryParse<TipoRole>(User.FindFirst(ClaimTypes.Role)?.Value, out var role) ? role : null;
 
-    protected bool IsSuporte => UserRole == "Suporte";
-    protected bool IsSindico => UserRole == "Sindico";
-    protected bool IsPorteiro => UserRole == "Porteiro";
+    protected bool IsSuporte => UserRole == TipoRole.Suporte;
+    protected bool IsSindico => UserRole == TipoRole.Sindico;
+    protected bool IsPorteiro => UserRole == TipoRole.Porteiro;
 }

@@ -8,7 +8,7 @@ namespace AspNetCore_Condominio.Application.Features.Auth.Commands.Create;
 
 public class CreateCommandAuthUser : IRequest<Result<AuthUserDto>>, ICommandBaseAuthUser
 {
-    public long Id { get; set; }
+    public Guid Id { get; set; }
     public long? EmpresaId { get; set; }
     public required string UserName { get; set; }
     public required string PasswordHash { get; set; }

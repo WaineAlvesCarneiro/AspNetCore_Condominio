@@ -1,5 +1,6 @@
 ﻿using AspNetCore_Condominio.Application.Behaviors;
 using AspNetCore_Condominio.Application.Features.Auth;
+using AspNetCore_Condominio.Application.Features.Auth.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Moradores.Commands.Create;
@@ -43,6 +44,7 @@ public static class ServiceExtensions
             cfg.RegisterServicesFromAssembly(typeof(AuthLoginQuery).Assembly);
         });
 
+        services.AddValidatorsFromAssembly(typeof(CreateCommandValidatorAuthUser).Assembly);
         services.AddValidatorsFromAssembly(typeof(CreateCommandValidatorEmpresa).Assembly);
         services.AddValidatorsFromAssembly(typeof(CreateCommandValidatorImovel).Assembly);
         services.AddValidatorsFromAssembly(typeof(CreateCommandValidatorMorador).Assembly);

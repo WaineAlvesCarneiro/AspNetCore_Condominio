@@ -6,7 +6,7 @@ using MediatR;
 
 namespace AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
 
-public class CreateCommandAuthUser : IRequest<Result<EmpresaDto>>, ICommandBaseEmpresa
+public class CreateCommandEmpresa : IRequest<Result<EmpresaDto>>, ICommandBaseEmpresa
 {
     public long Id { get; set; }
     public required string RazaoSocial { get; set; }

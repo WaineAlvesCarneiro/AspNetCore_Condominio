@@ -14,6 +14,11 @@ public static class DatabaseExtensions
     {
         using (var scope = app.ApplicationServices.CreateScope())
         {
+            const long empresaId = 0;
+            const string username = "Admin";
+            const string plainPassword = "12345";
+            const int roleValue = 1;
+
             var services = scope.ServiceProvider;
             var context = services.GetRequiredService<ApplicationDbContext>();
 
@@ -23,14 +28,15 @@ public static class DatabaseExtensions
 
                 if (!context.AuthUsers.Any())
                 {
-                    string plainPassword = "12345";
-                    string hashedPassword = PasswordHasher.HashPassword(plainPassword);
+                    string hashedPassword = PasswordHasher.HashPassword(plainPassword.ToString());
 
                     var adminUser = new AuthUser
                     {
-                        UserName = "Admin",
+                        EmpresaId = empresaId,
+                        UserName = username,
                         PasswordHash = hashedPassword,
-                        Role = (TipoRole)1
+                        Role = (TipoRole)roleValue,
+                        DataInclusao = DateTime.UtcNow
                     };
 
                     context.AuthUsers.Add(adminUser);

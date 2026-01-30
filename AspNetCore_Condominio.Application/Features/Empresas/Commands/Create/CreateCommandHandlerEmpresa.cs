@@ -7,9 +7,9 @@ using MediatR;
 namespace AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
 
 public record CreateCommandHandlerEmpresa(IEmpresaRepository repository, IMediator mediator)
-    : IRequestHandler<CreateCommandAuthUser, Result<EmpresaDto>>
+    : IRequestHandler<CreateCommandEmpresa, Result<EmpresaDto>>
 {
-    public async Task<Result<EmpresaDto>> Handle(CreateCommandAuthUser request, CancellationToken cancellationToken)
+    public async Task<Result<EmpresaDto>> Handle(CreateCommandEmpresa request, CancellationToken cancellationToken)
     {
         var dado = new Empresa
         {

@@ -106,15 +106,10 @@ public class MoradorController(IMediator mediator) : ApiBaseController
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(long id)
     {
-        if (IsSindico)
-        {
-            var result = await mediator.Send(new DeleteCommandMorador(id, UserEmpresaId));
+        var result = await mediator.Send(new DeleteCommandMorador(id, UserEmpresaId));
 
-            return result.Sucesso
-                ? NoContent()
-                : BadRequest(new { sucesso = false, erro = result.Mensagem });
-        }
-
-        return Forbid();
+        return result.Sucesso
+            ? NoContent()
+            : BadRequest(new { sucesso = false, erro = result.Mensagem });
     }
 }

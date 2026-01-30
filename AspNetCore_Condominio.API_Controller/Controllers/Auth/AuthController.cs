@@ -18,23 +18,18 @@ namespace AspNetCore_Condominio.API_Controller.Controllers;
 [Route("[controller]")]
 public class AuthController(IMediator mediator, TokenService tokenService) : ControllerBase
 {
-    private readonly IMediator _mediator = mediator;
-    private readonly TokenService _tokenService = tokenService;
-
     [HttpPost("login")]
     [AllowAnonymous]
     public async Task<IActionResult> LoginAsync([FromBody] AuthLoginRequest request)
     {
         var query = new AuthLoginQuery { Username = request.Username, Password = request.Password };
-        var user = await _mediator.Send(query);
+        var user = await mediator.Send(query);
 
-        if (user == null)
-        {
-            return Unauthorized();
-        }
+        if (user == null) return Unauthorized(new { mensagem = "Usuário ou senha inválidos" });
 
-        var token = _tokenService.GenerateToken(user.UserName, (TipoRole)user.Role, user.EmpresaId);
-        return Ok(new { token });
+        var token = tokenService.GenerateToken(user.UserName, (TipoRole)user.Role, user.EmpresaId);
+
+        return Ok(new { token, sucesso = true });
     }
 
     [Authorize(Roles = "Suporte")]
@@ -87,7 +82,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
     }
 
     [Authorize(Roles = "Suporte")]
-    [HttpPost]
+    [HttpPost("criar-usuario")]
     public async Task<IActionResult> Post([FromBody] CreateCommandAuthUser command)
     {
         var result = await mediator.Send(command);
