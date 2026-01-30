@@ -5,7 +5,7 @@ using MediatR;
 
 namespace AspNetCore_Condominio.Application.Features.Empresas.Commands.Update;
 
-public record UpdateCommandHandlerEmpresa(IEmpresaRepository repository, IMediator mediator)
+public record UpdateCommandHandlerEmpresa(IEmpresaRepository repository)
     : IRequestHandler<UpdateCommandEmpresa, Result<EmpresaDto>>
 {
     private readonly IEmpresaRepository _repository = repository;
