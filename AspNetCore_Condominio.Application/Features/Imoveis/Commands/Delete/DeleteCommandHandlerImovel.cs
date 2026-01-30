@@ -9,9 +9,9 @@ public class DeleteCommandHandlerImovel(IImovelRepository repository, IMoradorRe
 {
     public async Task<Result> Handle(DeleteCommandImovel request, CancellationToken cancellationToken)
     {
-        var existsMoradorVinculadoNoImovel = await moradorRepository.ExistsMoradorVinculadoNoImovelAsync(request.Id);
+        var existsMoradorVinculadoNoImovel = await moradorRepository.ExisteMoradorVinculadoNoImovelAsync(request.Id);
         if (existsMoradorVinculadoNoImovel)
-            return Result.Failure("Não é possível excluir o imóvel, pois existem moradores vinculados.");
+            return Result.Failure("Não é possível excluir o imóvel, pois tem morador vinculado.");
 
         var dado = await repository.GetByIdAsync(request.Id, request.UserEmpresaId);
         if (dado is null)

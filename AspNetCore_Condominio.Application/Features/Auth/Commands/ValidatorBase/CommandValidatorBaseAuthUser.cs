@@ -9,7 +9,7 @@ public abstract class CommandValidatorBaseAuthUser<T> : AbstractValidator<T>
     protected void ConfigureCommonRules()
     {
         RuleFor(p => p.UserName)
-            .NotEmpty().WithMessage("Usuário é obrigatória")
+            .NotEmpty().WithMessage("Usuário é obrigatório")
             .Length(3, 100).WithMessage("O campo Usuário precisa ter entre 3 e 100 caracteres");
 
         RuleFor(p => p.PasswordHash)

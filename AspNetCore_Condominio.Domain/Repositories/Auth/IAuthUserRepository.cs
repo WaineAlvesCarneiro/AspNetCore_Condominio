@@ -16,4 +16,5 @@ public interface IAuthUserRepository
     Task CreateAsync(AuthUser authUser);
     Task UpdateAsync(AuthUser authUser);
     Task DeleteAsync(AuthUser authUser);
+    Task<bool> ExisteUsuarioVinculadoNaEmpresaAsync(long id);
 }

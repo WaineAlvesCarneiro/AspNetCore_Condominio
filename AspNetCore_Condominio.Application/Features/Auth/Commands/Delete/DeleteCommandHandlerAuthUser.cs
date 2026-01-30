@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Domain.Common;
+using AspNetCore_Condominio.Domain.Repositories;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
 using MediatR;
 

@@ -98,7 +98,7 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> ExistsMoradorVinculadoNoImovelAsync(long imovelId)
+    public async Task<bool> ExisteMoradorVinculadoNoImovelAsync(long imovelId)
     {
         return await _context.Moradors.AnyAsync(m => m.ImovelId == imovelId);
     }

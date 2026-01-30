@@ -12,7 +12,7 @@ public class GetByIdQueryHandlerAuthUser(IAuthUserRepository repository)
     {
         var dado = await repository.GetByIdAsync(request.Id);
         if (dado is null)
-            return Result<AuthUserDto>.Failure("Usuário não encontrada.");
+            return Result<AuthUserDto>.Failure("Usuário não encontrado.");
 
         var dto = new AuthUserDto
         {

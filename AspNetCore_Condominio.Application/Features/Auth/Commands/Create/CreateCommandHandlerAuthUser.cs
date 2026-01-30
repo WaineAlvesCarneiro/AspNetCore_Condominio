@@ -7,7 +7,7 @@ using MediatR;
 
 namespace AspNetCore_Condominio.Application.Features.Auth.Commands.Create;
 
-public record CreateCommandHandlerAuthUser(IAuthUserRepository repository, IMediator mediator)
+public record CreateCommandHandlerAuthUser(IAuthUserRepository repository)
     : IRequestHandler<CreateCommandAuthUser, Result<AuthUserDto>>
 {
     public async Task<Result<AuthUserDto>> Handle(CreateCommandAuthUser request, CancellationToken cancellationToken)

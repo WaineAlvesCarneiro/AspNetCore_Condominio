@@ -92,7 +92,7 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<bool> ExistsImovelVinculadoNaEmpresaAsync(long userEmpresaId)
+    public async Task<bool> ExisteImovelVinculadoNaEmpresaAsync(long userEmpresaId)
     {
         return await _context.Imovels.AnyAsync(m => m.EmpresaId == userEmpresaId);
     }

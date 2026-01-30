@@ -86,4 +86,9 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
         _context.Set<AuthUser>().Remove(AuthUser);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<bool> ExisteUsuarioVinculadoNaEmpresaAsync(long id)
+    {
+        return await _context.AuthUsers.AnyAsync(m => m.EmpresaId == id);
+    }
 }

@@ -16,5 +16,5 @@ public interface IImovelRepository
     Task CreateAsync(Imovel imovel);
     Task UpdateAsync(Imovel imovel);
     Task DeleteAsync(Imovel imovel);
-    Task<bool> ExistsImovelVinculadoNaEmpresaAsync(long empresaId);
+    Task<bool> ExisteImovelVinculadoNaEmpresaAsync(long empresaId);
 }

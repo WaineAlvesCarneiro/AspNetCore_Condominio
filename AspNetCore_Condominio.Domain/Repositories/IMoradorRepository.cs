@@ -16,5 +16,5 @@ public interface IMoradorRepository
     Task CreateAsync(Morador morador);
     Task UpdateAsync(Morador morador);
     Task DeleteAsync(Morador morador);
-    Task<bool> ExistsMoradorVinculadoNoImovelAsync(long imovelId);
+    Task<bool> ExisteMoradorVinculadoNoImovelAsync(long imovelId);
 }

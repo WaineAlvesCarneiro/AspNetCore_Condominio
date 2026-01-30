@@ -2,6 +2,7 @@
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Enums;
 using AspNetCore_Condominio.Domain.Repositories;
+using AspNetCore_Condominio.Domain.Repositories.Auth;
 using Moq;
 
 namespace AspNetCore_Condominio.Application.Tests.Features.Empresas.Commands.Delete;
@@ -10,6 +11,7 @@ public class DeleteCommandHandlerTests
 {
     private readonly Mock<IEmpresaRepository> _repoMock;
     private readonly Mock<IImovelRepository> _imovelRepoMock;
+    private readonly Mock<IAuthUserRepository> _authUserRepoMock;
     private readonly DeleteCommandHandlerEmpresa _handler;
 
     private const long UserEmpresaId = 1;
@@ -21,6 +23,8 @@ public class DeleteCommandHandlerTests
     {
         _repoMock = new Mock<IEmpresaRepository>();
         _imovelRepoMock = new Mock<IImovelRepository>();
+        _authUserRepoMock = new Mock<IAuthUserRepository>();
+
         _existente = new Empresa {
             Id = ID_EXISTENTE,
             RazaoSocial = "Razão Social Atualizada",
@@ -42,7 +46,7 @@ public class DeleteCommandHandlerTests
             Complemento = "Complemento",
             DataInclusao = DateTime.UtcNow
         };
-        _handler = new DeleteCommandHandlerEmpresa(_repoMock.Object, _imovelRepoMock.Object);
+        _handler = new DeleteCommandHandlerEmpresa(_repoMock.Object, _imovelRepoMock.Object, _authUserRepoMock.Object);
     }
 
     [Fact]
@@ -51,7 +55,7 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemSucesso = "Empresa deletada com sucesso.";
         DeleteCommandEmpresa command = new(ID_EXISTENTE);
-        _imovelRepoMock.Setup(repo => repo.ExistsImovelVinculadoNaEmpresaAsync(command.Id)).ReturnsAsync(false);
+        _imovelRepoMock.Setup(repo => repo.ExisteImovelVinculadoNaEmpresaAsync(command.Id)).ReturnsAsync(false);
         _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_existente);
 
         // Act
@@ -70,9 +74,9 @@ public class DeleteCommandHandlerTests
     public async Task Handle_EmpresaComImoveisVinculados_DeveRetornarFalhaENaoDeletar()
     {
         // Arrange
-        string mensagemFalha = "Não é possível excluir a empresa, pois tem Imóvel evinculado.";
+        string mensagemFalha = "Não é possível excluir a empresa, pois tem imóvel vinculado.";
         DeleteCommandEmpresa command = new(ID_EXISTENTE);
-        _imovelRepoMock.Setup(repo => repo.ExistsImovelVinculadoNaEmpresaAsync(command.Id)).ReturnsAsync(true);
+        _imovelRepoMock.Setup(repo => repo.ExisteImovelVinculadoNaEmpresaAsync(command.Id)).ReturnsAsync(true);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -91,7 +95,7 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemFalha = "Empresa não encontrada.";
         DeleteCommandEmpresa command = new(ID_NAO_EXISTENTE);
-        _imovelRepoMock.Setup(repo => repo.ExistsImovelVinculadoNaEmpresaAsync(command.Id)).ReturnsAsync(false);
+        _imovelRepoMock.Setup(repo => repo.ExisteImovelVinculadoNaEmpresaAsync(command.Id)).ReturnsAsync(false);
         _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((Empresa)null!);
 
         // Act

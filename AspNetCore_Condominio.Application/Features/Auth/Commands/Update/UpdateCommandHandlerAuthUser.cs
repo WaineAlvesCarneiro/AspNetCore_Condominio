@@ -6,7 +6,7 @@ using MediatR;
 
 namespace AspNetCore_Condominio.Application.Features.Auth.Commands.Update;
 
-public record UpdateCommandHandlerAuthUser(IAuthUserRepository repository, IMediator mediator)
+public record UpdateCommandHandlerAuthUser(IAuthUserRepository repository)
     : IRequestHandler<UpdateCommandAuthUser, Result<AuthUserDto>>
 {
     private readonly IAuthUserRepository _repository = repository;

@@ -30,7 +30,7 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemSucesso = "Imóvel deletado com sucesso.";
         DeleteCommandImovel command = new(ID_EXISTENTE, UserEmpresaId);
-        _moradorRepoMock.Setup(repo => repo.ExistsMoradorVinculadoNoImovelAsync(command.Id)).ReturnsAsync(false);
+        _moradorRepoMock.Setup(repo => repo.ExisteMoradorVinculadoNoImovelAsync(command.Id)).ReturnsAsync(false);
         _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, UserEmpresaId)).ReturnsAsync(_existente);
 
         // Act
@@ -49,9 +49,9 @@ public class DeleteCommandHandlerTests
     public async Task Handle_ImovelComMoradoresVinculados_DeveRetornarFalhaENaoDeletar()
     {
         // Arrange
-        string mensagemFalha = "Não é possível excluir o imóvel, pois existem moradores vinculados.";
+        string mensagemFalha = "Não é possível excluir o imóvel, pois tem morador vinculado.";
         DeleteCommandImovel command = new(ID_EXISTENTE, UserEmpresaId);
-        _moradorRepoMock.Setup(repo => repo.ExistsMoradorVinculadoNoImovelAsync(command.Id)).ReturnsAsync(true);
+        _moradorRepoMock.Setup(repo => repo.ExisteMoradorVinculadoNoImovelAsync(command.Id)).ReturnsAsync(true);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -70,7 +70,7 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemFalha = "Imóvel não encontrado.";
         DeleteCommandImovel command = new(ID_NAO_EXISTENTE, UserEmpresaId);
-        _moradorRepoMock.Setup(repo => repo.ExistsMoradorVinculadoNoImovelAsync(command.Id)).ReturnsAsync(false);
+        _moradorRepoMock.Setup(repo => repo.ExisteMoradorVinculadoNoImovelAsync(command.Id)).ReturnsAsync(false);
         _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, UserEmpresaId)).ReturnsAsync((Imovel)null!);
 
         // Act
