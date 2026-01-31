@@ -18,17 +18,19 @@ public class GetAllQueryHandlerTests
             Id = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"),
             EmpresaId = 1,
             UserName = "Admin",
+            Email = "email@gmail.com",
             PasswordHash = "12345",
             Role = (TipoRole)1,
-            DataInclusao = DateTime.UtcNow
+            DataInclusao = DateTime.Now
         },
         new AuthUser {
             Id = Guid.Parse("FFFFF7AB-F0FD-F011-8550-A5241967915B"),
             EmpresaId = 1,
             UserName = "Sindico",
+            Email = "email@gmail.com",
             PasswordHash = "12345",
             Role = (TipoRole)2,
-            DataInclusao = DateTime.UtcNow
+            DataInclusao = DateTime.Now
         },
     ];   
 

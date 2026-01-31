@@ -32,7 +32,7 @@ public class CreateCommandValidatorTests
         Endereco = "Rua Exemplo, 123",
         Bairro = "Pq Amazônia",
         Complemento = "Complemento",
-        DataInclusao = DateTime.UtcNow
+        DataInclusao = DateTime.Now
     };
 
     [Theory]

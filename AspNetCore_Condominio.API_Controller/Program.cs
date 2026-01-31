@@ -1,6 +1,7 @@
 using AspNetCore_Condominio.Configurations.Configurations;
 using AspNetCore_Condominio.Configurations.Converters;
 using AspNetCore_Condominio.Infrastructure.Data;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +11,11 @@ builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 builder.Logging.SetMinimumLevel(LogLevel.Debug);
-builder.Services.AddControllers()
+builder.Services.AddControllers(
+    config =>
+    {
+        config.Filters.Add(new AuthorizeFilter("AdminPolicy"));
+    })
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonDateOnlyConverter());

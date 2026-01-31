@@ -14,6 +14,9 @@ public abstract class ApiBaseController : ControllerBase
     protected TipoRole? UserRole =>
         Enum.TryParse<TipoRole>(User.FindFirst(ClaimTypes.Role)?.Value, out var role) ? role : null;
 
+    protected bool IsPrimeiroAcesso =>
+        bool.TryParse(User.FindFirst("primeiroAcesso")?.Value, out var primeiro) && primeiro;
+
     protected bool IsSuporte => UserRole == TipoRole.Suporte;
     protected bool IsSindico => UserRole == TipoRole.Sindico;
     protected bool IsPorteiro => UserRole == TipoRole.Porteiro;

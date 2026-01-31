@@ -19,7 +19,7 @@ public static class AuthEndpoints
                 return Results.Unauthorized();
             }
 
-            var token = tokenService.GenerateToken(user.UserName, user.Role, user.EmpresaId);
+            var token = tokenService.GenerateToken(user.UserName, user.Role, user.EmpresaId, user.PrimeiroAcesso);
             return Results.Ok(new { token });
         })
             .WithSummary("Faça Login para gerar o Token.")

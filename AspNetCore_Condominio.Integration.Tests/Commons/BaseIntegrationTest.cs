@@ -141,7 +141,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
             }
         }
 
-        protected async Task<AuthUser> SeedAuthUserAsync(long empresaId, string userName, string passwordHash, int role, DateTime dataInclusao)
+        protected async Task<AuthUser> SeedAuthUserAsync(long empresaId, string userName, string email, string passwordHash, int role, DateTime dataInclusao)
         {
             using (var scope = _factory.Services.CreateScope())
             {
@@ -151,6 +151,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
                 {
                     EmpresaId = empresaId,
                     UserName = userName,
+                    Email = email,
                     PasswordHash = passwordHash,
                     Role = (TipoRole)role,
                     DataInclusao = dataInclusao

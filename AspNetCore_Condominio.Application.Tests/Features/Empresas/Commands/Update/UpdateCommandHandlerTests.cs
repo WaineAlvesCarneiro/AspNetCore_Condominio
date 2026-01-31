@@ -30,7 +30,7 @@ public class UpdateCommandHandlerTests
         Endereco = "Rua Exemplo, 123",
         Bairro = "Pq Amazônia",
         Complemento = "Complemento",
-        DataInclusao = DateTime.UtcNow
+        DataInclusao = DateTime.Now
     };
 
     public UpdateCommandHandlerTests()
@@ -63,8 +63,8 @@ public class UpdateCommandHandlerTests
             Endereco = "Rua Exemplo, 123",
             Bairro = "Pq Amazônia",
             Complemento = "Complemento",
-            DataInclusao = DateTime.UtcNow,
-            DataAlteracao = DateTime.UtcNow
+            DataInclusao = DateTime.Now,
+            DataAlteracao = DateTime.Now
         };
 
         // Act
@@ -105,7 +105,7 @@ public class UpdateCommandHandlerTests
             Endereco = "Rua Exemplo, 123",
             Bairro = "Pq Amazônia",
             Complemento = "Complemento",
-            DataInclusao = DateTime.UtcNow
+            DataInclusao = DateTime.Now
         };
 
         _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((Empresa)null!);

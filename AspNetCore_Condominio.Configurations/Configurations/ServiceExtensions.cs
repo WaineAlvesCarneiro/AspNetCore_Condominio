@@ -93,7 +93,13 @@ public static class ServiceExtensions
         services.AddAuthorization(options =>
         {
             options.AddPolicy("AdminPolicy", policy =>
-                policy.RequireRole("Suporte", "Sindico", "Porteiro"));
+            {
+                policy.RequireRole("Suporte", "Sindico", "Porteiro");
+                policy.RequireClaim("primeiroAcesso", "false");
+            });
+
+            options.AddPolicy("SenhaDefinida", policy =>
+                policy.RequireClaim("primeiroAcesso", "false"));
         });
 
         return services;

@@ -28,7 +28,7 @@ public class GetAllPagedQueryHandlerAuthUser(IAuthUserRepository repository)
             Id = dado.Id,
             EmpresaId = dado.EmpresaId,
             UserName = dado.UserName,
-            PasswordHash = dado.PasswordHash,
+            Email = dado.Email,
             Role = dado.Role,
             DataInclusao = dado.DataInclusao,
             DataAlteracao = dado.DataAlteracao

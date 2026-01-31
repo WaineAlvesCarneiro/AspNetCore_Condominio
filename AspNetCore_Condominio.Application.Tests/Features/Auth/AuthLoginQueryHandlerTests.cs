@@ -26,6 +26,7 @@ public class AuthLoginQueryHandlerTests
         {
             Id = Guid.NewGuid(),
             UserName = USERNAME,
+            Email = "email@gmail.com",
             PasswordHash = hashedPassword,
             Role = (TipoRole)1
         };

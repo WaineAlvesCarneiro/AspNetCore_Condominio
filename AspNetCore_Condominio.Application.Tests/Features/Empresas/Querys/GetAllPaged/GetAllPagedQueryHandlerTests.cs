@@ -34,7 +34,7 @@ public class GetAllPagedQueryHandlerTests
             Endereco = "Rua Exemplo, 123",
             Bairro = "Pq Amazônia",
             Complemento = "Complemento",
-            DataInclusao = DateTime.UtcNow
+            DataInclusao = DateTime.Now
         },
         new Empresa {
             Id = 2,
@@ -55,7 +55,7 @@ public class GetAllPagedQueryHandlerTests
             Endereco = "Rua Exemplo, 123",
             Bairro = "Pq Amazônia",
             Complemento = "Complemento",
-            DataInclusao = DateTime.UtcNow
+            DataInclusao = DateTime.Now
         },
     ];
 

@@ -7,6 +7,8 @@ public class AuthUser
     public Guid Id { get; set; }
     public long? EmpresaId { get; set; }
     public required string UserName { get; set; }
+    public required string Email { get; set; }
+    public bool PrimeiroAcesso { get; set; } = true;
     public required string PasswordHash { get; set; }
     public TipoRole Role { get; set; }
     public DateTime DataInclusao { get; set; }

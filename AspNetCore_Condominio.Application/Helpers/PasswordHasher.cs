@@ -13,4 +13,12 @@ public static class PasswordHasher
     {
         return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
     }
+
+    public static string GerarSenhaAleatoria(int tamanho = 8)
+    {
+        const string caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Sem '0', 'O', '1', 'l' para evitar confusão
+        var random = new Random();
+        return new string(Enumerable.Repeat(caracteres, tamanho)
+            .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
 }

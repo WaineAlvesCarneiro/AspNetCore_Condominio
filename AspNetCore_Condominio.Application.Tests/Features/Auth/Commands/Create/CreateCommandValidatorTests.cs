@@ -17,9 +17,9 @@ public class CreateCommandValidatorTests
     {
         EmpresaId = 1,
         UserName = "Admin",
-        PasswordHash = "12345",
+        Email = "email@gmail.com",
         Role = (TipoRole)1,
-        DataInclusao = DateTime.UtcNow
+        DataInclusao = DateTime.Now
     };
 
     [Theory]

@@ -20,9 +20,10 @@ public class DeleteCommandHandlerTests
             Id = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"),
             EmpresaId = 1,
             UserName = "Admin",
+            Email = "email@gmail.com",
             PasswordHash = "12345",
             Role = (TipoRole)1,
-            DataInclusao = DateTime.UtcNow
+            DataInclusao = DateTime.Now
         };
         _handler = new DeleteCommandHandlerAuthUser(_repoMock.Object);
     }

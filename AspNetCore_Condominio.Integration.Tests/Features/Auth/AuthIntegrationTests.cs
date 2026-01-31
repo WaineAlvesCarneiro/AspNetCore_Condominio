@@ -57,10 +57,11 @@ public class AuthIntegrationTests : BaseIntegrationTest
         {
             EmpresaId = 1,
             UserName = "Admin",
+            Email = "email@gmail.com",
             PasswordHash = "12345",
             Role = (TipoRole)1,
-            DataInclusao = DateTime.UtcNow,
-            DataAlteracao = DateTime.UtcNow
+            DataInclusao = DateTime.Now,
+            DataAlteracao = DateTime.Now
         };
     }
 
@@ -73,10 +74,11 @@ public class AuthIntegrationTests : BaseIntegrationTest
         {
             EmpresaId = 1,
             UserName = "Admin",
+            Email = "email@gmail.com",
             PasswordHash = "12345",
             Role = (TipoRole)1,
-            DataInclusao = DateTime.UtcNow,
-            DataAlteracao = DateTime.UtcNow
+            DataInclusao = DateTime.Now,
+            DataAlteracao = DateTime.Now
         };
 
         Assert.NotNull(dado);
@@ -112,9 +114,10 @@ public class AuthIntegrationTests : BaseIntegrationTest
         var seed = await SeedAuthUserAsync(
             1,
             "Admin",
+            "email@gmail.com",
             "12345",
             1,
-            DateTime.UtcNow);
+            DateTime.Now);
         await AddAdminAuthHeaderAsync();
 
         var response = await _client.GetAsync($"{"/Auth/login"}/{seed.Id}");
@@ -123,7 +126,7 @@ public class AuthIntegrationTests : BaseIntegrationTest
 
         Assert.True(resultDto!.Sucesso);
         Assert.Equal("Admin", resultDto.Dados!.UserName);
-        Assert.Equal("12345", resultDto.Dados!.PasswordHash);
+        Assert.Equal("email@gmail.com", resultDto.Dados!.Email);
     }
 
     [Fact]
@@ -132,9 +135,10 @@ public class AuthIntegrationTests : BaseIntegrationTest
         var seed = await SeedAuthUserAsync(
             1,
             "Admin",
+            "email@gmail.com",
             "12345",
             1,
-            DateTime.UtcNow);
+            DateTime.Now);
         await AddAdminAuthHeaderAsync();
 
         var response = await _client.GetAsync($"{"/Auth/login"}/{seed.Id}");
@@ -151,9 +155,10 @@ public class AuthIntegrationTests : BaseIntegrationTest
         var seed = await SeedAuthUserAsync(
             1,
             "Admin",
+            "email@gmail.com",
             "12345",
             1,
-            DateTime.UtcNow);
+            DateTime.Now);
         await AddAdminAuthHeaderAsync();
         var response = await _client.DeleteAsync($"{"/Auth/login"}/{seed.Id}");
         response.EnsureSuccessStatusCode();

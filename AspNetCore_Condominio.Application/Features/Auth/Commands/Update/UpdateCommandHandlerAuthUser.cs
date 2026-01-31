@@ -21,7 +21,6 @@ public record UpdateCommandHandlerAuthUser(IAuthUserRepository repository)
 
         dadoToUpdate.EmpresaId = request.EmpresaId;
         dadoToUpdate.UserName = request.UserName;
-        dadoToUpdate.PasswordHash = PasswordHasher.HashPassword(request.PasswordHash.ToString());
         dadoToUpdate.Role = request.Role;
         dadoToUpdate.DataInclusao = request.DataInclusao;
         dadoToUpdate.DataAlteracao = request.DataAlteracao;
@@ -33,7 +32,8 @@ public record UpdateCommandHandlerAuthUser(IAuthUserRepository repository)
             Id = dadoToUpdate.Id,
             EmpresaId = dadoToUpdate.EmpresaId,
             UserName = dadoToUpdate.UserName,
-            PasswordHash = dadoToUpdate.PasswordHash,
+            Email = dadoToUpdate.Email,
+            PrimeiroAcesso = dadoToUpdate.PrimeiroAcesso,
             Role = dadoToUpdate.Role,
             DataInclusao = dadoToUpdate.DataInclusao,
             DataAlteracao = dadoToUpdate.DataAlteracao,

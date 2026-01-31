@@ -15,9 +15,10 @@ public class UpdateCommandHandlerTests
         Id = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"),
         EmpresaId = 1,
         UserName = "Admin",
+        Email = "email@gmail.com",
         PasswordHash = "12345",
         Role = (TipoRole)1,
-        DataInclusao = DateTime.UtcNow
+        DataInclusao = DateTime.Now
     };
 
     public UpdateCommandHandlerTests()
@@ -35,9 +36,9 @@ public class UpdateCommandHandlerTests
             Id = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"),
             EmpresaId = 1,
             UserName = "Admin Alterado",
-            PasswordHash = "12345",
+            Email = "email@gmail.com",
             Role = (TipoRole)1,
-            DataInclusao = DateTime.UtcNow
+            DataInclusao = DateTime.Now
         };
 
         // Act
@@ -62,9 +63,9 @@ public class UpdateCommandHandlerTests
             Id = Guid.Parse("FFFF57AB-F0FD-F011-8550-A5241967915B"),
             EmpresaId = 1,
             UserName = "Admin",
-            PasswordHash = "12345",
+            Email = "email@gmail.com",
             Role = (TipoRole)1,
-            DataInclusao = DateTime.UtcNow
+            DataInclusao = DateTime.Now
         };
 
         _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((AuthUser)null!);

@@ -10,6 +10,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Data
         public static void Initialize(ApplicationDbContext context)
         {
             const string ADMIN_USERNAME = "Admin";
+            const string ADMIN_EMAIL = "email@gmail.com";
             const TipoRole ADMIN_ROLE = (TipoRole)1;
             const string ADMIN_PASSWORD = "12345";
 
@@ -18,6 +19,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Data
                 var admin = new AuthUser
                 {
                     UserName = ADMIN_USERNAME,
+                    Email = ADMIN_EMAIL,
                     Role = ADMIN_ROLE,
                     PasswordHash = PasswordHasher.HashPassword(ADMIN_PASSWORD)
                 };

@@ -11,9 +11,8 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
 
     public async Task<AuthUser> GetByUsernameAsync(string username)
     {
-        var users = await _context.AuthUsers.ToListAsync();
-
-        return users.FirstOrDefault(u => string.Equals(u.UserName, username, StringComparison.OrdinalIgnoreCase));
+        return await _context.AuthUsers
+                .FirstOrDefaultAsync(u => u.UserName.ToLower() == username.ToLower());
     }
 
     public async Task<IEnumerable<AuthUser>> GetAllAsync()

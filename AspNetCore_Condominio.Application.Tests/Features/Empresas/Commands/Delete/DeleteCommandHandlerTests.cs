@@ -44,7 +44,7 @@ public class DeleteCommandHandlerTests
             Endereco = "Rua Exemplo, 123",
             Bairro = "Pq Amazônia",
             Complemento = "Complemento",
-            DataInclusao = DateTime.UtcNow
+            DataInclusao = DateTime.Now
         };
         _handler = new DeleteCommandHandlerEmpresa(_repoMock.Object, _imovelRepoMock.Object, _authUserRepoMock.Object);
     }

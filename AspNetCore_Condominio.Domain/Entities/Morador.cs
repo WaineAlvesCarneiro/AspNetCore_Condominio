@@ -37,7 +37,7 @@ public class Morador
         EmpresaId = empresaId;
         IsProprietario = isProprietario;
         DataEntrada = dataEntrada;
-        DataInclusao = DateTime.UtcNow;
+        DataInclusao = DateTime.Now;
         Imovel = null!;
         Empresa = null!;
     }
@@ -51,7 +51,7 @@ public class Morador
             throw new ArgumentException("E-mail inválido.");
 
         Email = novoEmail;
-        DataAlteracao = DateTime.UtcNow;
+        DataAlteracao = DateTime.Now;
     }
 
     public void DefinirDataSaida(DateOnly? dataSaida)
@@ -60,7 +60,7 @@ public class Morador
             throw new ArgumentException("Data de saída não pode ser anterior à data de entrada.");
 
         DataSaida = dataSaida;
-        DataAlteracao = DateTime.UtcNow;
+        DataAlteracao = DateTime.Now;
     }
 
     public bool ValidarDatas()
@@ -70,7 +70,7 @@ public class Morador
 
     public bool EstaAtivo()
     {
-        return !DataSaida.HasValue || DataSaida.Value >= DateOnly.FromDateTime(DateTime.UtcNow);
+        return !DataSaida.HasValue || DataSaida.Value >= DateOnly.FromDateTime(DateTime.Now);
     }
 
     public void AtualizarDados(string nome, string celular, long imovelId, bool isProprietario)
@@ -82,6 +82,6 @@ public class Morador
         Celular = celular;
         ImovelId = imovelId;
         IsProprietario = isProprietario;
-        DataAlteracao = DateTime.UtcNow;
+        DataAlteracao = DateTime.Now;
     }
 }

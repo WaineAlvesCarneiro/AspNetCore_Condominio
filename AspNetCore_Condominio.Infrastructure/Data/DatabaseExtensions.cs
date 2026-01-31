@@ -16,6 +16,7 @@ public static class DatabaseExtensions
         {
             const long empresaId = 0;
             const string username = "Admin";
+            const string email = "enviaemailwebapi@gmail.com";
             const string plainPassword = "12345";
             const int roleValue = 1;
 
@@ -34,9 +35,10 @@ public static class DatabaseExtensions
                     {
                         EmpresaId = empresaId,
                         UserName = username,
+                        Email = email,
                         PasswordHash = hashedPassword,
                         Role = (TipoRole)roleValue,
-                        DataInclusao = DateTime.UtcNow
+                        DataInclusao = DateTime.Now
                     };
 
                     context.AuthUsers.Add(adminUser);

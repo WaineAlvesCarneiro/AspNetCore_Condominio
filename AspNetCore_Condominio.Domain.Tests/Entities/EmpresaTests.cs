@@ -5,7 +5,7 @@ namespace AspNetCore_Condominio.Domain.Tests.Entities;
 
 public class EmpresaTests
 {
-    private DateTime DateAtual = DateTime.UtcNow;
+    private DateTime DateAtual = DateTime.Now;
 
     private Empresa CriarBase()
     {

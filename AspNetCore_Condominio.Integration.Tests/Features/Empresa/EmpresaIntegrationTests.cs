@@ -37,7 +37,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Features.Empresa
                 Endereco = "Rua Exemplo, 123",
                 Bairro = "Pq Amazônia",
                 Complemento = "Complemento",
-                DataInclusao = DateTime.UtcNow
+                DataInclusao = DateTime.Now
             };
             var response = await _client.PostAsJsonAsync(BaseUrl, novoDto);
             Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);

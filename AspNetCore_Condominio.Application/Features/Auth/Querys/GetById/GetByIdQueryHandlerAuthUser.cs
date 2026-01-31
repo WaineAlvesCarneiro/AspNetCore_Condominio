@@ -19,7 +19,7 @@ public class GetByIdQueryHandlerAuthUser(IAuthUserRepository repository)
             Id = dado.Id,
             EmpresaId = dado.EmpresaId,
             UserName = dado.UserName,
-            PasswordHash = dado.PasswordHash,
+            Email = "email@gmail.com",
             Role = dado.Role,
             DataInclusao = dado.DataInclusao,
             DataAlteracao = dado.DataAlteracao

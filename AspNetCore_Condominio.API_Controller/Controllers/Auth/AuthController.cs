@@ -1,5 +1,6 @@
 ﻿using AspNetCore_Condominio.Application.Features.Auth;
 using AspNetCore_Condominio.Application.Features.Auth.Commands.Create;
+using AspNetCore_Condominio.Application.Features.Auth.Commands.DefinirSenha;
 using AspNetCore_Condominio.Application.Features.Auth.Commands.Delete;
 using AspNetCore_Condominio.Application.Features.Auth.Commands.Update;
 using AspNetCore_Condominio.Application.Features.Auth.Queries.GetAll;
@@ -9,6 +10,7 @@ using AspNetCore_Condominio.Configurations.ServicesJWT;
 using AspNetCore_Condominio.Domain.Entities.Auth;
 using AspNetCore_Condominio.Domain.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,12 +27,44 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
         var query = new AuthLoginQuery { Username = request.Username, Password = request.Password };
         var user = await mediator.Send(query);
 
-        if (user == null) return Unauthorized(new { mensagem = "Usuário ou senha inválidos" });
+        if (user == null)
+            return Unauthorized(new { mensagem = "Usuário ou senha inválidos" });
 
-        var token = tokenService.GenerateToken(user.UserName, (TipoRole)user.Role, user.EmpresaId);
+        var token = tokenService.GenerateToken(
+            user.UserName,
+            (TipoRole)user.Role,
+            user.EmpresaId,
+            user.PrimeiroAcesso
+        );
 
-        return Ok(new { token, sucesso = true });
+        return Ok(new { token, sucesso = true, primeiroAcesso = user.PrimeiroAcesso });
     }
+
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [AllowAnonymous]
+    [HttpPost("definir-senha-permanente")]
+    public async Task<IActionResult> DefinirSenha([FromBody] DefinirSenhaRequest request)
+    {
+        var username = User.Identity?.Name;
+
+        if (string.IsNullOrEmpty(username))
+            return Unauthorized(new { sucesso = false, erro = "Sessão inválida." });
+
+        var command = new DefinirSenhaCommand
+        {
+            UserName = username,
+            NovaSenha = request.NovaSenha
+        };
+
+        var result = await mediator.Send(command);
+
+        return result.Sucesso
+            ? Ok(new { sucesso = true, dados = result.Dados, mensagem = result.Mensagem })
+            : BadRequest(new { sucesso = false, erro = result.Mensagem });
+    }
+
+    public record DefinirSenhaRequest(string NovaSenha);
+
 
     [Authorize(Roles = "Suporte")]
     [HttpGet]

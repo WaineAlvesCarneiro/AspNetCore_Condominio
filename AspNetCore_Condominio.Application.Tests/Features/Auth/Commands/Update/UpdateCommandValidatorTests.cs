@@ -13,9 +13,9 @@ public class UpdateCommandValidatorTests
         Id = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"),
         EmpresaId = 1,
         UserName = "Admin",
-        PasswordHash = "12345",
+        Email = "email@gmail.com",
         Role = (TipoRole)1,
-        DataInclusao = DateTime.UtcNow
+        DataInclusao = DateTime.Now
     };
 
     [Fact]
