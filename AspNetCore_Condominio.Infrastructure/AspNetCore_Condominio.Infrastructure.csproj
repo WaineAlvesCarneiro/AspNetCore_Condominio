@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Scrips_SQL_Server\scripts\**" />
+    <EmbeddedResource Remove="Scrips_SQL_Server\scripts\**" />
+    <None Remove="Scrips_SQL_Server\scripts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	<PackageReference Include="MailKit" Version="4.14.1" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.19" />
 	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />

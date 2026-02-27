@@ -11,7 +11,7 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
 
     public async Task<IEnumerable<Imovel>> GetAllAsync(long? empresaId = null)
     {
-        var query = _context.Imovels.AsNoTracking();
+        var query = _context.Imoveis.AsNoTracking();
         if (empresaId.HasValue && empresaId.Value != 0)
             query = query.Where(u => u.EmpresaId == empresaId.Value);
         return await query.ToListAsync();
@@ -21,7 +21,7 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
         int page, int pageSize, string? orderBy, string? direction,
         long? empresaId, string? bloco, string? apartamento)
     {
-        var query = _context.Imovels.AsQueryable();
+        var query = _context.Imoveis.AsQueryable();
 
         if (empresaId.HasValue && empresaId != 0)
             query = query.Where(u => u.EmpresaId == empresaId.Value);
@@ -64,7 +64,7 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
 
     public async Task<Imovel?> GetByIdAsync(long id)
     {
-        return await _context.Imovels
+        return await _context.Imoveis
             .AsNoTracking()
             .FirstOrDefaultAsync(i => i.Id == id);
     }
@@ -89,6 +89,6 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
 
     public async Task<bool> ExisteImovelVinculadoNaEmpresaAsync(long userEmpresaId)
     {
-        return await _context.Imovels.AnyAsync(m => m.EmpresaId == userEmpresaId);
+        return await _context.Imoveis.AnyAsync(m => m.EmpresaId == userEmpresaId);
     }
 }

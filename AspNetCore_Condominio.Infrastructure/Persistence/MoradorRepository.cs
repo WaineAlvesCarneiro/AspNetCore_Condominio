@@ -11,7 +11,7 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
 
     public async Task<IEnumerable<Morador>> GetAllAsync(long? empresaId = null)
     {
-        var query = _context.Moradors
+        var query = _context.Moradores
             .Include(m => m.Imovel)
             .Include(m => m.Empresa)
             .AsQueryable();
@@ -26,7 +26,7 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
         int page, int pageSize, string? orderBy, string? direction,
         long? empresaId, string? nome)
     {
-        var query = _context.Moradors
+        var query = _context.Moradores
             .Include(m => m.Imovel)
             .Include(m => m.Empresa)
             .AsQueryable();
@@ -69,7 +69,7 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
 
     public async Task<Morador?> GetByIdAsync(long id)
     {
-        return await _context.Moradors
+        return await _context.Moradores
             .Include(m => m.Imovel)
             .Include(m => m.Empresa)
             .AsNoTracking()
@@ -96,6 +96,6 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
 
     public async Task<bool> ExisteMoradorVinculadoNoImovelAsync(long imovelId)
     {
-        return await _context.Moradors.AnyAsync(m => m.ImovelId == imovelId);
+        return await _context.Moradores.AnyAsync(m => m.ImovelId == imovelId);
     }
 }

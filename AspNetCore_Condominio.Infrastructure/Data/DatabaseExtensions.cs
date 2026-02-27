@@ -11,6 +11,27 @@ namespace AspNetCore_Condominio.Infrastructure.Data;
 
 public static class DatabaseExtensions
 {
+    public class AdminSettings
+    {
+        public string UserName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    private static AdminSettings? adminSettings;
+
+    private static AuthUser AdminUser = new()
+    {
+        EmpresaId = 0,
+        Ativo = TipoUserAtivo.Ativo,
+        EmpresaAtiva = TipoEmpresaAtivo.Ativo,
+        UserName = adminSettings?.UserName!,
+        Email = adminSettings?.Email!,
+        PasswordHash = PasswordHasher.HashPassword(adminSettings?.Password!),
+        Role = TipoRole.Suporte,
+        DataInclusao = DateTime.Now
+    };
+
     public static async Task MigrateAndSeedDatabaseAsync(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
@@ -24,21 +45,8 @@ public static class DatabaseExtensions
             if (!context.AuthUsers.Any())
             {
                 var config = services.GetRequiredService<IConfiguration>();
-                var adminSettings = config.GetSection("AdminSettings").Get<AdminSettings>();
-
-                var adminUser = new AuthUser
-                {
-                    EmpresaId = 0,
-                    Ativo = TipoUserAtivo.Ativo,
-                    EmpresaAtiva = TipoEmpresaAtivo.Ativo,
-                    UserName = adminSettings?.UserName!,
-                    Email = adminSettings?.Email!,
-                    PasswordHash = PasswordHasher.HashPassword(adminSettings?.Password!),
-                    Role = TipoRole.Suporte,
-                    DataInclusao = DateTime.Now
-                };
-
-                context.AuthUsers.Add(adminUser);
+                adminSettings = config.GetSection("AdminSettings").Get<AdminSettings>();
+                context.AuthUsers.Add(AdminUser);
                 await context.SaveChangesAsync();
             }
         }
@@ -47,12 +55,5 @@ public static class DatabaseExtensions
             var logger = services.GetRequiredService<ILogger<string>>();
             logger.LogError(ex, "Ocorreu um erro ao popular o banco de dados com usuário Admin.");
         }
-    }
-
-    public class AdminSettings
-    {
-        public string UserName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
     }
 }

@@ -67,7 +67,7 @@ namespace AspNetCore_Condominio.Integration.Tests.Commons
                     EmpresaId = empresaId
                 };
 
-                db.Imovels.Add(dado);
+                db.Imoveis.Add(dado);
                 await db.SaveChangesAsync();
                 return dado;
             }

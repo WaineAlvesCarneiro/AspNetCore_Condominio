@@ -9,8 +9,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<AuthUser> AuthUsers { get; set; }
     public DbSet<Empresa> Empresas { get; set; }
-    public DbSet<Imovel> Imovels { get; set; }
-    public DbSet<Morador> Moradors { get; set; }
+    public DbSet<Imovel> Imoveis { get; set; }
+    public DbSet<Morador> Moradores { get; set; }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
