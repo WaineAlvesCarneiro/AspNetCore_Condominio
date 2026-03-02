@@ -13,7 +13,6 @@ public class TokenService(IConfiguration configuration)
 
     public string GenerateToken(string username, TipoRole role, long? empresaId, bool primeiroAcesso, TipoUserAtivo userAtivo, TipoEmpresaAtivo empresaAtiva)
     {
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
         var claims = GerarClaims(username, role, primeiroAcesso, userAtivo, empresaAtiva);
 
         if (empresaId.HasValue) claims.Add(new Claim("empresaId", empresaId.Value.ToString()));
