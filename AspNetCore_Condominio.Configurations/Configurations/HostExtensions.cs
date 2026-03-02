@@ -7,11 +7,16 @@ public static class HostExtensions
 {
     public static IHostBuilder AddAppLogging(this IHostBuilder hostBuilder)
     {
-        return hostBuilder.ConfigureLogging(logging =>
+        return hostBuilder.ConfigureLogging((context, logging) =>
         {
             logging.ClearProviders();
             logging.AddConsole();
-            logging.SetMinimumLevel(LogLevel.Debug);
+
+            if (context.HostingEnvironment.IsDevelopment())
+                logging.SetMinimumLevel(LogLevel.Debug);
+            
+            if (context.HostingEnvironment.IsProduction())
+                logging.SetMinimumLevel(LogLevel.Information);
         });
     }
 }
