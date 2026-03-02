@@ -93,7 +93,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = "Id",
-        [FromQuery] string? sortDescending = "ASC",
+        [FromQuery] string? direction = "ASC",
         [FromQuery] long? empresaId = null,
         [FromQuery] string? userName = null)
     {
@@ -101,7 +101,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
             Page: page,
             PageSize: pageSize,
             SortBy: sortBy ?? "Id",
-            SortDescending: sortDescending ?? "ASC",
+            Direction: direction ?? "ASC",
             EmpresaId: empresaId,
             UserName: userName);
 

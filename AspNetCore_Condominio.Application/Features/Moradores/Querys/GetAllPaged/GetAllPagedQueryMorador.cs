@@ -8,7 +8,7 @@ public record GetAllPagedQueryMorador(
     int Page = 1,
     int PageSize = 10,
     string? SortBy = "Id",
-    string SortDescending = "ASC",
+    string Direction = "ASC",
     long? EmpresaId = null,
     string? Nome = null)
         : IRequest<Result<PagedResult<MoradorDto>>>
@@ -16,5 +16,5 @@ public record GetAllPagedQueryMorador(
     public int ActualPage => Page < 1 ? 1 : Page;
     public int ActualPageSize => PageSize < 1 ? 10 : PageSize;
     public string ActualSortBy => !string.IsNullOrWhiteSpace(SortBy) ? SortBy : "Id";
-    public string ActualDirection => SortDescending;
+    public string ActualDirection => Direction;
 }

@@ -8,7 +8,7 @@ public record GetAllPagedQueryImovel(
     int Page = 1,
     int PageSize = 10,
     string? SortBy = "Id",
-    string SortDescending = "ASC",
+    string Direction = "ASC",
     long? EmpresaId = null,
     string? Bloco = null,
     string? Apartamento = null)
@@ -17,5 +17,5 @@ public record GetAllPagedQueryImovel(
     public int ActualPage => Page < 1 ? 1 : Page;
     public int ActualPageSize => PageSize < 1 ? 10 : PageSize;
     public string ActualSortBy => !string.IsNullOrWhiteSpace(SortBy) ? SortBy : "Id";
-    public string ActualDirection => SortDescending;
+    public string ActualDirection => Direction;
 }

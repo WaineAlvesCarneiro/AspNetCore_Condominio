@@ -34,7 +34,7 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = "Id",
-        [FromQuery] string? sortDescending = "ASC",
+        [FromQuery] string? direction = "ASC",
         [FromQuery] string? razaoSocial = null,
         [FromQuery] string? cnpj = null)
     {
@@ -42,7 +42,7 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
             Page: page,
             PageSize: pageSize,
             SortBy: sortBy ?? "Id",
-            SortDescending: sortDescending ?? "ASC",
+            Direction: direction ?? "ASC",
             RazaoSocial: razaoSocial,
             Cnpj: cnpj);
 

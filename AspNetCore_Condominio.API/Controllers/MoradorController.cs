@@ -34,7 +34,7 @@ public class MoradorController(IMediator mediator) : ApiBaseController
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = "Id",
-        [FromQuery] string? sortDescending = "ASC",
+        [FromQuery] string? direction = "ASC",
         [FromQuery] long? empresaId = null,
         [FromQuery] string? nome = null)
     {
@@ -42,7 +42,7 @@ public class MoradorController(IMediator mediator) : ApiBaseController
             Page: page,
             PageSize: pageSize,
             SortBy: sortBy ?? "Id",
-            SortDescending: sortDescending ?? "ASC",
+            Direction: direction ?? "ASC",
             EmpresaId: empresaId,
             Nome: nome);
 
