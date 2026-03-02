@@ -1,11 +1,9 @@
 ﻿using AspNetCore_Condominio.Application.Behaviors;
 using AspNetCore_Condominio.Application.Features.Auth;
 using AspNetCore_Condominio.Application.Features.Auth.Commands.Create;
-using AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
-using AspNetCore_Condominio.Application.Features.Imoveis.Commands.Create;
-using AspNetCore_Condominio.Application.Features.Moradores.Commands.Create;
 using AspNetCore_Condominio.Configurations.Converters;
 using AspNetCore_Condominio.Configurations.ServicesJWT;
+using AspNetCore_Condominio.Domain.Constants;
 using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
@@ -21,6 +19,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -31,40 +30,57 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddAppServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services
+            .AddDatabase(configuration)
+            .AddJsonConfigs()
+            .AddMediatRAndValidators()
+            .AddRepositories()
+            .AddInfrastructureServices()
+            .AddSecurity(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
+    {
         services.AddDbContext<ApplicationDbContext>(opt =>
             opt.UseSqlServer(configuration.GetConnectionString("ApplicationDbContext")
-                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.")));
+                ?? throw new InvalidOperationException("Connection string 'ApplicationDbContext' not found.")));
+        return services;
+    }
 
+    private static IServiceCollection AddJsonConfigs(this IServiceCollection services)
+    {
         services.Configure<JsonSerializerOptions>(options =>
         {
             options.Converters.Add(new JsonDateOnlyConverter());
             options.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         });
+        return services;
+    }
 
-        services.AddMediatR(cfg =>
-        {
-            cfg.RegisterServicesFromAssembly(typeof(AuthLoginQuery).Assembly);
-        });
-
+    private static IServiceCollection AddMediatRAndValidators(this IServiceCollection services)
+    {
+        services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AuthLoginQuery).Assembly));
         services.AddValidatorsFromAssembly(typeof(CreateCommandValidatorAuthUser).Assembly);
-        services.AddValidatorsFromAssembly(typeof(CreateCommandValidatorEmpresa).Assembly);
-        services.AddValidatorsFromAssembly(typeof(CreateCommandValidatorImovel).Assembly);
-        services.AddValidatorsFromAssembly(typeof(CreateCommandValidatorMorador).Assembly);
 
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        return services;
+    }
 
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
         services.AddScoped<IAuthUserRepository, AuthUserRepository>();
-
-        // Registrar o serviço de envio (Produtor)
-        services.AddScoped<IMensageriaService, RabbitMQService>();
-
-        // Registrar o Worker que roda em background (Consumidor)
-        services.AddHostedService<EmailConsumerWorker>();
-
         services.AddScoped<IEmpresaRepository, EmpresaRepository>();
         services.AddScoped<IImovelRepository, ImovelRepository>();
         services.AddScoped<IMoradorRepository, MoradorRepository>();
+        return services;
+    }
 
+    private static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    {
+        services.AddScoped<IMensageriaService, RabbitMQService>();
+        services.AddHostedService<EmailConsumerWorker>();
         services.AddSingleton<TokenService>();
 
         services.AddCors(options =>
@@ -74,9 +90,21 @@ public static class ServiceExtensions
                       .AllowAnyMethod()
                       .AllowAnyHeader());
         });
+        return services;
+    }
 
+    private static IServiceCollection AddSecurity(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddJwtAuthentication(configuration);
+        services.AddAppAuthorization();
+
+        return services;
+    }
+
+    private static void AddJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
         var key = Encoding.ASCII.GetBytes(configuration["Jwt:Key"]
-                        ?? throw new InvalidOperationException("JWT Key não está configurada"));
+            ?? throw new InvalidOperationException("JWT Key não está configurada"));
 
         services.AddAuthentication(options =>
         {
@@ -92,33 +120,36 @@ public static class ServiceExtensions
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(key),
                 ValidateIssuer = true,
-                ValidateAudience = true,
                 ValidIssuer = configuration["Jwt:Issuer"],
-                ValidAudience = configuration["Jwt:Audience"]
+                ValidateAudience = true,
+                ValidAudience = configuration["Jwt:Audience"],
+                ClockSkew = TimeSpan.Zero
             };
         });
+    }
 
+    private static void AddAppAuthorization(this IServiceCollection services)
+    {
         services.AddAuthorization(options =>
         {
+            string[] rolesPermitidas = ["Suporte", "Sindico", "Porteiro"];
+
             options.AddPolicy("AdminPolicy", policy =>
             {
-                policy.RequireRole("Suporte", "Sindico", "Porteiro");
-                policy.RequireClaim("primeiroAcesso", "false");
-                policy.RequireClaim("statusAtivo", "Ativo");
-                policy.RequireClaim("empresaAtiva", "Ativo");
+                policy.RequireRole(rolesPermitidas);
+                policy.RequireClaim(AuthClaims.PrimeiroAcesso, AuthClaims.FalseValue);
+                policy.RequireClaim(AuthClaims.StatusAtivo, AuthClaims.StatusAtivoValue);
+                policy.RequireClaim(AuthClaims.EmpresaAtiva, AuthClaims.StatusAtivoValue);
             });
 
             options.AddPolicy("PermitirTrocaSenha", policy =>
             {
-                policy.RequireAuthenticatedUser();
-                policy.RequireRole("Suporte", "Sindico", "Porteiro");
-                policy.RequireClaim("primeiroAcesso", "true");
-                policy.RequireClaim("statusAtivo", "Ativo");
-                policy.RequireClaim("empresaAtiva", "Ativo");
+                policy.RequireRole(rolesPermitidas);
+                policy.RequireClaim(AuthClaims.PrimeiroAcesso, AuthClaims.TrueValue);
+                policy.RequireClaim(AuthClaims.StatusAtivo, AuthClaims.StatusAtivoValue);
+                policy.RequireClaim(AuthClaims.EmpresaAtiva, AuthClaims.StatusAtivoValue);
             });
         });
-
-        return services;
     }
 
     public static IServiceCollection AddSwaggerAndSecurity(this IServiceCollection services, string title, string description)
@@ -130,43 +161,40 @@ public static class ServiceExtensions
             {
                 Title = title,
                 Version = "v1",
-                Description = description,
-                Contact = new OpenApiContact
-                {
-                    Name = "Waine Alves Carneiro",
-                    Email = "carneirowaine@gmail.com",
-                    Url = new Uri("https://github.com/WaineAlvesCarneiro?tab=repositories")
-                }
+                Description = $"{description} Waine Alves Carneiro 🔗 [Acesse meu GitHub](https://github.com/WaineAlvesCarneiro)"
             });
 
-            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-            var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
-            if (File.Exists(xmlPath))
-            {
-                opt.IncludeXmlComments(xmlPath);
-            }
+            var xmlPath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+            if (File.Exists(xmlPath)) opt.IncludeXmlComments(xmlPath);
 
-            opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                In = ParameterLocation.Header,
-                Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
-                BearerFormat = "JWT",
-                Description = "Insira o token JWT no formato: Bearer {seu token}"
-            });
-
-            opt.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme {
-                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-                    },
-                    new string[] {}
-                }
-            });
+            ConfigurarSegurancaSwagger(opt);
         });
 
         return services;
+    }
+
+    private static void ConfigurarSegurancaSwagger(SwaggerGenOptions opt)
+    {
+        var securityScheme = new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Description = "Insira o token JWT desta forma: Bearer {seu_token}",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Reference = new OpenApiReference
+            {
+                Id = "Bearer",
+                Type = ReferenceType.SecurityScheme
+            }
+        };
+
+        opt.AddSecurityDefinition("Bearer", securityScheme);
+
+        opt.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            { securityScheme, Array.Empty<string>() }
+        });
     }
 }

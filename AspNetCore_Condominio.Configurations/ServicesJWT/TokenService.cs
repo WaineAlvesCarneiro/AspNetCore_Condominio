@@ -1,4 +1,5 @@
-﻿using AspNetCore_Condominio.Domain.Enums;
+﻿using AspNetCore_Condominio.Domain.Constants;
+using AspNetCore_Condominio.Domain.Enums;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -28,25 +29,27 @@ public class TokenService(IConfiguration configuration)
     {
         return
         [
-            new(ClaimTypes.Name, username),
-            new(ClaimTypes.Role, role.ToString()),
-            new("primeiroAcesso", primeiroAcesso.ToString().ToLower()),
-            new("statusAtivo", userAtivo.ToString()),
-            new("empresaAtiva", empresaAtiva.ToString())
+        new(ClaimTypes.Name, username),
+        new(ClaimTypes.Role, role.ToString()),
+        new(AuthClaims.PrimeiroAcesso, primeiroAcesso.ToString().ToLower()),
+        new(AuthClaims.StatusAtivo, userAtivo.ToString()),
+        new(AuthClaims.EmpresaAtiva, empresaAtiva.ToString())
         ];
     }
 
     private static SecurityTokenDescriptor GerarTokenDescriptor(IConfiguration _configuration, List<Claim> claims)
     {
+        var expireMinutes = double.TryParse(_configuration["Jwt:ExpireMinutes"], out var res) && res > 0 ? res : 15;
+
         return new SecurityTokenDescriptor
         {
             NotBefore = DateTime.UtcNow,
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(15),
+            Expires = DateTime.UtcNow.AddMinutes(expireMinutes),
             Audience = _configuration["Jwt:Audience"],
             Issuer = _configuration["Jwt:Issuer"],
             SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!)),
+                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!)),
                     SecurityAlgorithms.HmacSha256Signature)
         };
     }
