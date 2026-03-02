@@ -9,22 +9,24 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<AuthUser> GetByUsernameAsync(string username)
+    public async Task<AuthUser?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
     {
-        return await _context.AuthUsers
-                    .FirstOrDefaultAsync(u => u.UserName == username);
+        return await _context.AuthUsers.FirstOrDefaultAsync(u => u.UserName == username, cancellationToken);
     }
 
-    public async Task<IEnumerable<AuthUser>> GetAllAsync(long? empresaId = null)
+    public async Task<IEnumerable<AuthUser>> GetAllAsync(long? empresaId = null, CancellationToken cancellationToken = default)
     {
         var query = _context.AuthUsers.AsNoTracking();
+
         if (empresaId.HasValue && empresaId.Value != 0)
             query = query.Where(u => u.EmpresaId == empresaId.Value);
-        return await query.ToListAsync();
+
+        return await query.ToListAsync(cancellationToken);
     }
 
-    public async Task<(IEnumerable<AuthUser> Items, int TotalCount)> GetAllPagedAsync(int page, int pageSize, string? orderBy, string? direction,
-        long? empresaId, string? userName)
+    public async Task<(IEnumerable<AuthUser> Items, int TotalCount)> GetAllPagedAsync(
+        int page, int pageSize, string? orderBy, string? direction,
+        long? empresaId, string? userName, CancellationToken cancellationToken = default)
     {
         var query = _context.AuthUsers.AsQueryable();
 
@@ -36,17 +38,16 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
 
         query = ApplyOrdering(query, orderBy!, direction!);
 
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return (items, totalCount);
     }
-
 
     private IQueryable<AuthUser> ApplyOrdering(IQueryable<AuthUser> query, string orderBy, string direction)
     {
@@ -63,38 +64,39 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
         };
     }
 
-    public async Task<AuthUser?> GetByIdAsync(Guid id)
+    public async Task<AuthUser?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _context.Set<AuthUser>().FirstOrDefaultAsync(i => i.Id == id);
+        return await _context.Set<AuthUser>().AsNoTracking().FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
-    public async Task CreateAsync(AuthUser AuthUser)
+    public async Task CreateAsync(AuthUser authUser, CancellationToken cancellationToken = default)
     {
-        await _context.Set<AuthUser>().AddAsync(AuthUser);
-        await _context.SaveChangesAsync();
+        await _context.Set<AuthUser>().AddAsync(authUser, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(AuthUser AuthUser)
+    public async Task UpdateAsync(AuthUser authUser, CancellationToken cancellationToken = default)
     {
-        _context.Set<AuthUser>().Update(AuthUser);
-        await _context.SaveChangesAsync();
+        _context.Set<AuthUser>().Update(authUser);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(AuthUser AuthUser)
+    public async Task DeleteAsync(AuthUser authUser, CancellationToken cancellationToken = default)
     {
-        _context.Set<AuthUser>().Remove(AuthUser);
-        await _context.SaveChangesAsync();
+        _context.Set<AuthUser>().Remove(authUser);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<AuthUser>> GetByEmpresaIdAsync(long empresaId)
+    public async Task<IEnumerable<AuthUser>> GetByEmpresaIdAsync(long empresaId, CancellationToken cancellationToken = default)
     {
         return await _context.Set<AuthUser>()
             .Where(x => x.EmpresaId == empresaId)
-            .ToListAsync();
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task<bool> ExisteUsuarioVinculadoNaEmpresaAsync(long id)
+    public async Task<bool> ExisteUsuarioVinculadoNaEmpresaAsync(long id, CancellationToken cancellationToken = default)
     {
-        return await _context.AuthUsers.AnyAsync(m => m.EmpresaId == id);
+        return await _context.AuthUsers.AsNoTracking().AnyAsync(m => m.EmpresaId == id, cancellationToken);
     }
 }

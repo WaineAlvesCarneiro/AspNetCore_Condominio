@@ -19,7 +19,7 @@ public class CreateCommandHandlerImovel(IImovelRepository repository)
             EmpresaId = request.EmpresaId
         };
 
-        await repository.CreateAsync(dado);
+        await repository.CreateAsync(dado, cancellationToken);
 
         var dto = new ImovelDto
         {

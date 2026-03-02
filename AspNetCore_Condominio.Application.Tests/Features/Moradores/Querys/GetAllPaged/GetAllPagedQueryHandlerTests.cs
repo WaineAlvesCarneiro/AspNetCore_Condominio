@@ -21,7 +21,7 @@ public class GetAllPagedQueryHandlerTests
         {
             Id = 11, Nome = "Morador 11", Celular = "85991234567", Email = "m11@cond.com", IsProprietario = true,
             DataEntrada = DateOnly.FromDateTime(new DateTime(2023, 11, 1)), DataInclusao = new DateTime(2023, 11, 1),
-            ImovelId = 5, EmpresaId = 1, Imovel = new Imovel { Id = 5, Bloco = "C", Apartamento = "301", BoxGaragem = "134", EmpresaId = UserEmpresaId}
+            ImovelId = 5, EmpresaId = UserEmpresaId, Imovel = new Imovel { Id = 5, Bloco = "C", Apartamento = "301", BoxGaragem = "134", EmpresaId = UserEmpresaId}
         },
         new Morador
         {
@@ -33,7 +33,7 @@ public class GetAllPagedQueryHandlerTests
     private const int Page = 1;
     private const int PageSize = 10;
     private const string? SortBy = "Id";
-    private const string? SortDescending = "ASC";
+    private const string? Direction = "ASC";
 
     private const int TOTAL_REGISTROS = 2;
 
@@ -53,16 +53,18 @@ public class GetAllPagedQueryHandlerTests
             Page: Page,
             PageSize: PageSize,
             SortBy: SortBy,
-            SortDescending: SortDescending!,
-            EmpresaId: 1
+            Direction: Direction!,
+            EmpresaId: UserEmpresaId
         );
 
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
             Page,
             PageSize,
             SortBy,
-            SortDescending,
-            UserEmpresaId))
+            Direction,
+            UserEmpresaId,
+            It.IsAny<string?>(),
+            It.IsAny<CancellationToken>()))
             .ReturnsAsync((_pagina1, TOTAL_REGISTROS));
 
         // Act
@@ -85,8 +87,11 @@ public class GetAllPagedQueryHandlerTests
             Page,
             PageSize,
             SortBy,
-            SortDescending,
-            UserEmpresaId), Times.Once);
+            Direction,
+            UserEmpresaId,
+            It.IsAny<string?>(),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
 
         var primeiroDto = pagedResult.Items.First();
 
@@ -102,7 +107,7 @@ public class GetAllPagedQueryHandlerTests
         const int totalZero = 0;
         var query = new GetAllPagedQueryMorador();
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
-            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>()))
+            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((new List<Morador>(), totalZero));
         var resultado = await _handler.Handle(query, CancellationToken.None);
 

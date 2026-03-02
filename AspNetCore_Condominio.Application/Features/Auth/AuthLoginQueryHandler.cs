@@ -11,7 +11,7 @@ public class AuthLoginQueryHandler(IAuthUserRepository authUserRepository) : IRe
 
     public async Task<AuthUser> Handle(AuthLoginQuery request, CancellationToken cancellationToken)
     {
-        var user = await _authUserRepository.GetByUsernameAsync(request.Username);
+        var user = await _authUserRepository.GetByUsernameAsync(request.Username, cancellationToken);
 
         if (user == null || !PasswordHasher.VerifyPassword(request.Password, user.PasswordHash))
             return null!;

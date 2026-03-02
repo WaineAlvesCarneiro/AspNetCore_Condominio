@@ -1,6 +1,7 @@
 ﻿using AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Enums;
+using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories;
 using Moq;
 
@@ -9,15 +10,25 @@ namespace AspNetCore_Condominio.Application.Tests.Features.Empresas.Commands.Cre
 public class CreateCommandHandlerTests
 {
     private readonly Mock<IEmpresaRepository> _repoMock;
+    private readonly Mock<IMensageriaService> _mensageriaMock;
     private readonly CreateCommandHandlerEmpresa _handler;
 
     public CreateCommandHandlerTests()
     {
         _repoMock = new Mock<IEmpresaRepository>();
-        _handler = new CreateCommandHandlerEmpresa(_repoMock.Object);
-        _repoMock.Setup(repo => repo.CreateAsync(It.IsAny<Empresa>()))
-            .Callback<Empresa>(empresa => empresa.Id = 101)
+        _mensageriaMock = new Mock<IMensageriaService>();
+
+        _handler = new CreateCommandHandlerEmpresa(_repoMock.Object, _mensageriaMock.Object);
+
+        _repoMock.Setup(repo => repo.CreateAsync(It.IsAny<Empresa>(), It.IsAny<CancellationToken>()))
+            .Callback<Empresa, CancellationToken>((empresa, token)=> empresa.Id = 101)
             .Returns(Task.CompletedTask);
+
+        _mensageriaMock.Setup(x => x.EnviarEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>()))
+            .Returns(Task.CompletedTask);
+
+        _repoMock.Setup(repo => repo.ExisteCnpjAsync(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
     }
 
     [Fact]
@@ -34,7 +45,7 @@ public class CreateCommandHandlerTests
             Nome = "Responsável Atualizado",
             Celular = "(11) 99999-9999",
             Telefone = "(11) 3333-3333",
-            Email = "email@gmail.com",
+            Email = "enviaemailwebapi@gmail.com",
             Senha = "SenhaForte123!",
             Host = "smtp.exemplo.com",
             Porta = 587,
@@ -47,8 +58,12 @@ public class CreateCommandHandlerTests
             DataInclusao = DateTime.Now
         };
 
+        string corpoEmail = $@"
+            <h3>Bem-vindo ao Sistema de Condomínio!</h3>
+            <p>Seu condomínio foi cadastrado com sucesso.</p>";
+
         // Act
-        Domain.Common.Result<DTOs.EmpresaDto> resultado = await _handler.Handle(command, CancellationToken.None);
+        var resultado = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         Assert.True(resultado.Sucesso);
@@ -56,10 +71,11 @@ public class CreateCommandHandlerTests
         Assert.Equal(idGerado, resultado.Dados.Id);
         Assert.Equal(command.RazaoSocial, resultado.Dados.RazaoSocial);
 
+        // Verificação do Repositório (Corrigido com o CancellationToken)
         _repoMock.Verify(repo => repo.CreateAsync(
-            It.Is<Empresa>(
-                i => i.RazaoSocial == command.RazaoSocial && i.Cnpj == command.Cnpj
-            )),
+            It.Is<Empresa>(i => i.RazaoSocial == command.RazaoSocial && i.Cnpj == command.Cnpj),
+            It.IsAny<CancellationToken>()
+            ),
             Times.Once
         );
     }

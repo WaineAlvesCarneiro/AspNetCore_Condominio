@@ -22,7 +22,8 @@ public record GetAllPagedQueryHandlerImovel(IImovelRepository repository)
             direction: request.ActualDirection,
             empresaId: request.EmpresaId,
             bloco: request.Bloco,
-            apartamento: request.Apartamento);
+            apartamento: request.Apartamento,
+            cancellationToken);
 
         var dtos = items.Select(dado => new ImovelDto
         {

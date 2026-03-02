@@ -22,10 +22,10 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
 {
     [HttpPost("login")]
     [AllowAnonymous]
-    public async Task<IActionResult> LoginAsync([FromBody] AuthLoginRequest request)
+    public async Task<IActionResult> LoginAsync([FromBody] AuthLoginRequest request, CancellationToken cancellationToken)
     {
         var query = new AuthLoginQuery { Username = request.Username, Password = request.Password };
-        var user = await mediator.Send(query);
+        var user = await mediator.Send(query, cancellationToken);
 
         if (user == null)
             return Unauthorized();
@@ -50,7 +50,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
 
     [Authorize(Policy = "PermitirTrocaSenha")]
     [HttpPost("definir-senha-permanente")]
-    public async Task<IActionResult> DefinirSenha([FromBody] DefinirSenhaRequest request)
+    public async Task<IActionResult> DefinirSenha([FromBody] DefinirSenhaRequest request, CancellationToken cancellationToken)
     {
         var username = User.Identity?.Name;
 
@@ -63,7 +63,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
             NovaSenha = request.NovaSenha
         };
 
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados, mensagem = result.Mensagem })
@@ -75,11 +75,11 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
     [Authorize(Policy = "AdminPolicy")]
     [Authorize(Roles = "Suporte, Sindico")]
     [HttpGet]
-    public async Task<IActionResult> Get(
+    public async Task<IActionResult> Get(CancellationToken cancellationToken,
         [FromQuery] long? empresaId = null)
     {
         var result = await mediator.Send(new GetAllQueryAuthUser(
-             EmpresaId: Convert.ToInt64(empresaId)));
+             EmpresaId: Convert.ToInt64(empresaId)), cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -89,7 +89,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
     [Authorize(Policy = "AdminPolicy")]
     [Authorize(Roles = "Suporte, Sindico")]
     [HttpGet("paginado")]
-    public async Task<IActionResult> GetAllPagedAsync(
+    public async Task<IActionResult> GetAllPagedAsync(CancellationToken cancellationToken,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = "Id",
@@ -105,7 +105,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
             EmpresaId: empresaId,
             UserName: userName);
 
-        var result = await mediator.Send(query);
+        var result = await mediator.Send(query, cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -115,9 +115,9 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
     [Authorize(Policy = "AdminPolicy")]
     [Authorize(Roles = "Suporte, Sindico")]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetByIdQueryAuthUser(id));
+        var result = await mediator.Send(new GetByIdQueryAuthUser(id), cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -127,9 +127,9 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
     [Authorize(Policy = "AdminPolicy")]
     [Authorize(Roles = "Suporte")]
     [HttpPost("criar-usuario")]
-    public async Task<IActionResult> Post([FromBody] CreateCommandAuthUser command)
+    public async Task<IActionResult> Post([FromBody] CreateCommandAuthUser command, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
 
         if (!result.Sucesso)
             return BadRequest(new { sucesso = false, erro = result.Mensagem });
@@ -144,7 +144,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
     [Authorize(Policy = "AdminPolicy")]
     [Authorize(Roles = "Suporte, Sindico")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(Guid id, [FromBody] UpdateCommandAuthUser command)
+    public async Task<IActionResult> Put(Guid id, [FromBody] UpdateCommandAuthUser command, CancellationToken cancellationToken)
     {
         if (id != command.Id)
             return BadRequest("O ID da URL não corresponde ao ID do corpo da requisição.");
@@ -152,7 +152,7 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
         if (!User.IsSuporte())
             command.Role = null;
 
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
 
         return result.Sucesso
             ? NoContent()
@@ -162,9 +162,9 @@ public class AuthController(IMediator mediator, TokenService tokenService) : Con
     [Authorize(Policy = "AdminPolicy")]
     [Authorize(Roles = "Suporte")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new DeleteCommandAuthUser(id));
+        var result = await mediator.Send(new DeleteCommandAuthUser(id), cancellationToken);
 
         return result.Sucesso
             ? NoContent()

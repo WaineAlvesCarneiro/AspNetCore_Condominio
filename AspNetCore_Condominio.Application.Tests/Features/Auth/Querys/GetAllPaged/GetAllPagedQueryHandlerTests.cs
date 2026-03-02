@@ -18,19 +18,19 @@ public class GetAllPagedQueryHandlerTests
         new AuthUser {
             Id = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"),
             EmpresaId = 1,
-            UserName = "Admin",
+            UserName = "Sindico",
             Email = "email@gmail.com",
             PasswordHash = "12345",
-            Role = (TipoRole)1,
+            Role = (TipoRole)2,
             DataInclusao = DateTime.Now
         },
         new AuthUser {
             Id = Guid.Parse("FFFFF7AB-F0FD-F011-8550-A5241967915B"),
             EmpresaId = 1,
-            UserName = "Sindico",
+            UserName = "Porteiro",
             Email = "email@gmail.com",
             PasswordHash = "12345",
-            Role = (TipoRole)2,
+            Role = (TipoRole)3,
             DataInclusao = DateTime.Now
         },
     ];
@@ -38,8 +38,9 @@ public class GetAllPagedQueryHandlerTests
     private const int Page = 1;
     private const int PageSize = 10;
     private const string? SortBy = "Id";
-    private const string? SortDescending = "ASC";
-    private long? EmpresaId = null;
+    private const string? Direction = "ASC";
+    private long? EmpresaId = 1;
+    private string? User = "Sindico";
 
     private const int TOTAL_REGISTROS = 2;
 
@@ -53,20 +54,24 @@ public class GetAllPagedQueryHandlerTests
     public async Task Handle_DeveRetornarPagedResultComDadosCorretos()
     {
         // Arrange
-        string expectedFirstUserName = "Admin";
+        string expectedFirstUserName = "Sindico";
         GetAllPagedQueryAuthUser query = new(
             Page: Page,
             PageSize: PageSize,
             SortBy: SortBy,
-            SortDescending: SortDescending!
+            Direction: Direction!,
+            EmpresaId: 1,
+            UserName: expectedFirstUserName
         );
 
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
             Page,
             PageSize,
             SortBy,
-            SortDescending,
-            EmpresaId))
+            Direction,
+            EmpresaId,
+            User,
+            It.IsAny<CancellationToken>()))
             .ReturnsAsync((_pagina1, TOTAL_REGISTROS));
 
         // Act
@@ -89,8 +94,11 @@ public class GetAllPagedQueryHandlerTests
             Page,
             PageSize,
             SortBy,
-            SortDescending,
-            EmpresaId), Times.Once);
+            Direction,
+            EmpresaId,
+            User,
+            It.IsAny<CancellationToken>()
+            ), Times.Once);
     }
 
     [Fact]
@@ -99,7 +107,7 @@ public class GetAllPagedQueryHandlerTests
         const int totalZero = 0;
         GetAllPagedQueryAuthUser query = new();
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
-            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>()))
+            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((new List<AuthUser>(), totalZero));
         Result<PagedResult<AuthUserDto>> resultado = await _handler.Handle(query, CancellationToken.None);
 

@@ -10,7 +10,7 @@ public class GetByIdQueryHandlerEmpresa(IEmpresaRepository repository)
 {
     public async Task<Result<EmpresaDto>> Handle(GetByIdQueryEmpresa request, CancellationToken cancellationToken)
     {
-        var dado = await repository.GetByIdAsync(request.Id);
+        var dado = await repository.GetByIdAsync(request.Id, cancellationToken);
         if (dado is null)
             return Result<EmpresaDto>.Failure("Empresa não encontrada.");
 

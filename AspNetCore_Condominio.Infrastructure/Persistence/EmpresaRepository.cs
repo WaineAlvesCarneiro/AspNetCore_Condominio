@@ -9,17 +9,19 @@ public class EmpresaRepository(ApplicationDbContext context) : IEmpresaRepositor
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<IEnumerable<Empresa>> GetAllAsync(long? empresaId = null)
+    public async Task<IEnumerable<Empresa>> GetAllAsync(long? empresaId = null, CancellationToken cancellationToken = default)
     {
         var query = _context.Empresas.AsNoTracking();
+
         if (empresaId.HasValue && empresaId.Value != 0)
             query = query.Where(u => u.Id == empresaId.Value);
-        return await query.ToListAsync();
+
+        return await query.ToListAsync(cancellationToken);
     }
 
     public async Task<(IEnumerable<Empresa> Items, int TotalCount)> GetAllPagedAsync(
         int page, int pageSize, string? orderBy, string? direction,
-       string? razaoSocial, string? cnpj)
+       string? razaoSocial, string? cnpj, CancellationToken cancellationToken = default)
     {
         var query = _context.Empresas.AsQueryable();
 
@@ -31,13 +33,13 @@ public class EmpresaRepository(ApplicationDbContext context) : IEmpresaRepositor
 
         query = ApplyOrdering(query, orderBy!, direction!);
 
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return (items, totalCount);
     }
@@ -58,30 +60,30 @@ public class EmpresaRepository(ApplicationDbContext context) : IEmpresaRepositor
         };
     }
 
-    public async Task<Empresa?> GetByIdAsync(long id)
+    public async Task<Empresa?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
-        return await _context.Set<Empresa>().FirstOrDefaultAsync(i => i.Id == id);
+        return await _context.Set<Empresa>().FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
-    public async Task CreateAsync(Empresa Empresa)
+    public async Task CreateAsync(Empresa Empresa, CancellationToken cancellationToken = default)
     {
-        await _context.Set<Empresa>().AddAsync(Empresa);
-        await _context.SaveChangesAsync();
+        await _context.Set<Empresa>().AddAsync(Empresa, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Empresa Empresa)
+    public async Task UpdateAsync(Empresa Empresa, CancellationToken cancellationToken = default)
     {
         _context.Set<Empresa>().Update(Empresa);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Empresa Empresa)
+    public async Task DeleteAsync(Empresa Empresa, CancellationToken cancellationToken = default)
     {
         _context.Set<Empresa>().Remove(Empresa);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> ExisteCnpjAsync(string cnpj, long id, CancellationToken cancellation)
+    public async Task<bool> ExisteCnpjAsync(string cnpj, long id, CancellationToken cancellation = default)
     {
         return await _context.Empresas
             .AsNoTracking()

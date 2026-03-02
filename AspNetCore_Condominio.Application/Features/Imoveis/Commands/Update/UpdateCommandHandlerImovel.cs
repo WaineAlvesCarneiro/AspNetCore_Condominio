@@ -12,7 +12,7 @@ public class UpdateCommandHandlerImovel(IImovelRepository repository)
 
     public async Task<Result<ImovelDto>> Handle(UpdateCommandImovel request, CancellationToken cancellationToken)
     {
-        var dadoToUpdate = await _repository.GetByIdAsync(request.Id);
+        var dadoToUpdate = await _repository.GetByIdAsync(request.Id, cancellationToken);
         if (dadoToUpdate == null)
         {
             return Result<ImovelDto>.Failure("Imóvel não encontrado.");
@@ -23,7 +23,7 @@ public class UpdateCommandHandlerImovel(IImovelRepository repository)
         dadoToUpdate.BoxGaragem = request.BoxGaragem;
         dadoToUpdate.EmpresaId = request.EmpresaId;
 
-        await _repository.UpdateAsync(dadoToUpdate);
+        await _repository.UpdateAsync(dadoToUpdate, cancellationToken);
 
         var dto = new ImovelDto
         {

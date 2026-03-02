@@ -32,7 +32,7 @@ public class GetAllQueryHandlerTests
         long idprimeiroDto = 1;
         string blocoPrimeiroDto = "A";
         GetAllQueryImovel query = new(UserEmpresaId);
-        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId)).ReturnsAsync(_ficticios);
+        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId, It.IsAny<CancellationToken>())).ReturnsAsync(_ficticios);
 
         // Act
         Domain.Common.Result<IEnumerable<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
@@ -51,7 +51,7 @@ public class GetAllQueryHandlerTests
         Assert.Equal(idprimeiroDto, primeiroDto.Id);
         Assert.Equal(blocoPrimeiroDto, primeiroDto.Bloco);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -59,7 +59,7 @@ public class GetAllQueryHandlerTests
     {
         // Arrange
         GetAllQueryImovel query = new(UserEmpresaId);
-        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId)).ReturnsAsync(new List<Imovel>());
+        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId, It.IsAny<CancellationToken>())).ReturnsAsync(new List<Imovel>());
 
         // Act
         Domain.Common.Result<IEnumerable<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
@@ -69,6 +69,6 @@ public class GetAllQueryHandlerTests
         Assert.NotNull(resultado.Dados);
         Assert.Empty(resultado.Dados);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId, It.IsAny<CancellationToken>()), Times.Once);
     }
 }

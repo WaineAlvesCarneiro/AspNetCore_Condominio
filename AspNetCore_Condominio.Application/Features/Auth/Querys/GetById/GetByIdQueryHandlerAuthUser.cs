@@ -10,7 +10,7 @@ public class GetByIdQueryHandlerAuthUser(IAuthUserRepository repository)
 {
     public async Task<Result<AuthUserDto>> Handle(GetByIdQueryAuthUser request, CancellationToken cancellationToken)
     {
-        var dado = await repository.GetByIdAsync(request.Id);
+        var dado = await repository.GetByIdAsync(request.Id, cancellationToken);
         if (dado is null)
             return Result<AuthUserDto>.Failure("Usuário não encontrado.");
 

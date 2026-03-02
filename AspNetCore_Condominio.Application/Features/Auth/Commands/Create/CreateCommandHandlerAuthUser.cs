@@ -28,7 +28,7 @@ public record CreateCommandHandlerAuthUser(
             DataInclusao = request.DataInclusao
         };
 
-        await repository.CreateAsync(dado);
+        await repository.CreateAsync(dado, cancellationToken);
 
         var dto = new AuthUserDto
         {

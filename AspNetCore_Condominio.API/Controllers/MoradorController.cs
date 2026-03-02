@@ -17,11 +17,11 @@ public class MoradorController(IMediator mediator) : ApiBaseController
 {
     [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet]
-    public async Task<IActionResult> Get(
+    public async Task<IActionResult> Get(CancellationToken cancellationToken,
         [FromQuery] long? empresaId = null)
     {
         var result = await mediator.Send(new GetAllQueryMorador(
-            EmpresaId: Convert.ToInt64(empresaId)));
+            EmpresaId: Convert.ToInt64(empresaId)), cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -30,7 +30,7 @@ public class MoradorController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet("paginado")]
-    public async Task<IActionResult> GetAllPagedAsync(
+    public async Task<IActionResult> GetAllPagedAsync(CancellationToken cancellationToken,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = "Id",
@@ -46,7 +46,7 @@ public class MoradorController(IMediator mediator) : ApiBaseController
             EmpresaId: empresaId,
             Nome: nome);
 
-        var result = await mediator.Send(query);
+        var result = await mediator.Send(query, cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -55,9 +55,9 @@ public class MoradorController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(long id)
+    public async Task<IActionResult> GetById(long id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetByIdQueryMorador(id));
+        var result = await mediator.Send(new GetByIdQueryMorador(id), cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -66,11 +66,11 @@ public class MoradorController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico")]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateCommandMorador command)
+    public async Task<IActionResult> Post([FromBody] CreateCommandMorador command, CancellationToken cancellationToken)
     {
         command.EmpresaId = UserEmpresaId;
 
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
 
         if (!result.Sucesso)
             return BadRequest(new { sucesso = false, erro = result.Mensagem });
@@ -84,7 +84,7 @@ public class MoradorController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandMorador command)
+    public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandMorador command, CancellationToken cancellationToken)
     {
         if (id != command.Id)
         {
@@ -92,7 +92,7 @@ public class MoradorController(IMediator mediator) : ApiBaseController
         }
         command.EmpresaId = UserEmpresaId;
 
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
 
         return result.Sucesso
             ? NoContent()
@@ -101,9 +101,9 @@ public class MoradorController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(long id)
+    public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new DeleteCommandMorador(id));
+        var result = await mediator.Send(new DeleteCommandMorador(id), cancellationToken);
 
         return result.Sucesso
             ? NoContent()

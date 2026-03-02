@@ -17,13 +17,13 @@ public class UpdateCommandHandlerMorador(
 
     public async Task<Result<MoradorDto>> Handle(UpdateCommandMorador request, CancellationToken cancellationToken)
     {
-        var dadoToUpdate = await _repository.GetByIdAsync(request.Id);
+        var dadoToUpdate = await _repository.GetByIdAsync(request.Id, cancellationToken);
         if (dadoToUpdate == null)
         {
             return Result<MoradorDto>.Failure("Morador não encontrado.");
         }
 
-        var imovelExist = await _imovelRepository.GetByIdAsync(request.ImovelId);
+        var imovelExist = await _imovelRepository.GetByIdAsync(request.ImovelId, cancellationToken);
         if (imovelExist == null)
         {
             return Result<MoradorDto>.Failure("O imóvel informado não existe.");
@@ -40,7 +40,7 @@ public class UpdateCommandHandlerMorador(
         dadoToUpdate.DataInclusao = dadoToUpdate.DataInclusao;
         dadoToUpdate.EmpresaId = dadoToUpdate.EmpresaId;
 
-        await _repository.UpdateAsync(dadoToUpdate);
+        await _repository.UpdateAsync(dadoToUpdate, cancellationToken);
 
         var dto = new MoradorDto
         {

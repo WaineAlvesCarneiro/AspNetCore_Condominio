@@ -9,17 +9,19 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<IEnumerable<Imovel>> GetAllAsync(long? empresaId = null)
+    public async Task<IEnumerable<Imovel>> GetAllAsync(long? empresaId = null, CancellationToken cancellationToken = default)
     {
         var query = _context.Imoveis.AsNoTracking();
+
         if (empresaId.HasValue && empresaId.Value != 0)
             query = query.Where(u => u.EmpresaId == empresaId.Value);
-        return await query.ToListAsync();
+
+        return await query.ToListAsync(cancellationToken);
     }
 
     public async Task<(IEnumerable<Imovel> items, int totalCount)> GetAllPagedAsync(
         int page, int pageSize, string? orderBy, string? direction,
-        long? empresaId, string? bloco, string? apartamento)
+        long? empresaId, string? bloco, string? apartamento, CancellationToken cancellationToken = default)
     {
         var query = _context.Imoveis.AsQueryable();
 
@@ -34,13 +36,13 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
 
         query = ApplyOrdering(query, orderBy!, direction!);
 
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return (items, totalCount);
     }
@@ -62,33 +64,31 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
         };
     }
 
-    public async Task<Imovel?> GetByIdAsync(long id)
+    public async Task<Imovel?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
     {
-        return await _context.Imoveis
-            .AsNoTracking()
-            .FirstOrDefaultAsync(i => i.Id == id);
+        return await _context.Imoveis.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
-    public async Task CreateAsync(Imovel imovel)
+    public async Task CreateAsync(Imovel imovel, CancellationToken cancellationToken = default)
     {
-        await _context.Set<Imovel>().AddAsync(imovel);
-        await _context.SaveChangesAsync();
+        await _context.Set<Imovel>().AddAsync(imovel, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Imovel imovel)
+    public async Task UpdateAsync(Imovel imovel, CancellationToken cancellationToken = default)
     {
         _context.Set<Imovel>().Update(imovel);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Imovel imovel)
+    public async Task DeleteAsync(Imovel imovel, CancellationToken cancellationToken = default)
     {
         _context.Set<Imovel>().Remove(imovel);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> ExisteImovelVinculadoNaEmpresaAsync(long userEmpresaId)
+    public async Task<bool> ExisteImovelVinculadoNaEmpresaAsync(long userEmpresaId, CancellationToken cancellationToken = default)
     {
-        return await _context.Imoveis.AnyAsync(m => m.EmpresaId == userEmpresaId);
+        return await _context.Imoveis.AsNoTracking().AnyAsync(m => m.EmpresaId == userEmpresaId, cancellationToken);
     }
 }

@@ -53,7 +53,7 @@ public class GetAllQueryHandlerTests
         Guid idprimeiroDto = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B");
         string userNamePrimeiroDto = "Admin";
         GetAllQueryAuthUser query = new() { EmpresaId = 1 };
-        _repoMock.Setup(repo => repo.GetAllAsync(1)).ReturnsAsync(_ficticios);
+        _repoMock.Setup(repo => repo.GetAllAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(_ficticios);
 
         // Act
         Domain.Common.Result<IEnumerable<AuthUserDto>> resultado = await _handler.Handle(query, CancellationToken.None);
@@ -72,7 +72,7 @@ public class GetAllQueryHandlerTests
         Assert.Equal(idprimeiroDto, primeiroDto.Id);
         Assert.Equal(userNamePrimeiroDto, primeiroDto.UserName);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(1), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(1, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -80,7 +80,7 @@ public class GetAllQueryHandlerTests
     {
         // Arrange
         GetAllQueryAuthUser query = new();
-        _repoMock.Setup(repo => repo.GetAllAsync(1)).ReturnsAsync(new List<AuthUser>());
+        _repoMock.Setup(repo => repo.GetAllAsync(1, It.IsAny<CancellationToken>())).ReturnsAsync(new List<AuthUser>());
 
         // Act
         Domain.Common.Result<IEnumerable<AuthUserDto>> resultado = await _handler.Handle(query, CancellationToken.None);

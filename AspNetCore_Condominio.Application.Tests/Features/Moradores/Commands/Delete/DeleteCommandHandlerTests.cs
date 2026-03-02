@@ -32,14 +32,15 @@ public class DeleteCommandHandlerTests
     public async Task Handle_MoradorExistente_DeveChamarDeleteAsyncERetornarSucesso()
     {
         var command = new DeleteCommandMorador(_existente.Id);
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_existente);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
         var resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
         Assert.Equal("Morador deletado com sucesso.", resultado.Mensagem);
 
         _repoMock.Verify(repo => repo.DeleteAsync(
-            It.Is<Morador>(m => m.Id == _existente.Id)
+            It.Is<Morador>(m => m.Id == _existente.Id),
+            It.IsAny<CancellationToken>()
         ), Times.Once);
     }
 
@@ -48,12 +49,12 @@ public class DeleteCommandHandlerTests
     {
         const long idInexistente = 999;
         var command = new DeleteCommandMorador(idInexistente);
-        _repoMock.Setup(repo => repo.GetByIdAsync(idInexistente)).ReturnsAsync((Morador)null!);
+        _repoMock.Setup(repo => repo.GetByIdAsync(idInexistente, It.IsAny<CancellationToken>())).ReturnsAsync((Morador)null!);
         var resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
         Assert.Equal("Morador não encontrado.", resultado.Mensagem);
 
-        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Morador>()), Times.Never);
+        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Morador>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

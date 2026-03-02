@@ -21,7 +21,8 @@ public class GetAllPagedQueryHandlerEmpresa(IEmpresaRepository repository)
             orderBy: request.ActualSortBy,
             direction: request.ActualDirection,
             razaoSocial: request.RazaoSocial,
-            cnpj: request.Cnpj
+            cnpj: request.Cnpj,
+            cancellationToken: cancellationToken
         );
 
         IEnumerable<EmpresaDto> dtos = items.Select(dado => new EmpresaDto

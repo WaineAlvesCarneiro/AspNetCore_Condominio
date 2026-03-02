@@ -1,5 +1,6 @@
 ﻿using AspNetCore_Condominio.Application.Features.Moradores.Commands.Update;
 using AspNetCore_Condominio.Domain.Entities;
+using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories;
 using MediatR;
 using Moq;
@@ -11,6 +12,7 @@ public class UpdateCommandHandlerTests
 {
     private readonly Mock<IMoradorRepository> _repoMock;
     private readonly Mock<IImovelRepository> _imovelRepoMock;
+    private readonly Mock<IMensageriaService> _mensageriaMock;
     private readonly UpdateCommandHandlerMorador _handler;
 
     private const long UserEmpresaId = 1;
@@ -57,16 +59,18 @@ public class UpdateCommandHandlerTests
     {
         _repoMock = new Mock<IMoradorRepository>();
         _imovelRepoMock = new Mock<IImovelRepository>();
+        _mensageriaMock = new Mock<IMensageriaService>();
 
         _handler = new UpdateCommandHandlerMorador(
             _repoMock.Object,
-            _imovelRepoMock.Object
+            _imovelRepoMock.Object,
+            _mensageriaMock.Object
         );
 
-        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_VALIDO)).ReturnsAsync(_imovelValido);
-        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_NOVO)).ReturnsAsync(_imovelNovo);
-        _repoMock.Setup(repo => repo.GetByIdAsync(ID_EXISTENTE)).ReturnsAsync(_existente);
-        _repoMock.Setup(repo => repo.UpdateAsync(It.IsAny<Morador>())).Returns(Task.CompletedTask);
+        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_VALIDO, It.IsAny<CancellationToken>())).ReturnsAsync(_imovelValido);
+        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_NOVO, It.IsAny<CancellationToken>())).ReturnsAsync(_imovelNovo);
+        _repoMock.Setup(repo => repo.GetByIdAsync(ID_EXISTENTE, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
+        _repoMock.Setup(repo => repo.UpdateAsync(It.IsAny<Morador>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
     }
 
     private UpdateCommandMorador GetValidCommand() => new()
@@ -96,7 +100,8 @@ public class UpdateCommandHandlerTests
         Assert.Equal(IMOVEL_ID_NOVO, resultado.Dados.ImovelId);
 
         _repoMock.Verify(repo => repo.UpdateAsync(
-            It.Is<Morador>(m => m.Nome == command.Nome && m.ImovelId == IMOVEL_ID_NOVO)
+            It.Is<Morador>(m => m.Nome == command.Nome && m.ImovelId == IMOVEL_ID_NOVO),
+            It.IsAny<CancellationToken>()
         ), Times.Once);
     }
 
@@ -106,13 +111,13 @@ public class UpdateCommandHandlerTests
         const int moradorIdInexistente = 99;
         var command = GetValidCommand();
         command.Id = moradorIdInexistente;
-        _repoMock.Setup(repo => repo.GetByIdAsync(moradorIdInexistente)).ReturnsAsync((Morador)null!);
+        _repoMock.Setup(repo => repo.GetByIdAsync(moradorIdInexistente, It.IsAny<CancellationToken>())).ReturnsAsync((Morador)null!);
         var resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
         Assert.Contains("Morador não encontrado.", resultado.Mensagem);
 
-        _repoMock.Verify(repo => repo.UpdateAsync(It.IsAny<Morador>()), Times.Never);
+        _repoMock.Verify(repo => repo.UpdateAsync(It.IsAny<Morador>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -121,13 +126,13 @@ public class UpdateCommandHandlerTests
         const long imovelIdInexistente = 99;
         var command = GetValidCommand();
         command.ImovelId = imovelIdInexistente;
-        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(imovelIdInexistente)).ReturnsAsync((Imovel)null!);
+        _imovelRepoMock.Setup(repo => repo.GetByIdAsync(imovelIdInexistente, It.IsAny<CancellationToken>())).ReturnsAsync((Imovel)null!);
         var resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
         Assert.Contains("O imóvel informado não existe.", resultado.Mensagem);
 
-        _repoMock.Verify(repo => repo.UpdateAsync(It.IsAny<Morador>()), Times.Never);
+        _repoMock.Verify(repo => repo.UpdateAsync(It.IsAny<Morador>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -137,8 +142,8 @@ public class UpdateCommandHandlerTests
         var command = GetValidCommand();
         command.DataSaida = DateOnly.FromDateTime(dataSaida);
         Morador? moradorCapturado = null;
-        _repoMock.Setup(repo => repo.UpdateAsync(It.IsAny<Morador>()))
-            .Callback<Morador>(m => moradorCapturado = m)
+        _repoMock.Setup(repo => repo.UpdateAsync(It.IsAny<Morador>(), It.IsAny<CancellationToken>()))
+            .Callback<Morador, CancellationToken>((m, token) => moradorCapturado = m)
             .Returns(Task.CompletedTask);
 
         await _handler.Handle(command, CancellationToken.None);

@@ -20,25 +20,21 @@ public record UpdateCommandHandlerEmpresa(
 
     public async Task<Result<EmpresaDto>> Handle(UpdateCommandEmpresa request, CancellationToken cancellationToken)
     {
-        var dadoToUpdate = await _repository.GetByIdAsync(request.Id);
+        var dadoToUpdate = await _repository.GetByIdAsync(request.Id, cancellationToken);
         if (dadoToUpdate == null)
             return Result<EmpresaDto>.Failure("Empresa não encontrada.");
 
         bool statusMudouParaInativo = dadoToUpdate.Ativo == TipoEmpresaAtivo.Ativo && request.Ativo != TipoEmpresaAtivo.Ativo;
 
-        // --- SEGURANÇA: Tratamento da Senha SMTP ---
-        // Se a senha enviada for diferente da atual ou se você quiser garantir que ela
-        // sempre seja criptografada ao salvar:
         if (!string.IsNullOrEmpty(request.Senha))
         {
-            // Criptografamos antes de atribuir à entidade
             dadoToUpdate.Senha = EncryptionHelper.Encrypt(request.Senha);
         }
 
         dadoToUpdate.Ativo = request.Ativo;
         dadoToUpdate.RazaoSocial = request.RazaoSocial;
         dadoToUpdate.Fantasia = request.Fantasia;
-        dadoToUpdate.Cnpj = request.Cnpj.Replace(".", "").Replace("-", "").Replace("/", ""); // Sanitização básica
+        dadoToUpdate.Cnpj = request.Cnpj.Replace(".", "").Replace("-", "").Replace("/", "");
         dadoToUpdate.TipoDeCondominio = request.TipoDeCondominio;
         dadoToUpdate.Nome = request.Nome;
         dadoToUpdate.Celular = request.Celular;
@@ -52,19 +48,18 @@ public record UpdateCommandHandlerEmpresa(
         dadoToUpdate.Endereco = request.Endereco;
         dadoToUpdate.Bairro = request.Bairro;
         dadoToUpdate.Complemento = request.Complemento;
-        dadoToUpdate.DataAlteracao = DateTime.Now; // Usar a data atual na alteração
+        dadoToUpdate.DataAlteracao = DateTime.Now;
 
-        await _repository.UpdateAsync(dadoToUpdate);
+        await _repository.UpdateAsync(dadoToUpdate, cancellationToken);
 
-        // --- Lógica de Cascata para Usuários ---
         if (statusMudouParaInativo)
         {
-            var usuarios = await _authUserRepository.GetByEmpresaIdAsync(dadoToUpdate.Id);
+            var usuarios = await _authUserRepository.GetByEmpresaIdAsync(dadoToUpdate.Id, cancellationToken);
             foreach (var usuario in usuarios)
             {
                 usuario.EmpresaAtiva = request.Ativo;
                 usuario.DataAlteracao = DateTime.Now;
-                await _authUserRepository.UpdateAsync(usuario);
+                await _authUserRepository.UpdateAsync(usuario, cancellationToken);
             }
         }
 
@@ -80,7 +75,6 @@ public record UpdateCommandHandlerEmpresa(
             Celular = dadoToUpdate.Celular,
             Telefone = dadoToUpdate.Telefone ?? "",
             Email = dadoToUpdate.Email,
-            // Senha = null, // NUNCA retorne a senha para o React por questões de segurança
             Host = dadoToUpdate.Host,
             Porta = dadoToUpdate.Porta,
             Cep = dadoToUpdate.Cep,

@@ -9,7 +9,7 @@ public class DeleteCommandHandlerAuthUser(IAuthUserRepository repository)
 {
     public async Task<Result> Handle(DeleteCommandAuthUser request, CancellationToken cancellationToken)
     {
-        var dado = await repository.GetByIdAsync(request.Id);
+        var dado = await repository.GetByIdAsync(request.Id,cancellationToken);
         if (dado is null)
             return Result.Failure("Usuário não encontrado.");
 

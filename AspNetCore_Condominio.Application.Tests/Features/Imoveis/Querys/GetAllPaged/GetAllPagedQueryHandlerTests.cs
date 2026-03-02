@@ -23,7 +23,7 @@ public class GetAllPagedQueryHandlerTests
     private const int Page = 1;
     private const int PageSize = 10;
     private const string? SortBy = "Id";
-    private const string? SortDescending = "ASC";
+    private const string? Direction = "ASC";
 
     private const int TOTAL_REGISTROS = 2;
 
@@ -42,7 +42,7 @@ public class GetAllPagedQueryHandlerTests
             Page: Page,
             PageSize: PageSize,
             SortBy: SortBy,
-            SortDescending: SortDescending!,
+            Direction: Direction!,
             UserEmpresaId
         );
 
@@ -50,12 +50,16 @@ public class GetAllPagedQueryHandlerTests
             Page,
             PageSize,
             SortBy,
-            SortDescending,
-            UserEmpresaId))
+            Direction,
+            UserEmpresaId,
+            It.IsAny<string?>(),
+            It.IsAny<string?>(),
+            It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((_pagina1, TOTAL_REGISTROS));
 
         // Act
-        Result<PagedResult<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
+        var resultado = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         Assert.True(resultado.Sucesso);
@@ -74,8 +78,12 @@ public class GetAllPagedQueryHandlerTests
             Page,
             PageSize,
             SortBy,
-            SortDescending,
-            UserEmpresaId));
+            Direction,
+            UserEmpresaId,
+            It.IsAny<string?>(),
+            It.IsAny<string?>(),
+            It.IsAny<CancellationToken>()
+            ));
     }
 
     [Fact]
@@ -84,7 +92,7 @@ public class GetAllPagedQueryHandlerTests
         const int totalZero = 0;
         GetAllPagedQueryImovel query = new();
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
-            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>()))
+            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((new List<Imovel>(), totalZero));
         Result<PagedResult<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
 

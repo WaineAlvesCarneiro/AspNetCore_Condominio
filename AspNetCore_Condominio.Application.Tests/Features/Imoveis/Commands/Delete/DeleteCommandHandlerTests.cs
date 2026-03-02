@@ -30,8 +30,8 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemSucesso = "Imóvel deletado com sucesso.";
         DeleteCommandImovel command = new(ID_EXISTENTE);
-        _moradorRepoMock.Setup(repo => repo.ExisteMoradorVinculadoNoImovelAsync(command.Id)).ReturnsAsync(false);
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_existente);
+        _moradorRepoMock.Setup(repo => repo.ExisteMoradorVinculadoNoImovelAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -41,7 +41,8 @@ public class DeleteCommandHandlerTests
         Assert.Equal(mensagemSucesso, resultado.Mensagem);
 
         _repoMock.Verify(repo => repo.DeleteAsync(
-            It.Is<Imovel>(i => i.Id == ID_EXISTENTE)
+            It.Is<Imovel>(i => i.Id == ID_EXISTENTE),
+            It.IsAny<CancellationToken>()
         ), Times.Once);
     }
 
@@ -51,7 +52,7 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemFalha = "Não é possível excluir o imóvel, pois tem morador vinculado.";
         DeleteCommandImovel command = new(ID_EXISTENTE);
-        _moradorRepoMock.Setup(repo => repo.ExisteMoradorVinculadoNoImovelAsync(command.Id)).ReturnsAsync(true);
+        _moradorRepoMock.Setup(repo => repo.ExisteMoradorVinculadoNoImovelAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -60,8 +61,8 @@ public class DeleteCommandHandlerTests
         Assert.False(resultado.Sucesso);
         Assert.Equal(mensagemFalha, resultado.Mensagem);
 
-        _repoMock.Verify(repo => repo.GetByIdAsync(It.IsAny<long>()) , Times.Never);
-        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Imovel>()), Times.Never);
+        _repoMock.Verify(repo => repo.GetByIdAsync(It.IsAny<long>(), It.IsAny<CancellationToken>()) , Times.Never);
+        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Imovel>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -70,8 +71,8 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemFalha = "Imóvel não encontrado.";
         DeleteCommandImovel command = new(ID_NAO_EXISTENTE);
-        _moradorRepoMock.Setup(repo => repo.ExisteMoradorVinculadoNoImovelAsync(command.Id)).ReturnsAsync(false);
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((Imovel)null!);
+        _moradorRepoMock.Setup(repo => repo.ExisteMoradorVinculadoNoImovelAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync((Imovel)null!);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -80,6 +81,6 @@ public class DeleteCommandHandlerTests
         Assert.False(resultado.Sucesso);
         Assert.Equal(mensagemFalha, resultado.Mensagem);
 
-        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Imovel>()), Times.Never);
+        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Imovel>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

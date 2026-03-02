@@ -17,11 +17,11 @@ public class ImovelController(IMediator mediator) : ApiBaseController
 {
     [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet]
-    public async Task<IActionResult> Get(
+    public async Task<IActionResult> Get(CancellationToken cancellationToken,
         [FromQuery] long? empresaId = null)
     {
         var result = await mediator.Send(new GetAllQueryImovel(
-            EmpresaId: Convert.ToInt64(empresaId)));
+            EmpresaId: Convert.ToInt64(empresaId)), cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -30,7 +30,7 @@ public class ImovelController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet("paginado")]
-    public async Task<IActionResult> GetAllPagedAsync(
+    public async Task<IActionResult> GetAllPagedAsync(CancellationToken cancellationToken,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = "Id",
@@ -49,7 +49,7 @@ public class ImovelController(IMediator mediator) : ApiBaseController
                 Apartamento: apartamento
             );
 
-        var result = await mediator.Send(query);
+        var result = await mediator.Send(query, cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -58,9 +58,9 @@ public class ImovelController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico, Porteiro")]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(long id)
+    public async Task<IActionResult> GetById(long id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetByIdQueryImovel(id));
+        var result = await mediator.Send(new GetByIdQueryImovel(id), cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -69,11 +69,11 @@ public class ImovelController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico")]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateCommandImovel command)
+    public async Task<IActionResult> Post([FromBody] CreateCommandImovel command, CancellationToken cancellationToken)
     {
         command.EmpresaId = UserEmpresaId;
 
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
 
         if (!result.Sucesso)
             return BadRequest(new { sucesso = false, erro = result.Mensagem });
@@ -87,7 +87,7 @@ public class ImovelController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandImovel command)
+    public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandImovel command, CancellationToken cancellationToken)
     {
         if (id != command.Id)
         {
@@ -95,7 +95,7 @@ public class ImovelController(IMediator mediator) : ApiBaseController
         }
         command.EmpresaId = UserEmpresaId;
 
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
 
         return result.Sucesso
             ? NoContent()
@@ -104,9 +104,9 @@ public class ImovelController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Sindico")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(long id)
+    public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new DeleteCommandImovel(id));
+        var result = await mediator.Send(new DeleteCommandImovel(id), cancellationToken);
 
         return result.Sucesso
             ? NoContent()

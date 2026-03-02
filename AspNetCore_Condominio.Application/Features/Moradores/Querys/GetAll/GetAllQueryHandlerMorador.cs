@@ -11,7 +11,7 @@ public class GetAllQueryHandlerMorador(IMoradorRepository repository)
     public async Task<Result<IEnumerable<MoradorDto>>> Handle(GetAllQueryMorador request, CancellationToken cancellationToken)
     {
         var dados = await repository.GetAllAsync(
-            empresaId: request.IdEmpresa);
+            empresaId: request.IdEmpresa, cancellationToken);
 
         var dtos = dados.Select(dado => new MoradorDto
         {

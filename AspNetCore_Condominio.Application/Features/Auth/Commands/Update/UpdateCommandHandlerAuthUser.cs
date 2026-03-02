@@ -15,7 +15,7 @@ public record UpdateCommandHandlerAuthUser(
 
     public async Task<Result<AuthUserDto>> Handle(UpdateCommandAuthUser request, CancellationToken cancellationToken)
     {
-        var dadoToUpdate = await _repository.GetByIdAsync(request.Id);
+        var dadoToUpdate = await _repository.GetByIdAsync(request.Id, cancellationToken);
         if (dadoToUpdate == null)
         {
             return Result<AuthUserDto>.Failure("Usuário não encontrado.");
@@ -30,7 +30,7 @@ public record UpdateCommandHandlerAuthUser(
         dadoToUpdate.DataInclusao = request.DataInclusao;
         dadoToUpdate.DataAlteracao = request.DataAlteracao;
 
-        await _repository.UpdateAsync(dadoToUpdate);
+        await _repository.UpdateAsync(dadoToUpdate, cancellationToken);
 
         var dto = new AuthUserDto
         {

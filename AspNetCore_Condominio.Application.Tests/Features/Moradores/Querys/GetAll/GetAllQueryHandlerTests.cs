@@ -60,7 +60,7 @@ public class GetAllQueryHandlerTests
     {
         
         var query = new GetAllQueryMorador(UserEmpresaId);
-        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId)).ReturnsAsync(_ficticios);
+        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId, It.IsAny<CancellationToken>())).ReturnsAsync(_ficticios);
         var resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
@@ -85,20 +85,20 @@ public class GetAllQueryHandlerTests
         Assert.Equal(new DateOnly(2024, 9, 1), segundoDto.DataSaida);
         Assert.Null(segundoDto.ImovelDto);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task Handle_QuandoNaoHaMoradores_DeveRetornarListaVazia()
     {
         var query = new GetAllQueryMorador(UserEmpresaId);
-        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId)).ReturnsAsync(new List<Morador>());
+        _repoMock.Setup(repo => repo.GetAllAsync(UserEmpresaId, It.IsAny<CancellationToken>())).ReturnsAsync(new List<Morador>());
         var resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
         Assert.NotNull(resultado.Dados);
         Assert.Empty(resultado.Dados);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(UserEmpresaId, It.IsAny<CancellationToken>()), Times.Once);
     }
 }

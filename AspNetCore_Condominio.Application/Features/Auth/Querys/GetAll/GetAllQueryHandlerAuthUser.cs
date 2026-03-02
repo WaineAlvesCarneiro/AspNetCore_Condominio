@@ -11,7 +11,7 @@ public class GetAllQueryHandlerAuthUser(IAuthUserRepository repository)
     public async Task<Result<IEnumerable<AuthUserDto>>> Handle(GetAllQueryAuthUser request, CancellationToken cancellationToken)
     {
         var dados = await repository.GetAllAsync(
-            empresaId: request.IdEmpresa);
+            empresaId: request.IdEmpresa, cancellationToken);
 
         var dtos = dados.Select(dado => new AuthUserDto
         {

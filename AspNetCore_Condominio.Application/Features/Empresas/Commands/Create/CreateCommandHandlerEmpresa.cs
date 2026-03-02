@@ -1,5 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
-using AspNetCore_Condominio.Application.Helpers; // Onde reside o seu EncryptionHelper
+using AspNetCore_Condominio.Application.Helpers;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Interfaces;
@@ -15,11 +15,8 @@ public record CreateCommandHandlerEmpresa(
 {
     public async Task<Result<EmpresaDto>> Handle(CreateCommandEmpresa request, CancellationToken cancellationToken)
     {
-        // 1. Sanitização de dados (Importante para buscas e indexação)
         var cnpjApenasNumeros = request.Cnpj?.Replace(".", "").Replace("-", "").Replace("/", "");
 
-        // 2. SEGURANÇA: Criptografando a senha do SMTP antes de instanciar a entidade
-        // Se a senha não for fornecida, mantemos null, caso contrário, ciframos.
         string? senhaSmtpCifrada = !string.IsNullOrWhiteSpace(request.Senha)
             ? EncryptionHelper.Encrypt(request.Senha)
             : null;
@@ -34,10 +31,7 @@ public record CreateCommandHandlerEmpresa(
             Celular = request.Celular,
             Telefone = request.Telefone,
             Email = request.Email,
-
-            // Aqui entra o dado protegido
             Senha = senhaSmtpCifrada,
-
             Host = request.Host,
             Porta = request.Porta,
             Cep = request.Cep,
@@ -46,13 +40,11 @@ public record CreateCommandHandlerEmpresa(
             Endereco = request.Endereco,
             Bairro = request.Bairro,
             Complemento = request.Complemento,
-            DataInclusao = DateTime.Now // Garantindo que a data seja gerada pelo servidor
+            DataInclusao = DateTime.Now
         };
 
-        // 3. Persistência
-        await repository.CreateAsync(dado);
+        await repository.CreateAsync(dado, cancellationToken);
 
-        // 4. Mapeamento para DTO (Omitindo a senha por segurança)
         var dto = new EmpresaDto
         {
             Id = dado.Id,
@@ -64,11 +56,7 @@ public record CreateCommandHandlerEmpresa(
             Celular = dado.Celular,
             Telefone = dado.Telefone,
             Email = dado.Email,
-
-            // NUNCA retorne a senha (nem criptografada) para o Frontend. 
-            // O DTO deve ser uma representação segura dos dados.
             Senha = null,
-
             Host = dado.Host,
             Porta = dado.Porta,
             Cep = dado.Cep,

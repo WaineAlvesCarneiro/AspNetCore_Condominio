@@ -62,7 +62,9 @@ public class GetAllPagedQueryHandlerTests
     private const int Page = 1;
     private const int PageSize = 10;
     private const string? SortBy = "Id";
-    private const string? SortDescending = "ASC";
+    private const string? Direction = "ASC";
+    private string? _RazaoSocial = "Razão Social 2";
+    private string? _Cnpj = "44764428000186";
 
     private const int TOTAL_REGISTROS = 2;
 
@@ -81,14 +83,20 @@ public class GetAllPagedQueryHandlerTests
             Page: Page,
             PageSize: PageSize,
             SortBy: SortBy,
-            SortDescending: SortDescending!
+            Direction: Direction!,
+            _RazaoSocial,
+            _Cnpj
         );
 
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
             Page,
             PageSize,
             SortBy,
-            SortDescending))
+            Direction,
+            _RazaoSocial,
+            _Cnpj,
+            It.IsAny<CancellationToken>()
+            ))
             .ReturnsAsync((_pagina1, TOTAL_REGISTROS));
 
         // Act
@@ -111,7 +119,11 @@ public class GetAllPagedQueryHandlerTests
             Page,
             PageSize,
             SortBy,
-            SortDescending), Times.Once);
+            Direction,
+            _RazaoSocial,
+            _Cnpj,
+            It.IsAny<CancellationToken>()
+            ), Times.Once);
     }
 
     [Fact]
@@ -120,7 +132,7 @@ public class GetAllPagedQueryHandlerTests
         const int totalZero = 0;
         GetAllPagedQueryEmpresa query = new();
         _repoMock.Setup(repo => repo.GetAllPagedAsync(
-            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()))
+            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync((new List<Empresa>(), totalZero));
         Result<PagedResult<EmpresaDto>> resultado = await _handler.Handle(query, CancellationToken.None);
 

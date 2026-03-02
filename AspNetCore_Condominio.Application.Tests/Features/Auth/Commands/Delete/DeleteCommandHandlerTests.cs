@@ -34,7 +34,7 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemSucesso = "Usuário deletado com sucesso.";
         DeleteCommandAuthUser command = new(Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"));
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_existente);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -44,7 +44,7 @@ public class DeleteCommandHandlerTests
         Assert.Equal(mensagemSucesso, resultado.Mensagem);
 
         _repoMock.Verify(repo => repo.DeleteAsync(
-            It.Is<AuthUser>(i => i.Id == Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"))
+            It.Is<AuthUser>(i => i.Id == Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B")), It.IsAny<CancellationToken>()
         ), Times.Once);
     }
 
@@ -54,7 +54,7 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemFalha = "Usuário não encontrado.";
         DeleteCommandAuthUser command = new(Guid.Parse("FFFF57AB-F0FD-F011-8550-A5241967915B"));
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((AuthUser)null!);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync((AuthUser)null!);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -63,6 +63,6 @@ public class DeleteCommandHandlerTests
         Assert.False(resultado.Sucesso);
         Assert.Equal(mensagemFalha, resultado.Mensagem);
 
-        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<AuthUser>()), Times.Never);
+        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<AuthUser>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

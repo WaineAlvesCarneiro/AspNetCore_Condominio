@@ -21,7 +21,8 @@ public class GetAllPagedQueryHandlerAuthUser(IAuthUserRepository repository)
             orderBy: request.ActualSortBy,
             direction: request.ActualDirection,
             empresaId: request.EmpresaId,
-            userName: request.UserName);
+            userName: request.UserName,
+            cancellationToken);
 
         IEnumerable<AuthUserDto> dtos = items.Select(dado => new AuthUserDto
         {

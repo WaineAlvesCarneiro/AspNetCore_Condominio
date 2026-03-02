@@ -17,11 +17,11 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
 {
     [Authorize(Roles = "Suporte, Sindico")]
     [HttpGet]
-    public async Task<IActionResult> Get(
+    public async Task<IActionResult> Get(CancellationToken cancellationToken,
         [FromQuery] long? empresaId = null)
     {
         var result = await mediator.Send(new GetAllQueryEmpresa(
-            EmpresaId: Convert.ToInt64(empresaId)));
+            EmpresaId: Convert.ToInt64(empresaId)), cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -30,7 +30,7 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Suporte")]
     [HttpGet("paginado")]
-    public async Task<IActionResult> GetAllPagedAsync(
+    public async Task<IActionResult> GetAllPagedAsync(CancellationToken cancellationToken,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 10,
         [FromQuery] string? sortBy = "Id",
@@ -46,7 +46,7 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
             RazaoSocial: razaoSocial,
             Cnpj: cnpj);
 
-        var result = await mediator.Send(query);
+        var result = await mediator.Send(query, cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -55,9 +55,9 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Suporte")]
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(long id)
+    public async Task<IActionResult> GetById(long id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetByIdQueryEmpresa(id));
+        var result = await mediator.Send(new GetByIdQueryEmpresa(id), cancellationToken);
 
         return result.Sucesso
             ? Ok(new { sucesso = true, dados = result.Dados })
@@ -66,9 +66,9 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Suporte")]
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] CreateCommandEmpresa command)
+    public async Task<IActionResult> Post([FromBody] CreateCommandEmpresa command, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
 
         if (!result.Sucesso)
             return BadRequest(new { sucesso = false, erro = result.Mensagem });
@@ -82,14 +82,14 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Suporte")]
     [HttpPut("{id}")]
-    public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandEmpresa command)
+    public async Task<IActionResult> Put(long id, [FromBody] UpdateCommandEmpresa command, CancellationToken cancellationToken)
     {
         if (id != command.Id)
         {
             return BadRequest("O ID da URL não corresponde ao ID do corpo da requisição.");
         }
 
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(command, cancellationToken);
 
         return result.Sucesso
             ? NoContent()
@@ -98,9 +98,9 @@ public class EmpresaController(IMediator mediator) : ApiBaseController
 
     [Authorize(Roles = "Suporte")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(long id)
+    public async Task<IActionResult> Delete(long id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new DeleteCommandEmpresa(id));
+        var result = await mediator.Send(new DeleteCommandEmpresa(id), cancellationToken);
 
         return result.Sucesso
             ? NoContent()

@@ -21,7 +21,8 @@ public class GetAllPagedQueryHandlerMorador(IMoradorRepository repository)
             orderBy: request.ActualSortBy,
             direction: request.ActualDirection,
             empresaId: request.EmpresaId,
-            nome: request.Nome);
+            nome: request.Nome,
+            cancellationToken: cancellationToken);
 
         var dtos = items.Select(dado => new MoradorDto
         {

@@ -48,7 +48,7 @@ public class GetByIdQueryHandlerTests
     public async Task Handle_EmpresaExistente_DeveRetornarSucessoComEmpresaDto()
     {
         var query = new GetByIdQueryEmpresa(ID_EXISTENTE);
-        _repoMock.Setup(repo => repo.GetByIdAsync(ID_EXISTENTE)).ReturnsAsync(_existente);
+        _repoMock.Setup(repo => repo.GetByIdAsync(ID_EXISTENTE, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
         var resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
@@ -60,20 +60,20 @@ public class GetByIdQueryHandlerTests
         Assert.Equal(ID_EXISTENTE, dto.Id);
         Assert.Equal(_existente.RazaoSocial, dto.RazaoSocial);
 
-        _repoMock.Verify(repo => repo.GetByIdAsync(ID_EXISTENTE), Times.Once);
+        _repoMock.Verify(repo => repo.GetByIdAsync(ID_EXISTENTE, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task Handle_EmpresaInexistente_DeveRetornarFailure()
     {
         var query = new GetByIdQueryEmpresa(ID_NAO_EXISTENTE);
-        _repoMock.Setup(repo => repo.GetByIdAsync(ID_NAO_EXISTENTE)).ReturnsAsync((Empresa)null!);
+        _repoMock.Setup(repo => repo.GetByIdAsync(ID_NAO_EXISTENTE, It.IsAny<CancellationToken>())).ReturnsAsync((Empresa)null!);
         var resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
         Assert.Equal("Empresa não encontrada.", resultado.Mensagem);
         Assert.Null(resultado.Dados);
 
-        _repoMock.Verify(repo => repo.GetByIdAsync(ID_NAO_EXISTENTE), Times.Once);
+        _repoMock.Verify(repo => repo.GetByIdAsync(ID_NAO_EXISTENTE, It.IsAny<CancellationToken>()), Times.Once);
     }
 }

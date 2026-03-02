@@ -1,6 +1,7 @@
 ﻿using AspNetCore_Condominio.Application.Features.Auth.Commands.Update;
 using AspNetCore_Condominio.Domain.Entities.Auth;
 using AspNetCore_Condominio.Domain.Enums;
+using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
 using Moq;
 
@@ -9,6 +10,7 @@ namespace AspNetCore_Condominio.Application.Tests.Features.Auth.Commands.Update;
 public class UpdateCommandHandlerTests
 {
     private readonly Mock<IAuthUserRepository> _repoMock;
+    private readonly Mock<IMensageriaService> _mensageriaMock;
     private readonly UpdateCommandHandlerAuthUser _handler;
     private readonly AuthUser _existente = new()
     {
@@ -24,7 +26,8 @@ public class UpdateCommandHandlerTests
     public UpdateCommandHandlerTests()
     {
         _repoMock = new Mock<IAuthUserRepository>();
-        _handler = new UpdateCommandHandlerAuthUser(_repoMock.Object);
+        _mensageriaMock = new Mock<IMensageriaService>();
+        _handler = new UpdateCommandHandlerAuthUser(_repoMock.Object, _mensageriaMock.Object);
     }
 
     [Fact]
@@ -42,7 +45,7 @@ public class UpdateCommandHandlerTests
         };
 
         // Act
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_existente);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
         Domain.Common.Result<DTOs.AuthUserDto> resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
@@ -50,7 +53,8 @@ public class UpdateCommandHandlerTests
         Assert.Equal(command.UserName, resultado.Dados.UserName);
 
         _repoMock.Verify(repo => repo.UpdateAsync(
-            It.Is<AuthUser>(i => i.Id == Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B") && i.UserName == command.UserName)
+            It.Is<AuthUser>(i => i.Id == Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B") && i.UserName == command.UserName),
+            It.IsAny<CancellationToken>()
         ), Times.Once);
     }
 
@@ -68,13 +72,13 @@ public class UpdateCommandHandlerTests
             DataInclusao = DateTime.Now
         };
 
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((AuthUser)null!);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync((AuthUser)null!);
         Domain.Common.Result<DTOs.AuthUserDto> resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
         Assert.Contains(mensagemEsperada, resultado.Mensagem);
         Assert.Null(resultado.Dados);
 
-        _repoMock.Verify(repo => repo.UpdateAsync(It.IsAny<AuthUser>()), Times.Never);
+        _repoMock.Verify(repo => repo.UpdateAsync(It.IsAny<AuthUser>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

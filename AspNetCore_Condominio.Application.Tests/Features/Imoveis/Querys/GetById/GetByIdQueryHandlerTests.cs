@@ -34,7 +34,7 @@ public class GetByIdQueryHandlerTests
     public async Task Handle_ImovelExistente_DeveRetornarSucessoComImovelDto()
     {
         var query = new GetByIdQueryImovel(ID_EXISTENTE);
-        _repoMock.Setup(repo => repo.GetByIdAsync(ID_EXISTENTE)).ReturnsAsync(_existente);
+        _repoMock.Setup(repo => repo.GetByIdAsync(ID_EXISTENTE, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
         var resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
@@ -46,20 +46,20 @@ public class GetByIdQueryHandlerTests
         Assert.Equal(ID_EXISTENTE, dto.Id);
         Assert.Equal(_existente.Bloco, dto.Bloco);
 
-        _repoMock.Verify(repo => repo.GetByIdAsync(ID_EXISTENTE), Times.Once);
+        _repoMock.Verify(repo => repo.GetByIdAsync(ID_EXISTENTE, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
     public async Task Handle_ImovelInexistente_DeveRetornarFailure()
     {
         var query = new GetByIdQueryImovel(ID_NAO_EXISTENTE  );
-        _repoMock.Setup(repo => repo.GetByIdAsync(ID_NAO_EXISTENTE)).ReturnsAsync((Imovel)null!);
+        _repoMock.Setup(repo => repo.GetByIdAsync(ID_NAO_EXISTENTE, It.IsAny<CancellationToken>())).ReturnsAsync((Imovel)null!);
         var resultado = await _handler.Handle(query, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
         Assert.Equal("Imóvel não encontrado.", resultado.Mensagem);
         Assert.Null(resultado.Dados);
 
-        _repoMock.Verify(repo => repo.GetByIdAsync(ID_NAO_EXISTENTE), Times.Once);
+        _repoMock.Verify(repo => repo.GetByIdAsync(ID_NAO_EXISTENTE, It.IsAny<CancellationToken>()), Times.Once);
     }
 }

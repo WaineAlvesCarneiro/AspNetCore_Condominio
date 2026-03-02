@@ -9,7 +9,7 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<IEnumerable<Morador>> GetAllAsync(long? empresaId = null)
+    public async Task<IEnumerable<Morador>> GetAllAsync(long? empresaId = null, CancellationToken cancellationToken = default)
     {
         var query = _context.Moradores
             .Include(m => m.Imovel)
@@ -19,12 +19,12 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
         if (empresaId.HasValue && empresaId.Value != 0)
             query = query.Where(u => u.EmpresaId == empresaId.Value);
 
-        return await query.ToListAsync();
+        return await query.AsNoTracking().ToListAsync(cancellationToken);
     }
 
     public async Task<(IEnumerable<Morador> items, int totalCount)> GetAllPagedAsync(
         int page, int pageSize, string? orderBy, string? direction,
-        long? empresaId, string? nome)
+        long? empresaId, string? nome, CancellationToken cancellationToken = default)
     {
         var query = _context.Moradores
             .Include(m => m.Imovel)
@@ -39,13 +39,13 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
 
         query = ApplyOrdering(query, orderBy!, direction!);
 
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.CountAsync(cancellationToken);
 
         var items = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(cancellationToken);
 
         return (items, totalCount);
     }
@@ -67,35 +67,35 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
         };
     }
 
-    public async Task<Morador?> GetByIdAsync(long id)
+    public async Task<Morador?> GetByIdAsync(long id, CancellationToken cancellationToken)
     {
         return await _context.Moradores
             .Include(m => m.Imovel)
             .Include(m => m.Empresa)
             .AsNoTracking()
-            .FirstOrDefaultAsync(i => i.Id == id);
+            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
-    public async Task CreateAsync(Morador morador)
+    public async Task CreateAsync(Morador morador, CancellationToken cancellationToken)
     {
-        await _context.Set<Morador>().AddAsync(morador);
-        await _context.SaveChangesAsync();
+        await _context.Set<Morador>().AddAsync(morador, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Morador morador)
+    public async Task UpdateAsync(Morador morador, CancellationToken cancellationToken)
     {
         _context.Set<Morador>().Entry(morador).State = EntityState.Modified;
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteAsync(Morador morador)
+    public async Task DeleteAsync(Morador morador, CancellationToken cancellationToken)
     {
         _context.Set<Morador>().Remove(morador);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> ExisteMoradorVinculadoNoImovelAsync(long imovelId)
+    public async Task<bool> ExisteMoradorVinculadoNoImovelAsync(long imovelId, CancellationToken cancellationToken)
     {
-        return await _context.Moradores.AnyAsync(m => m.ImovelId == imovelId);
+        return await _context.Moradores.AsNoTracking().AnyAsync(m => m.ImovelId == imovelId, cancellationToken);
     }
 }

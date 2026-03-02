@@ -41,7 +41,7 @@ public class UpdateCommandHandlerTests
         };
 
         // Act
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_existente);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
         Domain.Common.Result<DTOs.ImovelDto> resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.True(resultado.Sucesso);
@@ -50,7 +50,8 @@ public class UpdateCommandHandlerTests
         Assert.Equal(command.Apartamento, resultado.Dados.Apartamento);
 
         _repoMock.Verify(repo => repo.UpdateAsync(
-            It.Is<Imovel>(i => i.Id == 5 && i.Bloco == command.Bloco)
+            It.Is<Imovel>(i => i.Id == 5 && i.Bloco == command.Bloco),
+            It.IsAny<CancellationToken>()
         ), Times.Once);
     }
 
@@ -67,13 +68,13 @@ public class UpdateCommandHandlerTests
             EmpresaId = UserEmpresaId
         };
 
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((Imovel)null!);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync((Imovel)null!);
         Domain.Common.Result<DTOs.ImovelDto> resultado = await _handler.Handle(command, CancellationToken.None);
 
         Assert.False(resultado.Sucesso);
         Assert.Contains(mensagemEsperada, resultado.Mensagem);
         Assert.Null(resultado.Dados);
 
-        _repoMock.Verify(repo => repo.UpdateAsync(It.IsAny<Imovel>()), Times.Never);
+        _repoMock.Verify(repo => repo.UpdateAsync(It.IsAny<Imovel>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

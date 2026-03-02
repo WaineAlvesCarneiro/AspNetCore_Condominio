@@ -11,7 +11,7 @@ public record GetAllQueryHandlerImovel(IImovelRepository repository)
     public async Task<Result<IEnumerable<ImovelDto>>> Handle(GetAllQueryImovel request, CancellationToken cancellationToken)
     {
         var dados = await repository.GetAllAsync(
-            empresaId: request.IdEmpresa);
+            empresaId: request.IdEmpresa, cancellationToken);
 
         var dtos = dados.Select(dado => new ImovelDto
         {

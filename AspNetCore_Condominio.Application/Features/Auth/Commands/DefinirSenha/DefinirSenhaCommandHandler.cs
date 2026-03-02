@@ -13,7 +13,7 @@ public class DefinirSenhaCommandHandler(IAuthUserRepository repository)
 
     public async Task<Result<AuthUserDto>> Handle(DefinirSenhaCommand request, CancellationToken cancellationToken)
     {
-        var usuario = await _repository.GetByUsernameAsync(request.UserName);
+        var usuario = await _repository.GetByUsernameAsync(request.UserName, cancellationToken);
 
         if (usuario == null)
             return Result<AuthUserDto>.Failure("Usuário não encontrado.");

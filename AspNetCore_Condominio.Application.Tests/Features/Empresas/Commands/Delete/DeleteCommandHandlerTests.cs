@@ -55,8 +55,8 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemSucesso = "Empresa deletada com sucesso.";
         DeleteCommandEmpresa command = new(ID_EXISTENTE);
-        _imovelRepoMock.Setup(repo => repo.ExisteImovelVinculadoNaEmpresaAsync(command.Id)).ReturnsAsync(false);
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync(_existente);
+        _imovelRepoMock.Setup(repo => repo.ExisteImovelVinculadoNaEmpresaAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -66,7 +66,8 @@ public class DeleteCommandHandlerTests
         Assert.Equal(mensagemSucesso, resultado.Mensagem);
 
         _repoMock.Verify(repo => repo.DeleteAsync(
-            It.Is<Empresa>(i => i.Id == ID_EXISTENTE)
+            It.Is<Empresa>(i => i.Id == ID_EXISTENTE),
+            It.IsAny<CancellationToken>()
         ), Times.Once);
     }
 
@@ -76,7 +77,7 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemFalha = "Não é possível excluir a empresa, pois tem imóvel vinculado.";
         DeleteCommandEmpresa command = new(ID_EXISTENTE);
-        _imovelRepoMock.Setup(repo => repo.ExisteImovelVinculadoNaEmpresaAsync(command.Id)).ReturnsAsync(true);
+        _imovelRepoMock.Setup(repo => repo.ExisteImovelVinculadoNaEmpresaAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(true);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -85,8 +86,8 @@ public class DeleteCommandHandlerTests
         Assert.False(resultado.Sucesso);
         Assert.Equal(mensagemFalha, resultado.Mensagem);
 
-        _repoMock.Verify(repo => repo.GetByIdAsync(It.IsAny<long>()) , Times.Never);
-        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Empresa>()), Times.Never);
+        _repoMock.Verify(repo => repo.GetByIdAsync(It.IsAny<long>(), It.IsAny<CancellationToken>()), Times.Never);
+        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Empresa>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -95,8 +96,8 @@ public class DeleteCommandHandlerTests
         // Arrange
         string mensagemFalha = "Empresa não encontrada.";
         DeleteCommandEmpresa command = new(ID_NAO_EXISTENTE);
-        _imovelRepoMock.Setup(repo => repo.ExisteImovelVinculadoNaEmpresaAsync(command.Id)).ReturnsAsync(false);
-        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id)).ReturnsAsync((Empresa)null!);
+        _imovelRepoMock.Setup(repo => repo.ExisteImovelVinculadoNaEmpresaAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync((Empresa)null!);
 
         // Act
         Domain.Common.Result resultado = await _handler.Handle(command, CancellationToken.None);
@@ -105,6 +106,6 @@ public class DeleteCommandHandlerTests
         Assert.False(resultado.Sucesso);
         Assert.Equal(mensagemFalha, resultado.Mensagem);
 
-        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Empresa>()), Times.Never);
+        _repoMock.Verify(repo => repo.DeleteAsync(It.IsAny<Empresa>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 }

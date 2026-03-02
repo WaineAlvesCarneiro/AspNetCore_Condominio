@@ -14,8 +14,8 @@ public class CreateCommandHandlerTests
     {
         _repoMock = new Mock<IImovelRepository>();
         _handler = new CreateCommandHandlerImovel(_repoMock.Object);
-        _repoMock.Setup(repo => repo.CreateAsync(It.IsAny<Imovel>()))
-            .Callback<Imovel>(imovel => imovel.Id = 101)
+        _repoMock.Setup(repo => repo.CreateAsync(It.IsAny<Imovel>(), It.IsAny<CancellationToken>()))
+            .Callback<Imovel, CancellationToken>((imovel, token) => imovel.Id = 101)
             .Returns(Task.CompletedTask);
     }
 
@@ -43,7 +43,7 @@ public class CreateCommandHandlerTests
         _repoMock.Verify(repo => repo.CreateAsync(
             It.Is<Imovel>(
                 i => i.Bloco == command.Bloco && i.Apartamento == command.Apartamento
-            )),
+            ), It.IsAny<CancellationToken>()),
             Times.Once
         );
     }

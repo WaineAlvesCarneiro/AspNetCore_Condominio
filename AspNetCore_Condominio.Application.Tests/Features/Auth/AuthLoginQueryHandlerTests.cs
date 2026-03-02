@@ -44,7 +44,7 @@ public class AuthLoginQueryHandlerTests
             Username = USERNAME,
             Password = SENHA_CORRETA
         };
-        _repoMock.Setup(repo => repo.GetByUsernameAsync(USERNAME)).ReturnsAsync(_user);
+        _repoMock.Setup(repo => repo.GetByUsernameAsync(USERNAME, It.IsAny<CancellationToken>())).ReturnsAsync(_user);
 
         //Act
         AuthUser resultado = await _handler.Handle(authLoginQuery, CancellationToken.None);
@@ -53,7 +53,7 @@ public class AuthLoginQueryHandlerTests
         Assert.NotNull(resultado);
         Assert.Equal(_user.Id, resultado.Id);
 
-        _repoMock.Verify(repo => repo.GetByUsernameAsync(USERNAME), Times.Once);
+        _repoMock.Verify(repo => repo.GetByUsernameAsync(USERNAME, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class AuthLoginQueryHandlerTests
     {
         //Arrange
         AuthLoginQuery authLoginQuery = new() { Username = "nao_existe", Password = "any" };
-        _repoMock.Setup(repo => repo.GetByUsernameAsync(It.IsAny<string>())).ReturnsAsync((AuthUser)null!);
+        _repoMock.Setup(repo => repo.GetByUsernameAsync(It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync((AuthUser)null!);
 
         //Act
         AuthUser resultado = await _handler.Handle(authLoginQuery, CancellationToken.None);
@@ -75,7 +75,7 @@ public class AuthLoginQueryHandlerTests
     {
         //Arrange
         AuthLoginQuery authLoginQuery = new() { Username = USERNAME, Password = "senha_errada" };
-        _repoMock.Setup(repo => repo.GetByUsernameAsync(USERNAME)).ReturnsAsync(_user);
+        _repoMock.Setup(repo => repo.GetByUsernameAsync(USERNAME, It.IsAny<CancellationToken>())).ReturnsAsync(_user);
 
         //Act
         AuthUser resultado = await _handler.Handle(authLoginQuery, CancellationToken.None);

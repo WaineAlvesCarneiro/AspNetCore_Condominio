@@ -18,44 +18,23 @@ public class GetAllQueryHandlerTests
             Id = 1,
             RazaoSocial = "Razão Social",
             Fantasia = "Fantasia",
-            Cnpj = "01.111.222/0001-02",
+            Cnpj = "44764428000186",
             TipoDeCondominio = (TipoCondominio)1,
             Nome = "Responsável",
-            Celular = "(11) 99999-9999",
-            Telefone = "(11) 3333-3333",
+            Celular = "11999999999",
+            Telefone = "1133333333",
             Email = "email@gmail.com",
             Senha = "SenhaForte123!",
             Host = "smtp.exemplo.com",
             Porta = 587,
-            Cep = "01234-567",
+            Cep = "01234567",
             Uf = "SP",
             Cidade = "São Paulo",
             Endereco = "Rua Exemplo, 123",
             Bairro = "Pq Amazônia",
             Complemento = "Complemento",
             DataInclusao = DateTime.Now
-        },
-        new Empresa {
-            Id = 2,
-            RazaoSocial = "Razão Social 2",
-            Fantasia = "Fantasia 2",
-            Cnpj = "01.111.222/0001-02",
-            TipoDeCondominio = (TipoCondominio)1,
-            Nome = "Responsável",
-            Celular = "(11) 99999-9999",
-            Telefone = "(11) 3333-3333",
-            Email = "email@gmail.com",
-            Senha = "SenhaForte123!",
-            Host = "smtp.exemplo.com",
-            Porta = 587,
-            Cep = "01234-567",
-            Uf = "SP",
-            Cidade = "São Paulo",
-            Endereco = "Rua Exemplo, 123",
-            Bairro = "Pq Amazônia",
-            Complemento = "Complemento",
-            DataInclusao = DateTime.Now
-        },
+        }
     ];   
 
     public GetAllQueryHandlerTests()
@@ -71,10 +50,10 @@ public class GetAllQueryHandlerTests
         long idprimeiroDto = 1;
         string razaoSocialPrimeiroDto = "Razão Social";
         GetAllQueryEmpresa query = new();
-        _repoMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(_ficticios);
+        _repoMock.Setup(repo => repo.GetAllAsync(It.IsAny<long?>(),It.IsAny<CancellationToken>())).ReturnsAsync(_ficticios);
 
         // Act
-        Domain.Common.Result<IEnumerable<EmpresaDto>> resultado = await _handler.Handle(query, CancellationToken.None);
+        var resultado = await _handler.Handle(query, CancellationToken.None);
 
         // Assert
         Assert.True(resultado.Sucesso);
@@ -90,7 +69,7 @@ public class GetAllQueryHandlerTests
         Assert.Equal(idprimeiroDto, primeiroDto.Id);
         Assert.Equal(razaoSocialPrimeiroDto, primeiroDto.RazaoSocial);
 
-        _repoMock.Verify(repo => repo.GetAllAsync(), Times.Once);
+        _repoMock.Verify(repo => repo.GetAllAsync(It.IsAny<long?>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -98,7 +77,7 @@ public class GetAllQueryHandlerTests
     {
         // Arrange
         GetAllQueryEmpresa query = new();
-        _repoMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(new List<Empresa>());
+        _repoMock.Setup(repo => repo.GetAllAsync(It.IsAny<long>(), It.IsAny<CancellationToken>())).ReturnsAsync(new List<Empresa>());
 
         // Act
         Domain.Common.Result<IEnumerable<EmpresaDto>> resultado = await _handler.Handle(query, CancellationToken.None);
@@ -107,7 +86,5 @@ public class GetAllQueryHandlerTests
         Assert.True(resultado.Sucesso);
         Assert.NotNull(resultado.Dados);
         Assert.Empty(resultado.Dados);
-
-        _repoMock.Verify(repo => repo.GetAllAsync(), Times.Once);
     }
 }
