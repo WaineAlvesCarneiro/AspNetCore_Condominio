@@ -14,22 +14,32 @@ public class TokenService(IConfiguration configuration)
     public string GenerateToken(string username, TipoRole role, long? empresaId, bool primeiroAcesso, TipoUserAtivo userAtivo, TipoEmpresaAtivo empresaAtiva)
     {
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
+        var claims = GerarClaims(username, role, primeiroAcesso, userAtivo, empresaAtiva);
 
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, username),
-            new Claim(ClaimTypes.Role, role.ToString()),
-            new Claim("primeiroAcesso", primeiroAcesso.ToString().ToLower()),
-            new Claim("statusAtivo", userAtivo.ToString()),
-            new Claim("empresaAtiva", empresaAtiva.ToString())
-        };
+        if (empresaId.HasValue) claims.Add(new Claim("empresaId", empresaId.Value.ToString()));
 
-        if (empresaId.HasValue)
-        {
-            claims.Add(new Claim("empresaId", empresaId.Value.ToString()));
-        }
+        var tokenDescriptor = GerarTokenDescriptor(_configuration, claims);
 
-        var tokenDescriptor = new SecurityTokenDescriptor
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
+    }
+
+    private static List<Claim> GerarClaims(string username, TipoRole role, bool primeiroAcesso, TipoUserAtivo userAtivo, TipoEmpresaAtivo empresaAtiva)
+    {
+        return
+        [
+            new(ClaimTypes.Name, username),
+            new(ClaimTypes.Role, role.ToString()),
+            new("primeiroAcesso", primeiroAcesso.ToString().ToLower()),
+            new("statusAtivo", userAtivo.ToString()),
+            new("empresaAtiva", empresaAtiva.ToString())
+        ];
+    }
+
+    private static SecurityTokenDescriptor GerarTokenDescriptor(IConfiguration _configuration, List<Claim> claims)
+    {
+        return new SecurityTokenDescriptor
         {
             NotBefore = DateTime.UtcNow,
             Subject = new ClaimsIdentity(claims),
@@ -37,12 +47,8 @@ public class TokenService(IConfiguration configuration)
             Audience = _configuration["Jwt:Audience"],
             Issuer = _configuration["Jwt:Issuer"],
             SigningCredentials = new SigningCredentials(
-                    new SymmetricSecurityKey(key),
+                    new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!)),
                     SecurityAlgorithms.HmacSha256Signature)
         };
-
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
     }
 }
