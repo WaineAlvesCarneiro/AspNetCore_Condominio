@@ -1,4 +1,5 @@
-﻿using AspNetCore_Condominio.Domain.Enums;
+﻿using AspNetCore_Condominio.Domain.Constants;
+using AspNetCore_Condominio.Domain.Enums;
 using System.Security.Claims;
 
 namespace AspNetCore_Condominio.Application.Helpers;
@@ -16,7 +17,7 @@ public static class ClaimsPrincipalExtensions
 
     public static long GetEmpresaId(this ClaimsPrincipal user)
     {
-        var claim = user.FindFirst("empresaId")?.Value;
+        var claim = user.FindFirst(AuthClaims.EmpresaId)?.Value;
         return long.TryParse(claim, out var id) ? id : 0;
     }
 
@@ -25,13 +26,13 @@ public static class ClaimsPrincipalExtensions
 
     public static TipoUserAtivo? GetUserStatus(this ClaimsPrincipal user)
     {
-        var status = user.FindFirst("statusAtivo")?.Value;
+        var status = user.FindFirst(AuthClaims.StatusAtivo)?.Value;
         return Enum.TryParse<TipoUserAtivo>(status, out var result) ? result : null;
     }
 
     public static TipoEmpresaAtivo? GetEmpresaStatus(this ClaimsPrincipal user)
     {
-        var status = user.FindFirst("empresaAtiva")?.Value;
+        var status = user.FindFirst(AuthClaims.EmpresaAtiva)?.Value;
         return Enum.TryParse<TipoEmpresaAtivo>(status, out var result) ? result : null;
     }
 

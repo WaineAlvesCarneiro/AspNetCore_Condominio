@@ -16,7 +16,7 @@ public class TokenService(IConfiguration configuration)
     {
         var claims = GerarClaims(username, role, primeiroAcesso, userAtivo, empresaAtiva);
 
-        if (empresaId.HasValue) claims.Add(new Claim("empresaId", empresaId.Value.ToString()));
+        if (empresaId.HasValue) claims.Add(new Claim(AuthClaims.EmpresaId, empresaId.Value.ToString()));
 
         var tokenDescriptor = GerarTokenDescriptor(_configuration, claims);
 
