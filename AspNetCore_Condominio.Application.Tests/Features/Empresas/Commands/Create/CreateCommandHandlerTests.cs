@@ -24,9 +24,6 @@ public class CreateCommandHandlerTests
             .Callback<Empresa, CancellationToken>((empresa, token)=> empresa.Id = 101)
             .Returns(Task.CompletedTask);
 
-        _mensageriaMock.Setup(x => x.EnviarEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>()))
-            .Returns(Task.CompletedTask);
-
         _repoMock.Setup(repo => repo.ExisteCnpjAsync(It.IsAny<string>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
     }
@@ -57,10 +54,6 @@ public class CreateCommandHandlerTests
             Complemento = "Complemento",
             DataInclusao = DateTime.Now
         };
-
-        string corpoEmail = $@"
-            <h3>Bem-vindo ao Sistema de Condomínio!</h3>
-            <p>Seu condomínio foi cadastrado com sucesso.</p>";
 
         // Act
         var resultado = await _handler.Handle(command, CancellationToken.None);

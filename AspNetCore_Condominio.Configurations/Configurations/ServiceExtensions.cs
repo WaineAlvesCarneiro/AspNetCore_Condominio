@@ -11,6 +11,7 @@ using AspNetCore_Condominio.Infrastructure.Data;
 using AspNetCore_Condominio.Infrastructure.Messaging;
 using AspNetCore_Condominio.Infrastructure.Repositories;
 using AspNetCore_Condominio.Infrastructure.Repositories.Auth;
+using AspNetCore_Condominio.Infrastructure.Services;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -79,7 +80,9 @@ public static class ServiceExtensions
 
     private static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
-        services.AddScoped<IMensageriaService, RabbitMQService>();
+        services.AddSingleton<IMensageriaService, RabbitMQService>();
+        services.AddScoped<IEmailSenderService, EmailSenderService>();
+        services.AddScoped<IEmailTemplateService, EmailTemplateService>();
         services.AddHostedService<EmailConsumerWorker>();
         services.AddSingleton<TokenService>();
 
@@ -97,7 +100,6 @@ public static class ServiceExtensions
     {
         services.AddJwtAuthentication(configuration);
         services.AddAppAuthorization();
-
         return services;
     }
 

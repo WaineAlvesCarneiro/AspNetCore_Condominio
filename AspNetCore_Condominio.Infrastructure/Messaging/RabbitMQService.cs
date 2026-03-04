@@ -1,55 +1,41 @@
-﻿using AspNetCore_Condominio.Application.DTOs;
-using AspNetCore_Condominio.Domain.Interfaces;
+﻿using AspNetCore_Condominio.Domain.Interfaces;
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
 
 namespace AspNetCore_Condominio.Infrastructure.Messaging;
 
-public class RabbitMQService : IMensageriaService
+public class RabbitMQService : IMensageriaService, IDisposable
 {
-    private readonly string _hostname = "localhost";
+    private readonly IConnection _connection;
+    private readonly IChannel _channel;
+    private const string QueueName = "fila_emails";
 
-    public async Task EnviarEmailAsync(string para, string assunto, string corpoHtml, long? empresaId)
+    public RabbitMQService(IConfiguration configuration)
     {
-        // 1. A Factory agora prefere o CreateConnectionAsync
-        var factory = new ConnectionFactory() { HostName = _hostname };
-
-        // 2. Use 'await' e as versões Async dos métodos
-        using var connection = await factory.CreateConnectionAsync();
-        using var channel = await connection.CreateChannelAsync();
-
-        // 3. Declaração da fila (também assíncrona)
-        await channel.QueueDeclareAsync(
-            queue: "fila_emails",
-            durable: true,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null);
-
-        var mensagem = new MensagemEmailDto
+        var factory = new ConnectionFactory()
         {
-            EmpresaId = empresaId ?? 0,
-            Para = para,
-            Assunto = assunto,
-            Corpo = corpoHtml
+            HostName = configuration["RabbitMQ:Host"] ?? "localhost",
+            UserName = configuration["RabbitMQ:UserName"] ?? "guest",
+            Password = configuration["RabbitMQ:Password"] ?? "guest"
         };
 
-        var messageBody = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(mensagem));
-
-        // 4. Publicação da mensagem
-        // No RabbitMQ 7+, usamos BasicPublishAsync
-        await channel.BasicPublishAsync(
-            exchange: string.Empty,
-            routingKey: "fila_emails",
-            body: messageBody);
-
-        Console.WriteLine($"[x] Mensagem enviada para a fila: {para}");
+        // Conecta uma única vez no início
+        _connection = factory.CreateConnectionAsync().GetAwaiter().GetResult();
+        _channel = _connection.CreateChannelAsync().GetAwaiter().GetResult();
+        _channel.QueueDeclareAsync(QueueName, true, false, false).GetAwaiter().GetResult();
     }
 
-    public Task EnviarWhatsappAsync(string numero, string mensagem)
+    public async Task PublicarEmailFilaAsync(EnvioEmailRequest request)
     {
-        // Implementaremos depois seguindo a mesma lógica
-        return Task.CompletedTask;
+        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+        await _channel.BasicPublishAsync(string.Empty, QueueName, body);
+    }
+
+    public void Dispose()
+    {
+        _channel?.Dispose();
+        _connection?.Dispose();
     }
 }

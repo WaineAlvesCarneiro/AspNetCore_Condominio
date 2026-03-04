@@ -11,27 +11,6 @@ namespace AspNetCore_Condominio.Infrastructure.Data;
 
 public static class DatabaseExtensions
 {
-    public class AdminSettings
-    {
-        public string UserName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-
-    private static AdminSettings? adminSettings;
-
-    private static AuthUser AdminUser = new()
-    {
-        EmpresaId = 0,
-        Ativo = TipoUserAtivo.Ativo,
-        EmpresaAtiva = TipoEmpresaAtivo.Ativo,
-        UserName = adminSettings?.UserName!,
-        Email = adminSettings?.Email!,
-        PasswordHash = PasswordHasher.HashPassword(adminSettings?.Password!),
-        Role = TipoRole.Suporte,
-        DataInclusao = DateTime.Now
-    };
-
     public static async Task MigrateAndSeedDatabaseAsync(this IApplicationBuilder app)
     {
         using var scope = app.ApplicationServices.CreateScope();
@@ -44,8 +23,10 @@ public static class DatabaseExtensions
 
             if (!context.AuthUsers.Any())
             {
-                var config = services.GetRequiredService<IConfiguration>();
-                adminSettings = config.GetSection("AdminSettings").Get<AdminSettings>();
+                var configuration = services.GetRequiredService<IConfiguration>();
+
+                AuthUser AdminUser = MapearEntidade(configuration);
+
                 context.AuthUsers.Add(AdminUser);
                 await context.SaveChangesAsync();
             }
@@ -55,5 +36,23 @@ public static class DatabaseExtensions
             var logger = services.GetRequiredService<ILogger<string>>();
             logger.LogError(ex, "Ocorreu um erro ao popular o banco de dados com usuário Admin.");
         }
+    }
+
+    private static AuthUser MapearEntidade(IConfiguration configuration)
+    {
+        var password = configuration["AdminSettings:Password"] ?? "12345";
+
+        AuthUser AdminUser = new()
+        {
+            EmpresaId = 0,
+            Ativo = TipoUserAtivo.Ativo,
+            EmpresaAtiva = TipoEmpresaAtivo.Ativo,
+            UserName = configuration["AdminSettings:UserName"] ?? "Admin",
+            Email = configuration["AdminSettings:Email"] ?? "enviaemailwebapi@gmail.com",
+            PasswordHash = PasswordHasher.HashPassword(password),
+            Role = TipoRole.Suporte,
+            DataInclusao = DateTime.Now
+        };
+        return AdminUser;
     }
 }

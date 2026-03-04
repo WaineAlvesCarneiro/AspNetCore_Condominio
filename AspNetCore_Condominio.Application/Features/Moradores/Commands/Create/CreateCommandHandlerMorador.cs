@@ -1,16 +1,20 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Features.Auth.Commands.Create;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace AspNetCore_Condominio.Application.Features.Moradores.Commands.Create;
 
 public class CreateCommandHandlerMorador(
     IMoradorRepository repository,
     IImovelRepository imovelRepository,
-    IMensageriaService mensageriaService)
+    IMensageriaService mensageriaService,
+    IEmailTemplateService emailTemplateService,
+    ILogger<CreateCommandHandlerAuthUser> logger)
     : IRequestHandler<CreateCommandMorador, Result<MoradorDto>>
 {
     private readonly IMoradorRepository _repository = repository;
@@ -19,12 +23,34 @@ public class CreateCommandHandlerMorador(
     public async Task<Result<MoradorDto>> Handle(CreateCommandMorador request, CancellationToken cancellationToken)
     {
         var imovelExist = await _imovelRepository.GetByIdAsync(request.ImovelId, cancellationToken);
+
         if (imovelExist == null)
-        {
             return Result<MoradorDto>.Failure("O imóvel informado não existe.");
+
+        Morador dado = MapearEntidade(request);
+
+        await _repository.CreateAsync(dado, cancellationToken);
+
+        MoradorDto dto = MapearDto(dado);
+
+        var corpoEmail = emailTemplateService.GerarBoasVindasMorador(dado.Nome);
+        EnvioEmailRequest emailRequest = PreencherEnvioEmailRequest(dado, corpoEmail);
+
+        try
+        {
+            await mensageriaService.PublicarEmailFilaAsync(emailRequest);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Falha ao publicar e-mail de boas-vindas na fila para o morador: {dado.Nome}", dado.Email);
         }
 
-        var dado = new Morador
+        return Result<MoradorDto>.Success(dto, "Morador criado com sucesso e notificação enviada para fila.");
+    }
+
+    private static Morador MapearEntidade(CreateCommandMorador request)
+    {
+        return new Morador
         {
             Nome = request.Nome,
             Celular = request.Celular,
@@ -37,10 +63,11 @@ public class CreateCommandHandlerMorador(
             ImovelId = request.ImovelId,
             EmpresaId = request.EmpresaId
         };
+    }
 
-        await _repository.CreateAsync(dado, cancellationToken);
-
-        var dto = new MoradorDto
+    private static MoradorDto MapearDto(Morador dado)
+    {
+        return new MoradorDto
         {
             Id = dado.Id,
             Nome = dado.Nome,
@@ -52,67 +79,58 @@ public class CreateCommandHandlerMorador(
             DataInclusao = dado.DataInclusao,
             DataAlteracao = dado.DataAlteracao,
             ImovelId = dado.ImovelId,
-            ImovelDto = dado.Imovel != null
-                ? new ImovelDto
-                {
-                    Id = dado.Imovel.Id,
-                    Bloco = dado.Imovel.Bloco,
-                    Apartamento = dado.Imovel.Apartamento,
-                    BoxGaragem = dado.Imovel.BoxGaragem,
-                    EmpresaId = dado.Imovel.EmpresaId
-                }
-                : null,
+            ImovelDto = dado.Imovel != null ? MapearEntidadeImovel(dado) : null,
             EmpresaId = dado.EmpresaId,
-            EmpresaDto = dado.Empresa != null
-                ? new EmpresaDto
-                {
-                    Id = dado.Id,
-                    RazaoSocial = dado.Empresa.RazaoSocial,
-                    Fantasia = dado.Empresa.Fantasia,
-                    Cnpj = dado.Empresa.Cnpj,
-                    TipoDeCondominio = dado.Empresa.TipoDeCondominio,
-                    Nome = dado.Nome,
-                    Celular = dado.Empresa.Celular,
-                    Telefone = dado.Empresa.Telefone!,
-                    Email = dado.Empresa.Email,
-                    Senha = null,
-                    Host = dado.Empresa.Host,
-                    Porta = dado.Empresa.Porta,
-                    Cep = dado.Empresa.Cep,
-                    Uf = dado.Empresa.Uf,
-                    Cidade = dado.Empresa.Cidade,
-                    Endereco = dado.Empresa.Endereco,
-                    Bairro = dado.Empresa.Bairro,
-                    Complemento = dado.Empresa.Complemento,
-                    DataInclusao = dado.Empresa.DataInclusao,
-                    DataAlteracao = dado.Empresa.DataAlteracao
-                }
-                : null
+            EmpresaDto = dado.Empresa != null ? MapearEntidadeEmpresa(dado) : null
         };
+    }
 
-        // MENSAGERIA REAL (RabbitMQ)
-        // O Handler não espera o e-mail ser enviado, ele apenas publica na fila
-        try
+    private static ImovelDto MapearEntidadeImovel(Morador dado)
+    {
+        return new ImovelDto
         {
-            string corpoEmail = $@"
-                <h3>Bem-vindo ao Sistema de Condomínio!</h3>
-                <p>Morador criado com sucesso.</p>";
+            Id = dado.Imovel!.Id,
+            Bloco = dado.Imovel.Bloco,
+            Apartamento = dado.Imovel.Apartamento,
+            BoxGaragem = dado.Imovel.BoxGaragem,
+            EmpresaId = dado.Imovel.EmpresaId
+        };
+    }
 
-            await mensageriaService.EnviarEmailAsync(
-                dado.Email,
-                "Seu Acesso",
-                corpoEmail,
-                dado.EmpresaId
-            );
-        }
-        catch (Exception ex)
+    private static EmpresaDto MapearEntidadeEmpresa(Morador dado)
+    {
+        return new EmpresaDto
         {
-            // Importante: Se o RabbitMQ falhar, o Morador já foi criado no banco.
-            // No mercado, usamos padrões como 'Outbox Pattern' para lidar com isso,
-            // mas por enquanto, apenas logar o erro é o suficiente.
-            Console.WriteLine($"Erro ao publicar no RabbitMQ: {ex.Message}");
-        }
+            Id = dado.Id,
+            RazaoSocial = dado.Empresa!.RazaoSocial,
+            Fantasia = dado.Empresa.Fantasia,
+            Cnpj = dado.Empresa.Cnpj,
+            TipoDeCondominio = dado.Empresa.TipoDeCondominio,
+            Nome = dado.Nome,
+            Celular = dado.Empresa.Celular,
+            Telefone = dado.Empresa.Telefone!,
+            Email = dado.Empresa.Email,
+            Senha = null,
+            Host = dado.Empresa.Host,
+            Porta = dado.Empresa.Porta,
+            Cep = dado.Empresa.Cep,
+            Uf = dado.Empresa.Uf,
+            Cidade = dado.Empresa.Cidade,
+            Endereco = dado.Empresa.Endereco,
+            Bairro = dado.Empresa.Bairro,
+            Complemento = dado.Empresa.Complemento,
+            DataInclusao = dado.Empresa.DataInclusao,
+            DataAlteracao = dado.Empresa.DataAlteracao
+        };
+    }
 
-        return Result<MoradorDto>.Success(dto, "Morador criado com sucesso e notificação enviada para fila.");
+    private static EnvioEmailRequest PreencherEnvioEmailRequest(Morador dado, string corpoEmail)
+    {
+        return new EnvioEmailRequest(
+            dado.Email,
+            "Bem-vindo - Seu Acesso ao Sistema",
+            corpoEmail,
+            dado.EmpresaId.GetHashCode()
+        );
     }
 }

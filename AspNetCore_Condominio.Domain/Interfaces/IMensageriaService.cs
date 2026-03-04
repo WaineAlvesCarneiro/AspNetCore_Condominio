@@ -2,6 +2,7 @@
 
 public interface IMensageriaService
 {
-    Task EnviarEmailAsync(string para, string assunto, string corpoHtml, long? empresaId);
-    Task EnviarWhatsappAsync(string numero, string mensagem);
+    Task PublicarEmailFilaAsync(EnvioEmailRequest email);
 }
+
+public record EnvioEmailRequest(string Para, string Assunto, string Corpo, long EmpresaId);
