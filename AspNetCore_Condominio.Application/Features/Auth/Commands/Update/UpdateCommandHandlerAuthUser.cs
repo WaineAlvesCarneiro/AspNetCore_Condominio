@@ -36,7 +36,7 @@ public record UpdateCommandHandlerAuthUser(
             var corpoEmail = emailTemplateService.GerarUsuarioAlterado(dadoToUpdate.UserName);
             var emailRequest = new EnvioEmailRequest(
                 dadoToUpdate.Email,
-                "Usuário - Alteração de Dados Cadastrais",
+                "Usuário alteração de Dados Cadastrais",
                 corpoEmail,
                 dadoToUpdate.EmpresaId.GetValueOrDefault()
             );

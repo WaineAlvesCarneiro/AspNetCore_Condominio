@@ -9,6 +9,7 @@ using AspNetCore_Condominio.Domain.Repositories;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
 using AspNetCore_Condominio.Infrastructure.Data;
 using AspNetCore_Condominio.Infrastructure.Messaging;
+using AspNetCore_Condominio.Infrastructure.Messaging.Configurations;
 using AspNetCore_Condominio.Infrastructure.Repositories;
 using AspNetCore_Condominio.Infrastructure.Repositories.Auth;
 using AspNetCore_Condominio.Infrastructure.Services;
@@ -34,9 +35,10 @@ public static class ServiceExtensions
         services
             .AddDatabase(configuration)
             .AddJsonConfigs()
+            .AddMemoryCache()
             .AddMediatRAndValidators()
             .AddRepositories()
-            .AddInfrastructureServices()
+            .AddInfrastructureServices(configuration)
             .AddSecurity(configuration);
 
         return services;
@@ -78,11 +80,16 @@ public static class ServiceExtensions
         return services;
     }
 
-    private static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    private static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
+        // 3. Configuração do Options Pattern para o RabbitMQ
+        services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMQ"));
+
+        // Singleton pois a ConnectionFactory e o gerenciamento de conexão devem ser únicos
         services.AddSingleton<IMensageriaService, RabbitMQService>();
         services.AddScoped<IEmailSenderService, EmailSenderService>();
         services.AddScoped<IEmailTemplateService, EmailTemplateService>();
+        // 4. Background Service para o Consumer
         services.AddHostedService<EmailConsumerWorker>();
         services.AddSingleton<TokenService>();
 

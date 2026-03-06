@@ -2,7 +2,7 @@
 
 public interface IMensageriaService
 {
-    Task PublicarEmailFilaAsync(EnvioEmailRequest email);
+    Task PublicarMensagemAsync<T>(T mensagem) where T : class;
 }
 
 public record EnvioEmailRequest(string Para, string Assunto, string Corpo, long EmpresaId);

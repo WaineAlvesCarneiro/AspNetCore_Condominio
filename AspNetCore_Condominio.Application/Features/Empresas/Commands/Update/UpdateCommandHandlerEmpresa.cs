@@ -43,7 +43,7 @@ public class UpdateCommandHandlerEmpresa(
             var corpoEmail = emailTemplateService.GerarEmpresaAlterada(dadoToUpdate.RazaoSocial);
             var emailRequest = new EnvioEmailRequest(
                 dadoToUpdate.Email,
-                "Empresa - Alteração de Dados Cadastrais",
+                "Empresa alteração de Dados Cadastrais",
                 corpoEmail,
                 dadoToUpdate.Id
             );

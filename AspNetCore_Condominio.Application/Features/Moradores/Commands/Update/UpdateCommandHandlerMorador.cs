@@ -42,7 +42,7 @@ public class UpdateCommandHandlerMorador(
             var corpoEmail = emailTemplateService.GerarMoradorAlterado(dadoToUpdate.Nome);
             var emailRequest = new EnvioEmailRequest(
                 dadoToUpdate.Email,
-                "Morador - Alteração de Dados Cadastrais",
+                "Morador alteração de Dados Cadastrais",
                 corpoEmail,
                 dadoToUpdate.Id
             );

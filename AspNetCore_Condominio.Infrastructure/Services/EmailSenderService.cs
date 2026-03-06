@@ -2,63 +2,72 @@
 using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using MimeKit;
 
 namespace AspNetCore_Condominio.Infrastructure.Services;
 
-public class EmailSenderService(IEmpresaRepository empresaRepository, ILogger<EmailSenderService> logger) : IEmailSenderService
+public class EmailSenderService(
+    IEmpresaRepository empresaRepository,
+    ILogger<EmailSenderService> logger,
+    IMemoryCache cache)
+        : IEmailSenderService
 {
-    private readonly IEmpresaRepository _empresaRepository = empresaRepository;
-    private readonly ILogger<EmailSenderService> _logger = logger;
-
     public async Task<bool> EnviarSmtpAsync(string para, string assunto, string corpo, long empresaId)
     {
-        var empresa = await _empresaRepository.GetByIdAsync(empresaId);
+        // 1. Estratégia de Cache para evitar idas excessivas ao Banco de Dados
+        var empresa = await cache.GetOrCreateAsync($"empresa_smtp_{empresaId}", entry =>
+        {
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10); // Cache por 10 min
+            logger.LogInformation("Buscando configurações de SMTP no banco para empresa {Id}", empresaId);
+            return empresaRepository.GetByIdAsync(empresaId);
+        });
 
         if (empresa == null || string.IsNullOrEmpty(empresa.Senha))
         {
-            _logger.LogError("Configurações de e-mail não encontradas para empresa {Id}", empresaId);
+            logger.LogError("[SMTP] Configurações não encontradas para empresa {Id}", empresaId);
             return false;
         }
 
         try
         {
-            using SmtpClient smtp = await SmtpCliente(para, assunto, corpo, empresa);
+            var email = MontarMensagem(para, assunto, corpo, empresa);
+            await DispararEmailAsync(email, empresa);
 
+            logger.LogInformation("[SMTP] E-mail enviado com sucesso para {Destino}", para);
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Erro ao disparar e-mail via SMTP para {Destino}", para);
+            logger.LogError(ex, "[SMTP] Falha ao disparar e-mail para {Destino} via host {Host}", para, empresa.Host);
             return false;
         }
     }
 
-    private static async Task<SmtpClient> SmtpCliente(string para, string assunto, string corpo, Domain.Entities.Empresa empresa)
+    private static MimeMessage MontarMensagem(string para, string assunto, string corpo, Domain.Entities.Empresa empresa)
     {
-        string senhaReal = EncryptionHelper.Decrypt(empresa.Senha!);
-
-        MimeMessage email;
-        SmtpClient smtp;
-        CriarEmail(para, assunto, corpo, empresa, out email, out smtp);
-
-        await smtp.ConnectAsync(empresa.Host, empresa.Porta, MailKit.Security.SecureSocketOptions.StartTls);
-        await smtp.AuthenticateAsync(empresa.Email, senhaReal);
-        await smtp.SendAsync(email);
-        await smtp.DisconnectAsync(true);
-
-        return smtp;
-    }
-
-    private static void CriarEmail(string para, string assunto, string corpo, Domain.Entities.Empresa empresa, out MimeMessage email, out SmtpClient smtp)
-    {
-        email = new MimeMessage();
+        var email = new MimeMessage();
         email.From.Add(new MailboxAddress(empresa.Fantasia, empresa.Email));
         email.To.Add(new MailboxAddress("", para));
         email.Subject = assunto;
         email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = corpo };
-        smtp = new SmtpClient();
-        smtp.Timeout = 10000;
+        return email;
+    }
+
+    private static async Task DispararEmailAsync(MimeMessage email, Domain.Entities.Empresa empresa)
+    {
+        using var smtp = new SmtpClient();
+        smtp.Timeout = 15000; // 15 segundos de timeout
+
+        // Descriptografia da senha (conforme seu Helper existente)
+        string senhaReal = EncryptionHelper.Decrypt(empresa.Senha!);
+
+        // Conexão e Autenticação
+        await smtp.ConnectAsync(empresa.Host, empresa.Porta, MailKit.Security.SecureSocketOptions.StartTls);
+        await smtp.AuthenticateAsync(empresa.Email, senhaReal);
+
+        await smtp.SendAsync(email);
+        await smtp.DisconnectAsync(true);
     }
 }

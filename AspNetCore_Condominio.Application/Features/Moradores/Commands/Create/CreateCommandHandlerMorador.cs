@@ -38,7 +38,7 @@ public class CreateCommandHandlerMorador(
             var corpoEmail = emailTemplateService.GerarBoasVindasMorador(dado.Nome);
             var emailRequest = new EnvioEmailRequest(
                 dado.Email,
-                "Bem-vindo!",
+                "Bem-vindo ao Sistema!",
                 corpoEmail,
                 dado.EmpresaId
             );

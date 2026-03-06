@@ -30,7 +30,7 @@ public record CreateCommandHandlerEmpresa(
     {
         try
         {
-            var corpoEmail = emailTemplateService.GerarBoasVindasEmpresa(dado.Nome);
+            var corpoEmail = emailTemplateService.GerarBoasVindasEmpresa(dado.RazaoSocial);
             var emailRequest = new EnvioEmailRequest(
                 dado.Email,
                 "Bem-vindo ao Sistema",
