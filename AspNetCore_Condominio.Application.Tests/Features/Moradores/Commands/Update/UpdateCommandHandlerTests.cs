@@ -2,7 +2,7 @@
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories;
-using MediatR;
+using Microsoft.Extensions.Logging;
 using Moq;
 using DateTime = System.DateTime;
 
@@ -13,6 +13,8 @@ public class UpdateCommandHandlerTests
     private readonly Mock<IMoradorRepository> _repoMock;
     private readonly Mock<IImovelRepository> _imovelRepoMock;
     private readonly Mock<IMensageriaService> _mensageriaMock;
+    private readonly Mock<IEmailTemplateService> _emailTemplateServiceMock;
+    private readonly Mock<ILogger<UpdateCommandHandlerMorador>> _loggerMock;
     private readonly UpdateCommandHandlerMorador _handler;
 
     private const long UserEmpresaId = 1;
@@ -60,11 +62,15 @@ public class UpdateCommandHandlerTests
         _repoMock = new Mock<IMoradorRepository>();
         _imovelRepoMock = new Mock<IImovelRepository>();
         _mensageriaMock = new Mock<IMensageriaService>();
+        _emailTemplateServiceMock = new Mock<IEmailTemplateService>();
+        _loggerMock = new Mock<ILogger<UpdateCommandHandlerMorador>>();
 
         _handler = new UpdateCommandHandlerMorador(
             _repoMock.Object,
             _imovelRepoMock.Object,
-            _mensageriaMock.Object
+            _mensageriaMock.Object,
+            _emailTemplateServiceMock.Object,
+            _loggerMock.Object
         );
 
         _imovelRepoMock.Setup(repo => repo.GetByIdAsync(IMOVEL_ID_VALIDO, It.IsAny<CancellationToken>())).ReturnsAsync(_imovelValido);

@@ -3,6 +3,7 @@ using AspNetCore_Condominio.Domain.Entities.Auth;
 using AspNetCore_Condominio.Domain.Enums;
 using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace AspNetCore_Condominio.Application.Tests.Features.Auth.Commands.Create;
@@ -11,14 +12,18 @@ public class CreateCommandHandlerTests
 {
     private readonly Mock<IAuthUserRepository> _repoMock;
     private readonly Mock<IMensageriaService> _mensageriaMock;
+    private readonly Mock<IEmailTemplateService> _emailTemplateServiceMock;
+    private readonly Mock<ILogger<CreateCommandHandlerAuthUser>> _loggerMock;
     private readonly CreateCommandHandlerAuthUser _handler;
 
     public CreateCommandHandlerTests()
     {
         _repoMock = new Mock<IAuthUserRepository>();
         _mensageriaMock = new Mock<IMensageriaService>();
+        _emailTemplateServiceMock = new Mock<IEmailTemplateService>();
+        _loggerMock = new Mock<ILogger<CreateCommandHandlerAuthUser>>();
 
-        _handler = new CreateCommandHandlerAuthUser(_repoMock.Object, _mensageriaMock.Object);
+        _handler = new CreateCommandHandlerAuthUser(_repoMock.Object, _mensageriaMock.Object, _emailTemplateServiceMock.Object, _loggerMock.Object);
 
         _repoMock.Setup(repo => repo.CreateAsync(It.IsAny<AuthUser>(), It.IsAny<CancellationToken>()))
             .Callback<AuthUser, CancellationToken>((authUser, token) => authUser.Id = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"))

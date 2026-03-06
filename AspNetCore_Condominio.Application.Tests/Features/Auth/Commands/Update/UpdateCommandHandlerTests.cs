@@ -3,6 +3,7 @@ using AspNetCore_Condominio.Domain.Entities.Auth;
 using AspNetCore_Condominio.Domain.Enums;
 using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace AspNetCore_Condominio.Application.Tests.Features.Auth.Commands.Update;
@@ -11,6 +12,8 @@ public class UpdateCommandHandlerTests
 {
     private readonly Mock<IAuthUserRepository> _repoMock;
     private readonly Mock<IMensageriaService> _mensageriaMock;
+    private readonly Mock<IEmailTemplateService> _emailTemplateServiceMock;
+    private readonly Mock<ILogger<UpdateCommandHandlerAuthUser>> _loggerMock;
     private readonly UpdateCommandHandlerAuthUser _handler;
     private readonly AuthUser _existente = new()
     {
@@ -27,7 +30,10 @@ public class UpdateCommandHandlerTests
     {
         _repoMock = new Mock<IAuthUserRepository>();
         _mensageriaMock = new Mock<IMensageriaService>();
-        _handler = new UpdateCommandHandlerAuthUser(_repoMock.Object, _mensageriaMock.Object);
+        _emailTemplateServiceMock = new Mock<IEmailTemplateService>();
+        _loggerMock = new Mock<ILogger<UpdateCommandHandlerAuthUser>>();
+
+        _handler = new UpdateCommandHandlerAuthUser(_repoMock.Object, _mensageriaMock.Object, _emailTemplateServiceMock.Object, _loggerMock.Object);
     }
 
     [Fact]

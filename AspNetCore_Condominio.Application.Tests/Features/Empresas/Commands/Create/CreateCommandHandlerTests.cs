@@ -1,8 +1,10 @@
-﻿using AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
+﻿using AspNetCore_Condominio.Application.Features.Auth.Commands.Create;
+using AspNetCore_Condominio.Application.Features.Empresas.Commands.Create;
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Enums;
 using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace AspNetCore_Condominio.Application.Tests.Features.Empresas.Commands.Create;
@@ -11,14 +13,18 @@ public class CreateCommandHandlerTests
 {
     private readonly Mock<IEmpresaRepository> _repoMock;
     private readonly Mock<IMensageriaService> _mensageriaMock;
+    private readonly Mock<IEmailTemplateService> _emailTemplateServiceMock;
+    private readonly Mock<ILogger<CreateCommandHandlerEmpresa>> _loggerMock;
     private readonly CreateCommandHandlerEmpresa _handler;
 
     public CreateCommandHandlerTests()
     {
         _repoMock = new Mock<IEmpresaRepository>();
         _mensageriaMock = new Mock<IMensageriaService>();
+        _emailTemplateServiceMock = new Mock<IEmailTemplateService>();
+        _loggerMock = new Mock<ILogger<CreateCommandHandlerEmpresa>>();
 
-        _handler = new CreateCommandHandlerEmpresa(_repoMock.Object, _mensageriaMock.Object);
+        _handler = new CreateCommandHandlerEmpresa(_repoMock.Object, _mensageriaMock.Object, _emailTemplateServiceMock.Object, _loggerMock.Object);
 
         _repoMock.Setup(repo => repo.CreateAsync(It.IsAny<Empresa>(), It.IsAny<CancellationToken>()))
             .Callback<Empresa, CancellationToken>((empresa, token)=> empresa.Id = 101)

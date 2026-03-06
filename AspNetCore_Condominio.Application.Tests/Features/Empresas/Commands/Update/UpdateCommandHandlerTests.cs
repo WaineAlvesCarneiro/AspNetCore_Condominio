@@ -4,6 +4,7 @@ using AspNetCore_Condominio.Domain.Enums;
 using AspNetCore_Condominio.Domain.Interfaces;
 using AspNetCore_Condominio.Domain.Repositories;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace AspNetCore_Condominio.Application.Tests.Features.Empresas.Commands.Update;
@@ -13,7 +14,10 @@ public class UpdateCommandHandlerTests
     private readonly Mock<IEmpresaRepository> _repoMock;
     private readonly Mock<IAuthUserRepository> _authUserRepoMock;
     private readonly Mock<IMensageriaService> _mensageriaMock;
+    private readonly Mock<IEmailTemplateService> _emailTemplateServiceMock;
+    private readonly Mock<ILogger<UpdateCommandHandlerEmpresa>> _loggerMock;
     private readonly UpdateCommandHandlerEmpresa _handler;
+
     private readonly Empresa _existente = new()
     {
         Id = 1,
@@ -43,7 +47,10 @@ public class UpdateCommandHandlerTests
         _repoMock = new Mock<IEmpresaRepository>();
         _authUserRepoMock = new Mock<IAuthUserRepository>();
         _mensageriaMock = new Mock<IMensageriaService>();
-        _handler = new UpdateCommandHandlerEmpresa(_repoMock.Object, _authUserRepoMock.Object, _mensageriaMock.Object);
+        _emailTemplateServiceMock = new Mock<IEmailTemplateService>();
+        _loggerMock = new Mock<ILogger<UpdateCommandHandlerEmpresa>>();
+
+        _handler = new UpdateCommandHandlerEmpresa(_repoMock.Object, _authUserRepoMock.Object, _mensageriaMock.Object, _emailTemplateServiceMock.Object, _loggerMock.Object);
     }
 
     [Fact]
