@@ -29,11 +29,11 @@ public class TokenService(IConfiguration configuration)
     {
         return
         [
-        new(ClaimTypes.Name, username),
-        new(ClaimTypes.Role, role.ToString()),
-        new(AuthClaims.PrimeiroAcesso, primeiroAcesso.ToString().ToLower()),
-        new(AuthClaims.StatusAtivo, userAtivo.ToString()),
-        new(AuthClaims.EmpresaAtiva, empresaAtiva.ToString())
+            new(ClaimTypes.Name, username),
+            new(ClaimTypes.Role, role.ToString()),
+            new(AuthClaims.PrimeiroAcesso, primeiroAcesso.ToString().ToLower()),
+            new(AuthClaims.StatusAtivo, userAtivo.ToString()),
+            new(AuthClaims.EmpresaAtiva, empresaAtiva.ToString())
         ];
     }
 

@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Mappings;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Repositories;
@@ -25,30 +26,7 @@ public class GetAllPagedQueryHandlerEmpresa(IEmpresaRepository repository)
             cancellationToken: cancellationToken
         );
 
-        IEnumerable<EmpresaDto> dtos = items.Select(dado => new EmpresaDto
-        {
-            Id = dado.Id,
-            Ativo = dado.Ativo,
-            RazaoSocial = dado.RazaoSocial,
-            Fantasia = dado.Fantasia,
-            Cnpj = dado.Cnpj,
-            TipoDeCondominio = dado.TipoDeCondominio,
-            Nome = dado.Nome,
-            Celular = dado.Celular,
-            Telefone = dado.Telefone!,
-            Email = dado.Email,
-            Senha = null,
-            Host = dado.Host,
-            Porta = dado.Porta,
-            Cep = dado.Cep,
-            Uf = dado.Uf,
-            Cidade = dado.Cidade,
-            Endereco = dado.Endereco,
-            Bairro = dado.Bairro,
-            Complemento = dado.Complemento,
-            DataInclusao = dado.DataInclusao,
-            DataAlteracao = dado.DataAlteracao
-        });
+        var dtos = items.Select(dado => dado.ToDto()).ToList();
 
         PagedResult<EmpresaDto> pagedResult = new PagedResult<EmpresaDto>
         {

@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Mappings;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
 using MediatR;
@@ -14,19 +15,6 @@ public class GetByIdQueryHandlerAuthUser(IAuthUserRepository repository)
         if (dado is null)
             return Result<AuthUserDto>.Failure("Usuário não encontrado.");
 
-        var dto = new AuthUserDto
-        {
-            Id = dado.Id,
-            Ativo = dado.Ativo,
-            EmpresaAtiva = dado.EmpresaAtiva,
-            EmpresaId = dado.EmpresaId,
-            UserName = dado.UserName,
-            Email = dado.Email,
-            Role = dado.Role,
-            DataInclusao = dado.DataInclusao,
-            DataAlteracao = dado.DataAlteracao
-        };
-
-        return Result<AuthUserDto>.Success(dto);
+        return Result<AuthUserDto>.Success(dado.ToDto());
     }
 }

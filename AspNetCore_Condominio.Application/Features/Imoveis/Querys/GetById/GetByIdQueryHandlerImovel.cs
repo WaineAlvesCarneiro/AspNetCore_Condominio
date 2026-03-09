@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Mappings;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Repositories;
 using MediatR;
@@ -14,15 +15,6 @@ public record GetByIdQueryHandlerImovel(IImovelRepository repository)
         if (dado is null)
             return Result<ImovelDto>.Failure("Imóvel não encontrado.");
 
-        var dto = new ImovelDto
-        {
-            Id = dado.Id,
-            Bloco = dado.Bloco,
-            Apartamento = dado.Apartamento,
-            BoxGaragem = dado.BoxGaragem,
-            EmpresaId = dado.EmpresaId
-        };
-
-        return Result<ImovelDto>.Success(dto);
+        return Result<ImovelDto>.Success(dado.ToDto());
     }
 }

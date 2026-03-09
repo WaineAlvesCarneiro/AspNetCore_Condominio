@@ -48,7 +48,7 @@ public class ImovelRepository(ApplicationDbContext context) : IImovelRepository
     }
 
     private IQueryable<Imovel> ApplyOrdering(IQueryable<Imovel> query, string orderBy, string direction)
-        {
+    {
         direction = direction?.ToUpper() ?? "ASC";
 
         return (orderBy?.ToLower(), direction) switch

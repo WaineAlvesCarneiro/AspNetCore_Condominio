@@ -16,10 +16,7 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
 
     public async Task<IEnumerable<AuthUser>> GetAllAsync(long? empresaId = null, CancellationToken cancellationToken = default)
     {
-        var query = _context.AuthUsers.AsNoTracking();
-
-        if (empresaId.HasValue && empresaId.Value != 0)
-            query = query.Where(u => u.EmpresaId == empresaId.Value);
+        IQueryable<AuthUser> query = MontaQueryComEmpresaId(empresaId);
 
         return await query.ToListAsync(cancellationToken);
     }
@@ -28,10 +25,7 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
         int page, int pageSize, string? orderBy, string? direction,
         long? empresaId, string? userName, CancellationToken cancellationToken = default)
     {
-        var query = _context.AuthUsers.AsQueryable();
-
-        if (empresaId.HasValue && empresaId != 0)
-            query = query.Where(u => u.EmpresaId == empresaId.Value);
+        IQueryable<AuthUser> query = MontaQueryComEmpresaId(empresaId);
 
         if (!string.IsNullOrWhiteSpace(userName))
             query = query.Where(x => x.UserName.Contains(userName));
@@ -47,6 +41,15 @@ public class AuthUserRepository(ApplicationDbContext context) : IAuthUserReposit
             .ToListAsync(cancellationToken);
 
         return (items, totalCount);
+    }
+
+    private IQueryable<AuthUser> MontaQueryComEmpresaId(long? empresaId)
+    {
+        var query = _context.AuthUsers.AsNoTracking();
+
+        if (empresaId.HasValue && empresaId.Value != 0)
+            query = query.Where(u => u.EmpresaId == empresaId.Value);
+        return query;
     }
 
     private IQueryable<AuthUser> ApplyOrdering(IQueryable<AuthUser> query, string orderBy, string direction)

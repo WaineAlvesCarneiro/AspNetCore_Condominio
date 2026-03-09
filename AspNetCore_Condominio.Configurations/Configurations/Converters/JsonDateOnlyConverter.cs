@@ -14,14 +14,10 @@ public class JsonDateOnlyConverter : JsonConverter<DateOnly>
         {
             var value = reader.GetString();
             if (DateOnly.TryParseExact(value, Format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
-            {
                 return date;
-            }
 
             if (DateTime.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateTime))
-            {
                 return DateOnly.FromDateTime(dateTime);
-            }
 
             throw new JsonException($"Formato de data inválido. Esperado: {Format}");
         }

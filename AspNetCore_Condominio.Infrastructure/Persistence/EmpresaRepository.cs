@@ -21,7 +21,7 @@ public class EmpresaRepository(ApplicationDbContext context) : IEmpresaRepositor
 
     public async Task<(IEnumerable<Empresa> Items, int TotalCount)> GetAllPagedAsync(
         int page, int pageSize, string? orderBy, string? direction,
-       string? razaoSocial, string? cnpj, CancellationToken cancellationToken = default)
+        string? razaoSocial, string? cnpj, CancellationToken cancellationToken = default)
     {
         var query = _context.Empresas.AsQueryable();
 

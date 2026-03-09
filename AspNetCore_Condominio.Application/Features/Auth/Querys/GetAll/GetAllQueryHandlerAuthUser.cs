@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Mappings;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
 using MediatR;
@@ -13,18 +14,7 @@ public class GetAllQueryHandlerAuthUser(IAuthUserRepository repository)
         var dados = await repository.GetAllAsync(
             empresaId: request.IdEmpresa, cancellationToken);
 
-        var dtos = dados.Select(dado => new AuthUserDto
-        {
-            Id = dado.Id,
-            Ativo = dado.Ativo,
-            EmpresaAtiva = dado.EmpresaAtiva,
-            EmpresaId = dado.EmpresaId,
-            UserName = dado.UserName,
-            Email = dado.Email,
-            Role = dado.Role,
-            DataInclusao = dado.DataInclusao,
-            DataAlteracao = dado.DataAlteracao
-        });
+        var dtos = dados.Select(dado => dado.ToDto()).ToList();
 
         return Result<IEnumerable<AuthUserDto>>.Success(dtos);
     }

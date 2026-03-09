@@ -11,13 +11,7 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
 
     public async Task<IEnumerable<Morador>> GetAllAsync(long? empresaId = null, CancellationToken cancellationToken = default)
     {
-        var query = _context.Moradores
-            .Include(m => m.Imovel)
-            .Include(m => m.Empresa)
-            .AsQueryable();
-
-        if (empresaId.HasValue && empresaId.Value != 0)
-            query = query.Where(u => u.EmpresaId == empresaId.Value);
+        IQueryable<Morador> query = MontaQueryComEmpresaId(empresaId);
 
         return await query.AsNoTracking().ToListAsync(cancellationToken);
     }
@@ -26,13 +20,7 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
         int page, int pageSize, string? orderBy, string? direction,
         long? empresaId, string? nome, CancellationToken cancellationToken = default)
     {
-        var query = _context.Moradores
-            .Include(m => m.Imovel)
-            .Include(m => m.Empresa)
-            .AsQueryable();
-
-        if (empresaId.HasValue && empresaId != 0)
-            query = query.Where(u => u.EmpresaId == empresaId.Value);
+        IQueryable<Morador> query = MontaQueryComEmpresaId(empresaId);
 
         if (!string.IsNullOrWhiteSpace(nome))
             query = query.Where(x => x.Nome.Contains(nome));
@@ -48,6 +36,19 @@ public class MoradorRepository(ApplicationDbContext context) : IMoradorRepositor
             .ToListAsync(cancellationToken);
 
         return (items, totalCount);
+    }
+
+    private IQueryable<Morador> MontaQueryComEmpresaId(long? empresaId)
+    {
+        var query = _context.Moradores
+            .Include(m => m.Imovel)
+            .Include(m => m.Empresa)
+            .AsQueryable();
+
+        if (empresaId.HasValue && empresaId.Value != 0)
+            query = query.Where(u => u.EmpresaId == empresaId.Value);
+
+        return query;
     }
 
     private IQueryable<Morador> ApplyOrdering(IQueryable<Morador> query, string orderBy, string direction)

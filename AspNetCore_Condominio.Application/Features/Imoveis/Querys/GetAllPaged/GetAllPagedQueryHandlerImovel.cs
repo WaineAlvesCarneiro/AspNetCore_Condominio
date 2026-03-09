@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Mappings;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Repositories;
@@ -25,14 +26,7 @@ public record GetAllPagedQueryHandlerImovel(IImovelRepository repository)
             apartamento: request.Apartamento,
             cancellationToken);
 
-        var dtos = items.Select(dado => new ImovelDto
-        {
-            Id = dado.Id,
-            Bloco = dado.Bloco,
-            Apartamento = dado.Apartamento,
-            BoxGaragem = dado.BoxGaragem,
-            EmpresaId = dado.EmpresaId
-        });
+        var dtos = items.Select(dado => dado.ToDto()).ToList();
 
         return Result<PagedResult<ImovelDto>>.Success(new PagedResult<ImovelDto>
         {

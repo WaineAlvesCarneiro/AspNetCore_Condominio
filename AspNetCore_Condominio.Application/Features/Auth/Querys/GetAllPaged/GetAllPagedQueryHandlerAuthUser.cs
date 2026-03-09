@@ -1,4 +1,5 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Mappings;
 using AspNetCore_Condominio.Domain.Common;
 using AspNetCore_Condominio.Domain.Entities.Auth;
 using AspNetCore_Condominio.Domain.Repositories.Auth;
@@ -24,18 +25,7 @@ public class GetAllPagedQueryHandlerAuthUser(IAuthUserRepository repository)
             userName: request.UserName,
             cancellationToken);
 
-        IEnumerable<AuthUserDto> dtos = items.Select(dado => new AuthUserDto
-        {
-            Id = dado.Id,
-            Ativo = dado.Ativo,
-            EmpresaAtiva = dado.EmpresaAtiva,
-            EmpresaId = dado.EmpresaId,
-            UserName = dado.UserName,
-            Email = dado.Email,
-            Role = dado.Role,
-            DataInclusao = dado.DataInclusao,
-            DataAlteracao = dado.DataAlteracao
-        });
+        var dtos = items.Select(dado => dado.ToDto()).ToList();
 
         PagedResult<AuthUserDto> pagedResult = new PagedResult<AuthUserDto>
         {

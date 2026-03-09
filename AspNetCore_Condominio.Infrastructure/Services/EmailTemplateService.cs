@@ -5,7 +5,7 @@ namespace AspNetCore_Condominio.Infrastructure.Services;
 
 public class EmailTemplateService : IEmailTemplateService
 {
-    private string MontarLayoutBase(string titulo, string saudacao, string mensagem, string? conteudoExtra = null)
+    private static string MontarLayoutBase(string titulo, string saudacao, string mensagem, string? conteudoExtra = null)
     {
         return $@"
         <div style='font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px;'>
@@ -19,7 +19,7 @@ public class EmailTemplateService : IEmailTemplateService
         </div>";
     }
 
-    private string GerarQuadroInformativo(params (string Label, string Valor)[] itens)
+    private static string GerarQuadroInformativo(params (string Label, string Valor)[] itens)
     {
         var sb = new StringBuilder();
         sb.Append("<div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;'>");
