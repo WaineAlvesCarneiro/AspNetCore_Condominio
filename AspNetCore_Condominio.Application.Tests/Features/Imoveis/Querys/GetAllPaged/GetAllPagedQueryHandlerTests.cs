@@ -1,0 +1,104 @@
+﻿using AspNetCore_Condominio.Application.DTOs;
+using AspNetCore_Condominio.Application.Features.Imoveis.Queries.GetAllPaged;
+using AspNetCore_Condominio.Domain.Common;
+using AspNetCore_Condominio.Domain.Entities;
+using AspNetCore_Condominio.Domain.Repositories;
+using Moq;
+
+namespace AspNetCore_Condominio.Application.Tests.Features.Imoveis.Querys.GetAllPaged;
+
+public class GetAllPagedQueryHandlerTests
+{
+    private readonly Mock<IImovelRepository> _repoMock;
+    private readonly GetAllPagedQueryHandlerImovel _handler;
+
+    private const long UserEmpresaId = 1;
+
+    private readonly List<Imovel> _pagina1 =
+    [
+        new Imovel { Id = 1, Bloco = "A", Apartamento = "101", BoxGaragem = "G1", EmpresaId = UserEmpresaId },
+        new Imovel { Id = 2, Bloco = "B", Apartamento = "202", BoxGaragem = "G2", EmpresaId = UserEmpresaId }
+    ];
+
+    private const int Page = 1;
+    private const int PageSize = 10;
+    private const string? SortBy = "Id";
+    private const string? Direction = "ASC";
+
+    private const int TOTAL_REGISTROS = 2;
+
+    public GetAllPagedQueryHandlerTests()
+    {
+        _repoMock = new Mock<IImovelRepository>();
+        _handler = new GetAllPagedQueryHandlerImovel(_repoMock.Object);
+    }
+
+    [Fact]
+    public async Task Handle_DeveRetornarPagedResultComDadosCorretos()
+    {
+        // Arrange
+        string expectedFirstBloco = "A";
+        GetAllPagedQueryImovel query = new(
+            Page: Page,
+            PageSize: PageSize,
+            SortBy: SortBy,
+            Direction: Direction!,
+            UserEmpresaId
+        );
+
+        _repoMock.Setup(repo => repo.GetAllPagedAsync(
+            Page,
+            PageSize,
+            SortBy,
+            Direction,
+            UserEmpresaId,
+            It.IsAny<string?>(),
+            It.IsAny<string?>(),
+            It.IsAny<CancellationToken>()
+            ))
+            .ReturnsAsync((_pagina1, TOTAL_REGISTROS));
+
+        // Act
+        var resultado = await _handler.Handle(query, CancellationToken.None);
+
+        // Assert
+        Assert.True(resultado.Sucesso);
+        Assert.NotNull(resultado.Dados);
+
+        PagedResult<ImovelDto> pagedResult = resultado.Dados;
+
+        Assert.Equal(TOTAL_REGISTROS, pagedResult.TotalCount);
+        Assert.Equal(Page, pagedResult.PageIndex);
+        Assert.Equal(PageSize, pagedResult.PageSize);
+        Assert.Equal(_pagina1.Count, pagedResult.Items.Count());
+        Assert.Equal(expectedFirstBloco, pagedResult.Items.First().Bloco);
+        Assert.IsType<PagedResult<ImovelDto>>(pagedResult);
+
+        _repoMock.Verify(repo => repo.GetAllPagedAsync(
+            Page,
+            PageSize,
+            SortBy,
+            Direction,
+            UserEmpresaId,
+            It.IsAny<string?>(),
+            It.IsAny<string?>(),
+            It.IsAny<CancellationToken>()
+            ));
+    }
+
+    [Fact]
+    public async Task Handle_QuandoRetornaListaVazia_DeveRetornarPagedResultVazio()
+    {
+        const int totalZero = 0;
+        GetAllPagedQueryImovel query = new();
+        _repoMock.Setup(repo => repo.GetAllPagedAsync(
+            It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<long>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((new List<Imovel>(), totalZero));
+        Result<PagedResult<ImovelDto>> resultado = await _handler.Handle(query, CancellationToken.None);
+
+        Assert.True(resultado.Sucesso);
+        Assert.NotNull(resultado.Dados);
+        Assert.Equal(totalZero, resultado.Dados.TotalCount);
+        Assert.Empty(resultado.Dados.Items);
+    }
+}

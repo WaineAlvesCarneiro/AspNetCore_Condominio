@@ -1,0 +1,90 @@
+﻿using AspNetCore_Condominio.Application.Features.Auth.Commands.Update;
+using AspNetCore_Condominio.Domain.Entities.Auth;
+using AspNetCore_Condominio.Domain.Enums;
+using AspNetCore_Condominio.Domain.Interfaces;
+using AspNetCore_Condominio.Domain.Repositories.Auth;
+using Microsoft.Extensions.Logging;
+using Moq;
+
+namespace AspNetCore_Condominio.Application.Tests.Features.Auth.Commands.Update;
+
+public class UpdateCommandHandlerTests
+{
+    private readonly Mock<IAuthUserRepository> _repoMock;
+    private readonly Mock<IMensageriaService> _mensageriaMock;
+    private readonly Mock<IEmailTemplateService> _emailTemplateServiceMock;
+    private readonly Mock<ILogger<UpdateCommandHandlerAuthUser>> _loggerMock;
+    private readonly UpdateCommandHandlerAuthUser _handler;
+    private readonly AuthUser _existente = new()
+    {
+        Id = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"),
+        EmpresaId = 1,
+        UserName = "Admin",
+        Email = "email@gmail.com",
+        PasswordHash = "12345",
+        Role = (TipoRole)1,
+        DataInclusao = DateTime.Now
+    };
+
+    public UpdateCommandHandlerTests()
+    {
+        _repoMock = new Mock<IAuthUserRepository>();
+        _mensageriaMock = new Mock<IMensageriaService>();
+        _emailTemplateServiceMock = new Mock<IEmailTemplateService>();
+        _loggerMock = new Mock<ILogger<UpdateCommandHandlerAuthUser>>();
+
+        _handler = new UpdateCommandHandlerAuthUser(_repoMock.Object, _mensageriaMock.Object, _emailTemplateServiceMock.Object, _loggerMock.Object);
+    }
+
+    [Fact]
+    public async Task Handle_AuthUserExistenteEComandoValido_DeveAtualizarERetornarSucessoDto()
+    {
+        // Arrange
+        UpdateCommandAuthUser command = new()
+        {
+            Id = Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B"),
+            EmpresaId = 1,
+            UserName = "Admin Alterado",
+            Email = "email@gmail.com",
+            Role = (TipoRole)1,
+            DataInclusao = DateTime.Now
+        };
+
+        // Act
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync(_existente);
+        Domain.Common.Result<DTOs.AuthUserDto> resultado = await _handler.Handle(command, CancellationToken.None);
+
+        Assert.True(resultado.Sucesso);
+        Assert.NotNull(resultado.Dados);
+        Assert.Equal(command.UserName, resultado.Dados.UserName);
+
+        _repoMock.Verify(repo => repo.UpdateAsync(
+            It.Is<AuthUser>(i => i.Id == Guid.Parse("85D257AB-F0FD-F011-8550-A5241967915B") && i.UserName == command.UserName),
+            It.IsAny<CancellationToken>()
+        ), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_AuthUserInexistente_DeveRetornarResultFailure()
+    {
+        string mensagemEsperada = "Usuário não encontrado.";
+        UpdateCommandAuthUser command = new()
+        {
+            Id = Guid.Parse("FFFF57AB-F0FD-F011-8550-A5241967915B"),
+            EmpresaId = 1,
+            UserName = "Admin",
+            Email = "email@gmail.com",
+            Role = (TipoRole)1,
+            DataInclusao = DateTime.Now
+        };
+
+        _repoMock.Setup(repo => repo.GetByIdAsync(command.Id, It.IsAny<CancellationToken>())).ReturnsAsync((AuthUser)null!);
+        Domain.Common.Result<DTOs.AuthUserDto> resultado = await _handler.Handle(command, CancellationToken.None);
+
+        Assert.False(resultado.Sucesso);
+        Assert.Contains(mensagemEsperada, resultado.Mensagem);
+        Assert.Null(resultado.Dados);
+
+        _repoMock.Verify(repo => repo.UpdateAsync(It.IsAny<AuthUser>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+}

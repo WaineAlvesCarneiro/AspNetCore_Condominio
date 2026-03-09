@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Scrips_SQL_Server\scripts\**" />
+    <EmbeddedResource Remove="Scrips_SQL_Server\scripts\**" />
+    <None Remove="Scrips_SQL_Server\scripts\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<PackageReference Include="MailKit" Version="4.14.1" />
+	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.19" />
+	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
+	<PackageReference Include="RabbitMQ.Client" Version="7.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<Folder Include="Data\Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<ProjectReference Include="..\AspNetCore_Condominio.Application\AspNetCore_Condominio.Application.csproj" />
+	<ProjectReference Include="..\AspNetCore_Condominio.Domain\AspNetCore_Condominio.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
