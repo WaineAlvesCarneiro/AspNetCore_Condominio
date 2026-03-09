@@ -1,6 +1,5 @@
-﻿using AspNetCore_Condominio.Application.Helpers;
+﻿using AspNetCore_Condominio.Application.Mappings;
 using AspNetCore_Condominio.Domain.Entities.Auth;
-using AspNetCore_Condominio.Domain.Enums;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,7 +24,7 @@ public static class DatabaseExtensions
             {
                 var configuration = services.GetRequiredService<IConfiguration>();
 
-                AuthUser AdminUser = MapearEntidade(configuration);
+                AuthUser AdminUser = configuration.ToEntityMigrateAndSeedDatabase();
 
                 context.AuthUsers.Add(AdminUser);
                 await context.SaveChangesAsync();
@@ -36,23 +35,5 @@ public static class DatabaseExtensions
             var logger = services.GetRequiredService<ILogger<string>>();
             logger.LogError(ex, "Ocorreu um erro ao popular o banco de dados com usuário Admin.");
         }
-    }
-
-    private static AuthUser MapearEntidade(IConfiguration configuration)
-    {
-        var password = configuration["AdminSettings:Password"] ?? "12345";
-
-        AuthUser AdminUser = new()
-        {
-            EmpresaId = 0,
-            Ativo = TipoUserAtivo.Ativo,
-            EmpresaAtiva = TipoEmpresaAtivo.Ativo,
-            UserName = configuration["AdminSettings:UserName"] ?? "Admin",
-            Email = configuration["AdminSettings:Email"] ?? "enviaemailwebapi@gmail.com",
-            PasswordHash = PasswordHasher.HashPassword(password),
-            Role = TipoRole.Suporte,
-            DataInclusao = DateTime.Now
-        };
-        return AdminUser;
     }
 }

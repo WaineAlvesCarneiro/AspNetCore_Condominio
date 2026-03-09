@@ -1,16 +1,30 @@
 ﻿using AspNetCore_Condominio.Application.DTOs;
 using AspNetCore_Condominio.Application.Features.Auth.Commands.Create;
 using AspNetCore_Condominio.Application.Features.Auth.Commands.Update;
-using AspNetCore_Condominio.Application.Features.Moradores.Commands.Update;
 using AspNetCore_Condominio.Application.Helpers;
-using AspNetCore_Condominio.Domain.Entities;
 using AspNetCore_Condominio.Domain.Entities.Auth;
 using AspNetCore_Condominio.Domain.Enums;
+using Microsoft.Extensions.Configuration;
 
 namespace AspNetCore_Condominio.Application.Mappings;
 
 public static class AuthUserMappingExtensions
 {
+    public static AuthUser ToEntityMigrateAndSeedDatabase(this IConfiguration configuration)
+    {
+        return new AuthUser
+        {
+            EmpresaId = 0,
+            Ativo = TipoUserAtivo.Ativo,
+            EmpresaAtiva = TipoEmpresaAtivo.Ativo,
+            UserName = configuration["AdminSettings:UserName"] ?? "Admin",
+            Email = configuration["AdminSettings:Email"] ?? "enviaemailwebapi@gmail.com",
+            PasswordHash = PasswordHasher.HashPassword(configuration["AdminSettings:Password"] ?? "12345"),
+            Role = TipoRole.Suporte,
+            DataInclusao = DateTime.Now
+        };
+    }
+
     public static AuthUser ToEntity(this CreateCommandAuthUser request, string senhaTemporaria)
     {
         return new AuthUser
