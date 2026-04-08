@@ -16,10 +16,9 @@ public class EmailSenderService(
 {
     public async Task<bool> EnviarSmtpAsync(string para, string assunto, string corpo, long empresaId)
     {
-        // 1. Estratégia de Cache para evitar idas excessivas ao Banco de Dados
         var empresa = await cache.GetOrCreateAsync($"empresa_smtp_{empresaId}", entry =>
         {
-            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10); // Cache por 10 min
+            entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
             logger.LogInformation("Buscando configurações de SMTP no banco para empresa {Id}", empresaId);
             return empresaRepository.GetByIdAsync(empresaId);
         });
@@ -58,12 +57,10 @@ public class EmailSenderService(
     private static async Task DispararEmailAsync(MimeMessage email, Domain.Entities.Empresa empresa)
     {
         using var smtp = new SmtpClient();
-        smtp.Timeout = 15000; // 15 segundos de timeout
+        smtp.Timeout = 15000;
 
-        // Descriptografia da senha (conforme seu Helper existente)
         string senhaReal = EncryptionHelper.Decrypt(empresa.Senha!);
 
-        // Conexão e Autenticação
         await smtp.ConnectAsync(empresa.Host, empresa.Porta, MailKit.Security.SecureSocketOptions.StartTls);
         await smtp.AuthenticateAsync(empresa.Email, senhaReal);
 

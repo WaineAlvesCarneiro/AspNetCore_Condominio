@@ -6,14 +6,14 @@
 CREATE DATABASE Condominio_api
 ON PRIMARY (
     NAME = Condominio_Data,
-    FILENAME = 'C:\SQLData\Condominio_api.mdf', -- Defina o caminho real aqui
+    FILENAME = 'D:\SQLData\Condominio_api.mdf', -- Defina o caminho real aqui
     SIZE = 10MB,
     MAXSIZE = UNLIMITED,
     FILEGROWTH = 5MB
 )
 LOG ON (
     NAME = Condominio_Log,
-    FILENAME = 'C:\SQLData\Condominio_api_log.ldf',
+    FILENAME = 'D:\SQLData\Condominio_api_log.ldf',
     SIZE = 5MB,
     MAXSIZE = 250MB,
     FILEGROWTH = 5MB
